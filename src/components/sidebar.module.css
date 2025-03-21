@@ -1,0 +1,66 @@
+.sidebarWrapper {
+    min-height: 100vh;
+  }
+  
+  .sidebar {
+    background-color: #517ea6;
+    color: white;
+    padding: 10px;
+    transition: width 0.3s ease-in-out;
+    overflow: hidden;
+  }
+  
+  .sidebar.collapsed {
+    width: 40px;
+  }
+  
+  .sidebar.expanded {
+    width: 200px;
+  }
+
+  .logoSection {
+    text-align: center;
+    padding: 10px;
+    background-color: transparent !important;
+  }
+  
+  .miniLogo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .fullLogo {
+    width: 120px;
+    height: auto;
+  }
+  
+  .logoText {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    margin-left: 10px;
+  }
+  
+  .toggleBtn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .navLink {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+    color: white;
+    text-decoration: none !important;
+  }
+  .navLink svg {
+    margin-right: 16px; 
+    font-size: 20px; 
+  }
+  
+  .navLink:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+  }
+  
