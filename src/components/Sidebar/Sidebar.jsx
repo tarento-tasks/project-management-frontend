@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser, FaProjectDiagram, FaTasks, FaBars ,FaUserPlus,FaFolderOpen, FaChalkboardTeacher, FaUserGraduate, FaComment, FaCommentDots, FaUserCheck, FaInfoCircle } from "react-icons/fa";
 import { Nav } from "react-bootstrap";
-import logo from "../assets/Projecthive.png";
+import logo from "../../assets/Projecthive.png";
+
 
 import styles from "./sidebar.module.css"; 
 
