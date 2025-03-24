@@ -1,17 +1,9 @@
 .loginPage {
-  text-align: center;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-.title {
-  color: #2a3c50;
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.subtitle {
-  color: #739abd;
-  font-size: 1rem;
-  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  padding: 2rem;
 }

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styles from './loginForm.module.css';
+import "bootstrap-icons/font/bootstrap-icons.css"; // Import Bootstrap Icons CSS
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -59,74 +60,73 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <div className={styles.loginContainer}>
-      {/* Wrap everything inside a container */}
-      <div className={styles.formContainer}>
-        {/* Logo */}
-        <div className={styles.header}>
-          <img src="/src/assets/logopms.png" alt="Logo" className={styles.logo} />
+    <div className={styles.formContainer}>
+      <div className={styles.header}>
+        <img src="/src/assets/logopms1.png" alt="Logo" className={styles.logo} />
+      </div>
+
+      <h2 className={styles.title}>Welcome Back!</h2>
+      <p className={styles.subtitle}>Sign in if you have an account</p>
+
+      <form onSubmit={handleSubmit} className={styles.loginForm}>
+        <div className={styles.formGroup}>
+          <label htmlFor="email" className={styles.label}>Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            onBlur={handleBlur}
+            className={`${styles.input} ${errors.email ? styles.errorInput : ''}`}
+            placeholder="Enter your email"
+          />
+          {errors.email && <div className={styles.errorMessage}>{errors.email}</div>}
         </div>
 
-        {/* Title and Subtitle */}
-        <h2 className={styles.title}>Welcome Back!</h2>
-        <p className={styles.subtitle}>Sign in if you have an account</p>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className={styles.loginForm}>
-          <div className={styles.formGroup}>
-            <label htmlFor="email" className={styles.label}>Email</label>
+        <div className={styles.formGroup}>
+          <label htmlFor="password" className={styles.label}>Password</label>
+          <div className={styles.passwordWrapper}>
             <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               onBlur={handleBlur}
-              className={`${styles.input} ${errors.email ? styles.errorInput : ''}`}
-              placeholder="Enter your email"
+              className={`${styles.input} ${errors.password ? styles.errorInput : ''}`}
+              placeholder="Enter your password"
             />
-            {errors.email && <div className={styles.errorMessage}>{errors.email}</div>}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className={styles.toggleButton}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? (
+                <i className="bi bi-eye-slash" style={{ fontSize: '1.2rem' }}></i>
+              ) : (
+                <i className="bi bi-eye" style={{ fontSize: '1.2rem' }}></i>
+              )}
+            </button>
           </div>
+          {errors.password && <div className={styles.errorMessage}>{errors.password}</div>}
+        </div>
 
-          <div className={styles.formGroup}>
-            <label htmlFor="password" className={styles.label}>Password</label>
-            <div className={styles.passwordWrapper}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onBlur={handleBlur}
-                className={`${styles.input} ${errors.password ? styles.errorInput : ''}`}
-                placeholder="Enter your password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className={styles.toggleButton}
-              >
-                {showPassword ? '👁️' : '👁️‍🗨️'}
-              </button>
-            </div>
-            {errors.password && <div className={styles.errorMessage}>{errors.password}</div>}
-          </div>
+        <div className={styles.rememberMe}>
+          <input
+            type="checkbox"
+            id="rememberMe"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="rememberMe">Remember Me</label>
+        </div>
 
-          <div className={styles.rememberMe}>
-            <input
-              type="checkbox"
-              id="rememberMe"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <label htmlFor="rememberMe">Remember Me</label>
-          </div>
-
-          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
-            {isSubmitting ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
-      </div>
+        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+          {isSubmitting ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { FaUser, FaProjectDiagram, FaTasks, FaBars ,FaUserPlus,FaFolderOpen, FaChalkboardTeacher, FaUserGraduate, FaComment, FaCommentDots, FaUserCheck, FaInfoCircle } from "react-icons/fa";
 import { Nav } from "react-bootstrap";
-import logo from "../../assets/Projecthive.png";
+import logo from "../../assets/logopms1.png";
 
 
 import styles from "./sidebar.module.css"; 
@@ -41,7 +41,7 @@ const Sidebar = ({ role }) => {
 
         <div className={styles.logoSection}>
           <img src={logo} alt="ProjectHive Logo" className={expanded ? styles.fullLogo : styles.miniLogo} />
-          {expanded && <span className={styles.logoText}>ProjectHive</span>}
+          
         </div>
         <button className={styles.toggleBtn} onClick={() => setExpanded(!expanded)}>
           <FaBars />

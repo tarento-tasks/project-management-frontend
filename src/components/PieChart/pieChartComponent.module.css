@@ -1,18 +1,30 @@
+
 .chartContainer {
-    width: 300px;  /* Adjust size */
-    max-width: 100%;
-    margin: auto;
-    padding: 15px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .chartContainer h5 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    font-weight: bold;
-    color: #333;
-    text-align: center;
-  }
-  
+  width: 350px;  
+  max-width: 100%;
+  margin: auto;
+  padding: 15px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.chartTitle {
+  font-size: 18px;
+  font-weight: bold;
+  color: #212e3f;
+  text-align: center;
+  margin-bottom: 15px;
+  font-family: "Poppins", sans-serif;
+}
+
+.pieChartWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 280px; /* Adjust height for better label alignment */
+}
