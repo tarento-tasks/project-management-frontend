@@ -53,7 +53,8 @@ const Sidebar = ({ role }) => {
           {sidebarItems[role]?.map((item) => (
             <Nav.Link as={Link} to={item.path} key={item.path} className={`d-flex align-items-center ${styles.navLink}`}>
               {item.icon}
-              {expanded && <span className="ms-2">{item.name}</span>}
+              {expanded && (<span className={`ms-2 ${styles.sidebarText}`}>{item.name}</span>)
+            }
             </Nav.Link>
           ))}
         </Nav>

@@ -4,7 +4,8 @@
   
   .sidebar {
     background-color: #517ea6;
-    color: white;
+    color: #ee0e0e !important;
+    
     padding: 10px;
     transition: width 0.3s ease-in-out;
     overflow: hidden;
@@ -17,6 +18,13 @@
   .sidebar.expanded {
     width: 200px;
   }
+
+  .sidebarText {
+    font-size: 16px; 
+    color: #ffffff; 
+    font-weight: bold; 
+  }
+  
 
   .logoSection {
     text-align: center;
@@ -37,7 +45,7 @@
   .logoText {
     font-size: 18px;
     font-weight: bold;
-    color: white;
+    color: rgb(253, 250, 250);
     margin-left: 10px;
   }
   
