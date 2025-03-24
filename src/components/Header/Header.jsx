@@ -1,9 +1,8 @@
-// components/Header/Header.jsx
 import React from "react";
 import { FaSearch, FaUserCircle } from "react-icons/fa";
 import styles from "./header.module.css";
 
-const Header = ({ userName = "Alex Meian", userRole = "Product Manager" }) => {
+const Header = ({ userName, userRole }) => {
   return (
     <div className={`d-flex justify-content-between align-items-center ${styles.headerContainer}`}>
       <h2 className="fw-bold">Dashboard</h2>
@@ -15,13 +14,12 @@ const Header = ({ userName = "Alex Meian", userRole = "Product Manager" }) => {
           </button>
         </div>
         <div className="ms-3 d-flex align-items-center">
-  <FaUserCircle size={30} className="me-2" />
-  <div className={styles.userInfo}>
-    <p className="m-0 fw-bold">{userName}</p>
-    <small className="text-muted">{userRole}</small>
-  </div>
-</div>
-
+          <FaUserCircle size={30} className="me-2" />
+          <div className={styles.userInfo}>
+            <p className="m-0 fw-bold">{userName}</p>
+            <small className="text-muted">{userRole}</small>
+          </div>
+        </div>
       </div>
     </div>
   );
