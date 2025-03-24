@@ -1,0 +1,17 @@
+/* components/Header/header.module.css */
+.headerContainer {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    height: 50px;
+  }
+  
+  .userInfo {
+    display: flex;
+  flex-direction: column;
+  white-space: nowrap; /* Prevent text from wrapping */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add "..." if text overflows */
+  max-width: 150px; /* Adjust this value based on your layout */
+  }
+  
