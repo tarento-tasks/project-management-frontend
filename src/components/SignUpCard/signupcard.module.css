@@ -1,0 +1,17 @@
+.signupCard {
+    width: 750px; /* Increased width */
+    height: 200px; /* Reduced height */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .card-footer {
+    display: flex;
+    justify-content: center; /* Centers the buttons horizontally */
+    padding: 10px;
+  }
+  
+  .card-footer button {
+    min-width: 100px; /* Ensures buttons are not too small */
+  }
+  
