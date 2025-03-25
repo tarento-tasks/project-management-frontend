@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./logoDisplay.module.css";
-import logo from "../assets/logopms1.png";
+import logo from "/src/assets/logopms1.png";
+
 
 const LogoDisplay = () => {
   return (

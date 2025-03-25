@@ -113,15 +113,7 @@ const LoginForm = ({ onLogin }) => {
           {errors.password && <div className={styles.errorMessage}>{errors.password}</div>}
         </div>
 
-        <div className={styles.rememberMe}>
-          <input
-            type="checkbox"
-            id="rememberMe"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <label htmlFor="rememberMe">Remember Me</label>
-        </div>
+        
 
         <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
           {isSubmitting ? 'Logging in...' : 'Login'}

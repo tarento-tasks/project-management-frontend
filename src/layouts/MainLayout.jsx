@@ -6,7 +6,7 @@ const MainLayout = ({ role }) => {
     <div className="d-flex">
       <Sidebar role={role} />
       <div className="content p-4">
-        <Outlet /> {/* This will load different pages */}
+        <Outlet /> 
       </div>
     </div>
   );

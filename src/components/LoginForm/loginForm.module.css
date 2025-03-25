@@ -139,20 +139,7 @@
     color: #517ea6;
   }
   
-  .rememberMe {
-    display: flex;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-  
-  .rememberMe input {
-    margin-right: 0.5rem;
-  }
-  
-  .rememberMe label {
-    color: #2a3c50;
-    font-size: 0.9rem;
-  }
+ 
   
   .submitButton {
     width: 100%;

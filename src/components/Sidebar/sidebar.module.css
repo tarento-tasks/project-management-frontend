@@ -1,79 +1,144 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 .sidebarWrapper {
-    min-height: 100vh;
-  }
-  
-  .sidebar {
-    background-color: #fafafa;
-    color: #ee0e0e !important;
-    
-    padding: 10px;
-    transition: width 0.3s ease-in-out;
-    overflow: hidden;
-  }
-  
-  .sidebar.collapsed {
-    width: 40px;
-  }
-  
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.sidebar {
+  background-color: #ffffff;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  padding: 1.25rem 0; /* Increased padding */
+  transition: width 0.3s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e9ecef;
+  gap: 0.5rem; /* Added gap between items */
+}
+
+.sidebar.collapsed {
+  width: 4.5rem; /* Slightly wider when collapsed */
+}
+
+.sidebar.expanded {
+  width: 14rem; /* Wider to accommodate text */
+}
+
+.logoSection {
+  padding: 0 1rem 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.miniLogo {
+  width: 2.75rem; /* Slightly larger */
+  height: 2.75rem;
+  transition: all 0.3s ease;
+}
+
+.fullLogo {
+  width: 9rem; /* Slightly larger */
+  height: auto;
+  transition: all 0.3s ease;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  color: #495057;
+  cursor: pointer;
+  padding: 0.85rem 1.25rem; /* Increased padding */
+  margin: 0.75rem 0; /* Increased margin */
+  align-self: flex-start;
+  transition: all 0.2s ease;
+}
+
+.toggleBtn:hover {
+  color: #212529;
+  transform: scale(1.05);
+}
+
+.toggleBtn i {
+  font-size: 1.3rem; /* Slightly larger */
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1.25rem; /* Increased padding */
+  color: #495057;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin: 0.25rem 0; /* Increased margin */
+  border-radius: 0.375rem; /* Slightly larger radius */
+  gap: 0.75rem; /* Added gap between icon and text */
+}
+
+/* Remove blue click color */
+.navLink:active, 
+.navLink:focus {
+  color: inherit;
+  background-color: #f1f3f5;
+}
+
+.navLink:hover {
+  background-color: #f1f3f5;
+  color: #212529;
+}
+
+.navLink i {
+  font-size: 1.15rem; /* Slightly larger */
+  min-width: 1.75rem; /* Increased min-width */
+  text-align: center;
+  color: #495057; /* Set explicit color */
+  transition: all 0.2s ease;
+}
+
+.sidebarText {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.9rem; /* Slightly larger */
+  font-weight: 500;
+  color: #212529;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+  line-height: 1.5; /* Better line spacing */
+}
+
+/* Fix for enrollment status text */
+.navLink .sidebarText {
+  white-space: normal; /* Allow text wrapping */
+  word-break: break-word; /* Prevent overflow */
+}
+
+/* Active state - removed blue color */
+.navLink.active {
+  background-color: #e9ecef;
+  color: #212529;
+  font-weight: 600;
+}
+
+/* Submenu items */
+.subMenu {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem; /* Added spacing */
+}
+
+.subItem {
+  padding: 0.65rem 1rem; /* Adjusted padding */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .sidebar.expanded {
-    width: 200px;
-  }
-
-  .sidebarText {
-    font-family: 'Inter', sans-serif;
-    font-size: 16px; 
-    color: #0e0f0f; 
-    font-weight: bold; 
-  }
-  
-
-  .logoSection {
-    text-align: center;
-    padding: 10px;
-    background-color: transparent !important;
-  }
-  
-  .miniLogo {
-    width: 40px;
-    height: 40px;
+    width: 15rem;
   }
   
   .fullLogo {
-    width: 120px;
-    height: auto;
+    width: 7rem;
   }
   
-  .logoText {
-    font-family: 'Inter', sans-serif;
-    font-size: 18px;
-    font-weight: bold;
-    color: rgb(8, 8, 8);
-    margin-left: 10px;
+  .sidebarText {
+    font-size: 0.85rem;
   }
-  
-  .toggleBtn {
-    background: none;
-    border: none;
-    color: rgb(15, 15, 15);
-    cursor: pointer;
-  }
-  
-  .navLink {
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    align-items: center;
-    padding: 5px;
-    color: rgb(2, 2, 2);
-    text-decoration: none !important;
-  }
-  .navLink svg {
-    margin-right: 16px; 
-    font-size: 20px; 
-  }
-  
-  .navLink:hover {
-    background-color: rgba(2, 2, 2, 0.1);
-  }
-  
+}

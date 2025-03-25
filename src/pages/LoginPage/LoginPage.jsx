@@ -1,20 +1,18 @@
-import React from 'react';
-import LoginForm from '../../components/LoginForm/LoginForm';
-import styles from './loginPage.module.css';
+
+import React from "react";
+import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
+import LoginForm from "../../components/LoginForm/LoginForm";
 
 const LoginPage = () => {
   const handleLogin = (loginData) => {
-    console.log('Login attempt with:', loginData);
-  
+    console.log("Login attempt with:", loginData);
   };
 
   return (
-    <div className={styles.loginPage}>
+    <AuthLayout>
       <LoginForm onLogin={handleLogin} />
-    </div>
+    </AuthLayout>
   );
 };
 
 export default LoginPage;
-
-
