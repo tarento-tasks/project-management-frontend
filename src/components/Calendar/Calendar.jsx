@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Calendar } from "react-bootstrap-icons";
 import "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./calender.module.css";
+import styles from "./calendar.module.css";
 
-const Calender = ({ projectDeadline }) => {
+const CalendarComponent = ({ projectDeadline }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   // Format the dates for comparison (YYYY-MM-DD)
@@ -57,4 +57,4 @@ const Calender = ({ projectDeadline }) => {
   );
 };
 
-export default Calender;
+export default CalendarComponent;

@@ -1,12 +1,12 @@
 import React from "react";
-import Calender from "./Calender";
+import Calendar from "./Calendar";
 
 export default {
   title: "Components/Calendar",
-  component: Calender,
+  component: Calendar,
 };
 
-const Template = (args) => <Calender {...args} />;
+const Template = (args) => <Calendar {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

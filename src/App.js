@@ -1,8 +1,17 @@
-import AppRoutes from "./routes/AppRoutes";
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Dashboard from '../pages/Dashboard';
+import OtherPage from '../pages/OtherPage';
 
-function App() {
-  const role = "admin"; // You can change this dynamically from authService
-  return <AppRoutes role={role} />;
-}
+const AppRoutes = ({ role }) => {
+  return (
+    <Routes>
+      {/* Example route for Dashboard */}
+      <Route path="/dashboard" element={<Dashboard role={role} />} />
+      {/* Other routes */}
+      <Route path="/other" element={<OtherPage />} />
+    </Routes>
+  );
+};
 
-export default App;
+export default AppRoutes;

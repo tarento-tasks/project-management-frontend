@@ -1,0 +1,127 @@
+/* General Styles */
+.dashboardContainer {
+    margin-top: 20px;
+  }
+  
+  .cardComponent {
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .progressCardContainer {
+    margin-bottom: 20px;
+  }
+  
+  .pieChartContainer {
+    margin-bottom: 20px;
+  }
+  
+  .calendarContainer {
+    margin-bottom: 20px;
+  }
+  
+  .cardComponent .card-header {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  /* Layout Styles */
+  .layoutWrapper {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .mainContent {
+    flex-grow: 1;
+    background-color: #f5f5f5;
+    padding: 20px;
+  }
+  
+  .cardContainer {
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .tableContainer {
+    margin-top: 20px;
+  }
+  
+  .cardTitle {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .cardNumber {
+    font-size: 1.5rem;
+    color: #007bff;
+  }
+  
+  /* Header Styles */
+  header h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .headerContainer {
+    padding: 15px;
+    background-color: #343a40;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* Sidebar Styles */
+  .sidebarContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #343a40;
+    padding-top: 50px;
+  }
+  
+  .sidebarContainer a {
+    display: block;
+    padding: 15px;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .sidebarContainer a:hover {
+    background-color: #495057;
+  }
+  
+  .sidebarContainer .sidebarHeader {
+    font-size: 1.5rem;
+    color: white;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .sidebarContainer {
+      width: 200px;
+    }
+  
+    .mainContent {
+      margin-left: 200px; /* To make space for the sidebar */
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .sidebarContainer {
+      width: 100%;
+      position: relative;
+      height: auto;
+    }
+  
+    .mainContent {
+      margin-left: 0;
+    }
+  }
+  

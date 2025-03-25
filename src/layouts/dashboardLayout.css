@@ -1,0 +1,19 @@
+.layoutWrapper {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .mainContent {
+    flex-grow: 1;
+    background-color: #f4f7fc;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+  
+  @media (max-width: 768px) {
+    .mainContent {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+  
