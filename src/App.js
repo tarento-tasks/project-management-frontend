@@ -1,15 +1,13 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Dashboard from '../pages/Dashboard';
-import OtherPage from '../pages/OtherPage';
+import DashboardLayout from "./layouts/DashboardLayout"; // Corrected import path
+import Dashboard from "./pages/Dashboard"; // Corrected import path
 
 const AppRoutes = ({ role }) => {
   return (
     <Routes>
-      {/* Example route for Dashboard */}
-      <Route path="/dashboard" element={<Dashboard role={role} />} />
-      {/* Other routes */}
-      <Route path="/other" element={<OtherPage />} />
+      {/* Route for Dashboard page */}
+      <Route path="/dashboard" element={<DashboardLayout><Dashboard role={role} /></DashboardLayout>} />
     </Routes>
   );
 };

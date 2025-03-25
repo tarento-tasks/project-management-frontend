@@ -1,20 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import DashboardLayout from "../layouts/DashboardLayout"; // Corrected import
-import Dashboard from "../pages/Dashboard";  // The single dashboard component for all users
-import NotFound from "../pages/NotFound";
+import DashboardLayout from "../layouts/DashboardLayout"; // Common DashboardLayout
+import Dashboard from "../pages/Dashboard"; // Common Dashboard page
+import NotFound from "../pages/NotFound"; // Not Found page
 
 const AppRoutes = ({ role, userName }) => {
   return (
-  <BrowserRouter>
-  <Routes>
-    <Route path="/" element={<MainLayout role={role} />}>
-      <Route path="admin/dashboard" element={<AdminDashboard />} />
-      <Route path="mentor/dashboard" element={<MentorDashboard />} />
-      <Route path="student/dashboard" element={<StudentDashboard />} />
-      <Route path="*" element={<NotFound />} />
-    </Route>
-  </Routes>
-  </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        {/* Main route for dashboard */}
+        <Route path="/" element={<DashboardLayout userName={userName} userRole={role} />}>
+          <Route path="dashboard" element={<Dashboard role={role} userName={userName} />} />
+        </Route>
+
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 

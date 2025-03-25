@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import Sidebar from "../components/Sidebar/Sidebar";  // Correct path
-import Header from "../components/Header/Header";
+import Sidebar from "../components/Sidebar/Sidebar"; // Sidebar component
+import Header from "../components/Header/Header"; // Header component
 import "./dashboardLayout.css"; // Assuming you have a separate CSS file for the layout
 
 const DashboardLayout = ({ children, userName, userRole }) => {
@@ -18,7 +18,7 @@ const DashboardLayout = ({ children, userName, userRole }) => {
         {/* Content Area */}
         <Container fluid className="mt-4">
           <Row>
-            <Col>{children}</Col>
+            <Col>{children}</Col> {/* This will render the Dashboard page */}
           </Row>
         </Container>
       </div>
