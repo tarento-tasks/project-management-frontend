@@ -1,0 +1,78 @@
+/* Main card styling */
+.card {
+    max-width: 450px;
+    margin: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f8f9fa;
+    border: 2px solid #3e648b;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .card:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Card header styling */
+  .cardHeader {
+    background-color: #517ea6;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  /* Card body with padding */
+  .cardBody {
+    padding: 15px;
+    background-color: #f0f4f8;
+  }
+  
+  /* Input Group styling */
+  .inputGroup {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  
+  .inputGroup label {
+    font-weight: bold;
+    flex: 1;
+    color: #2a3c50;
+  }
+  
+  /* Input field styling */
+  .inputField {
+    flex: 2;
+    border: 2px solid #517ea6;
+    padding: 6px;
+    border-radius: 6px;
+    background-color: white;
+    color: #212e3f;
+    font-weight: 500;
+  }
+  
+  .enrollButton {
+    width: 100%;
+    background-color: #2a3c50 !important;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  .enrollButton:hover {
+    background-color: #335171;
+    transform: scale(1.05);
+  }
+  
+  
