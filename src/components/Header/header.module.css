@@ -1,17 +1,148 @@
-/* components/Header/header.module.css */
 .headerContainer {
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-    height: 50px;
+  position: fixed;
+  top: 0;
+  left: 14rem; /* Match expanded sidebar width */
+  right: 0;
+  height: 70px;
+  background: white;
+  padding: 0.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e9ecef;
+  z-index: 900;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: left 0.3s ease;
+}
+
+.sidebarCollapsed .headerContainer {
+  left: 4.5rem;
+}
+
+.headerContent {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.searchGroup {
+  display: flex;
+  max-width: 300px;
+  width: 100%;
+}
+
+.searchInput {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e9ecef;
+  border-radius: 4px 0 0 4px;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.searchButton {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  padding: 0 0.75rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.searchButton:hover {
+  background: #e9ecef;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  padding-left: 1rem;
+  border-left: 1px solid #e9ecef;
+}
+
+@media (max-width: 992px) {
+  .headerContent {
+    padding: 0.5rem;
+  }
+  
+  .searchContainer {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .searchGroup {
+    max-width: 100%;
   }
   
   .userInfo {
-    display: flex;
-  flex-direction: column;
-  white-space: nowrap; /* Prevent text from wrapping */
-  overflow: hidden; /* Hide overflow */
-  text-overflow: ellipsis; /* Add "..." if text overflows */
-  max-width: 150px; /* Adjust this value based on your layout */
+    padding-left: 0;
+    border-left: none;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 992px) {
+  .headerContent {
+    padding: 0.5rem;
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
   }
   
+  .userInfo {
+    padding-left: 0;
+    border-left: none;
+    justify-content: flex-end;
+  }
+}
+
+/* Rest of your CSS remains the same */
+
+/* Responsive adjustments (unchanged) */
+@media (max-width: 992px) {
+  .headerContent {
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .headerContent {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .searchGroup {
+    max-width: 100%;
+  }
+  
+  .userInfo {
+    padding-left: 0;
+    border-left: none;
+    justify-content: flex-end;
+  }
+}

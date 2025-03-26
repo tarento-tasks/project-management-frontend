@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Button } from "react-bootstrap";
 import styles from "./buttonComponent.module.css";
 
 const ButtonComponent = ({ 
@@ -11,16 +10,25 @@ const ButtonComponent = ({
   isLoading, 
   children 
 }) => {
+  // Map Bootstrap variants to your custom style
+  const buttonClass = `${styles.submitButton} ${
+    size === 'sm' ? styles.small : 
+    size === 'md' ? styles.medium : 
+    styles.large
+  }`;
+
   return (
-    <Button 
-      className={`${styles.customButton} w-100 `} 
-      variant={variant} 
-      size={size} 
-      onClick={onClick} 
+    <button
+      className={buttonClass}
+      onClick={onClick}
       disabled={disabled || isLoading}
+      style={{
+        opacity: disabled ? 0.7 : 1,
+        cursor: disabled ? 'not-allowed' : 'pointer'
+      }}
     >
       {isLoading ? "Loading..." : children}
-    </Button>
+    </button>
   );
 };
 

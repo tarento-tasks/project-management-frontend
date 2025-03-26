@@ -1,7 +1,6 @@
+import "bootstrap-icons/font/bootstrap-icons.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Nav } from "react-bootstrap";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import logo from "/src/assets/logopms1.png";
 import styles from "./sidebar.module.css";
 
@@ -114,15 +113,12 @@ const sidebarItems = {
   ]
 };
 
-const Sidebar = ({ role }) => {
-  const [expanded, setExpanded] = useState(false);
+const Sidebar = ({ role = "admin" }) => {
+  const [expanded, setExpanded] = useState(true);
   const [openSubmenus, setOpenSubmenus] = useState({});
 
   const toggleSubmenu = (name) => {
-    setOpenSubmenus(prev => ({
-      ...prev,
-      [name]: !prev[name]
-    }));
+    setOpenSubmenus(prev => ({ ...prev, [name]: !prev[name] }));
   };
 
   const renderSubItems = (items, level = 0) => {
@@ -135,9 +131,7 @@ const Sidebar = ({ role }) => {
               onClick={() => toggleSubmenu(item.name)}
             >
               {item.icon}
-              {expanded && (
-                <span className={styles.sidebarText}>{item.name}</span>
-              )}
+              {expanded && <span className={styles.sidebarText}>{item.name}</span>}
             </div>
             
             {openSubmenus[item.name] && expanded && (
@@ -147,23 +141,20 @@ const Sidebar = ({ role }) => {
             )}
           </>
         ) : (
-          <Nav.Link
-            as={Link}
+          <Link
             to={item.path}
             className={`${styles.navLink} ${level > 0 ? styles.subItem : ''}`}
           >
             {item.icon}
-            {expanded && (
-              <span className={styles.sidebarText}>{item.name}</span>
-            )}
-          </Nav.Link>
+            {expanded && <span className={styles.sidebarText}>{item.name}</span>}
+          </Link>
         )}
       </div>
     ));
   };
 
   return (
-    <div className={`d-flex ${styles.sidebarWrapper}`}>
+    <div className={styles.sidebarContainer}>
       <div className={`${styles.sidebar} ${expanded ? styles.expanded : styles.collapsed}`}>
         <div className={styles.logoSection}>
           <img 
@@ -181,9 +172,9 @@ const Sidebar = ({ role }) => {
           <i className="bi bi-list"></i>
         </button>
 
-        <Nav className="flex-column">
+        <div className={styles.navContainer}>
           {renderSubItems(sidebarItems[role] || [])}
-        </Nav>
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,33 @@
+.dashboardContainer {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .mainContent {
+    margin-left: 14rem; /* Matches expanded sidebar width */
+    margin-top: 70px; /* Matches header height */
+    padding: 2rem;
+    flex: 1;
+    transition: margin-left 0.3s ease;
+    min-height: calc(100vh - 70px);
+  }
+  
+  /* When sidebar is collapsed */
+  .sidebarCollapsed .mainContent {
+    margin-left: 4.5rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .mainContent {
+      margin-left: 4.5rem;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .mainContent {
+      margin-left: 0;
+      padding: 1rem;
+    }
+  }

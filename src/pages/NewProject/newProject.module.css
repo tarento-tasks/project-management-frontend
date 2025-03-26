@@ -1,0 +1,46 @@
+.pageContainer {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .header h1 {
+    font-size: 2rem;
+    color: #212529;
+    margin-bottom: 0.5rem;
+  }
+  
+  .header p {
+    color: #6c757d;
+    margin-bottom: 0;
+  }
+  
+  .formWrapper {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    margin-top: 1rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .pageContainer {
+      padding: 15px;
+    }
+    
+    .formWrapper {
+      padding: 1.5rem;
+    }
+    
+    .header h1 {
+      font-size: 1.75rem;
+    }
+  }

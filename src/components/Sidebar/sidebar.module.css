@@ -4,22 +4,38 @@
   min-height: 100vh;
   background-color: #f8f9fa;
 }
+.sidebarContainer {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 1000; /* Higher than header */
+  height: 100vh;
+  width: 14rem;
+  transition: width 0.3s ease;
+}
+.navContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
 
 .sidebar {
   background-color: #ffffff;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
-  padding: 1.25rem 0; /* Increased padding */
-  transition: width 0.3s ease;
-  overflow: hidden;
+  padding: 1.25rem 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   border-right: 1px solid #e9ecef;
-  gap: 0.5rem; /* Added gap between items */
+  gap: 0.5rem;
 }
 
 .sidebar.collapsed {
-  width: 4.5rem; /* Slightly wider when collapsed */
+  width: 4.5rem;
 }
+
+/* Rest of your sidebar styles remain the same */
 
 .sidebar.expanded {
   width: 14rem; /* Wider to accommodate text */
@@ -100,7 +116,6 @@
   font-size: 0.9rem; /* Slightly larger */
   font-weight: 500;
   color: #212529;
-  white-space: nowrap;
   transition: opacity 0.2s ease;
   line-height: 1.5; /* Better line spacing */
 }
@@ -184,3 +199,5 @@
 .navLink i {
   margin-right: 0; /* Let the gap property handle spacing */
 }
+
+
