@@ -20,8 +20,9 @@ function App() {
           <Route path="/admin/new-project" element={<NewProject />} /> 
            
            <Route path="/admin/new-project" element={<NewProject />} /> */}
+           <Route path="/" element={<LoginPage />} />
            <Route path="/admin/new-project" element={<NewProject />} /> 
-          
+           
            
         </Routes>
       

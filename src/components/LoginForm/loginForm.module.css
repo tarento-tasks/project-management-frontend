@@ -129,7 +129,7 @@
   
   .toggleButton {
     position: absolute;
-    right: -10%;
+    right: -5%;
     top: 50%;
     transform: translateY(-50%);
     background: none;

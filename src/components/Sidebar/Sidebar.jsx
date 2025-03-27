@@ -17,7 +17,7 @@ const sidebarItems = {
       subItems: [
         { name: "All Projects", path: "/admin/projects" },
         { name: "Tasks", path: "/admin/projects/tasks" },
-        { name: "New Project", path: "/admin/new-project", icon: <i className="bi bi-plus-circle"></i> }
+        { name: "New Project", path: "/admin/new-project" }
       ]
     },
     { 
