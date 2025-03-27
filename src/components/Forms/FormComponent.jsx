@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import Swal from 'sweetalert2';
 import styles from "./formComponent.module.css";
 
 const FormComponent = ({ fields, onSubmit }) => {
@@ -32,6 +33,23 @@ const FormComponent = ({ fields, onSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
+    
+    // Show success SweetAlert
+    Swal.fire({
+      title: 'Success!',
+      text: 'Submitted successfully',
+      icon: 'success',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#517ea6',
+      timer: 2000,
+      
+      showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutUp'
+      }
+    });
   };
 
   return (
@@ -66,12 +84,16 @@ const FormComponent = ({ fields, onSubmit }) => {
                     ))}
                 </select>
 
-                {/* Selected skills displayed inline */}
                 <div className={styles.selectedSkills}>
                   {formData.skills.map((skill, index) => (
                     <span key={index} className={styles.skillTag}>
                       {skill}
-                      <button type="button" className={styles.removeSkill} onClick={() => removeSkill(skill)}>
+                      <button 
+                        type="button" 
+                        className={styles.removeSkill} 
+                        onClick={() => removeSkill(skill)}
+                        aria-label={`Remove ${skill}`}
+                      >
                         ✖
                       </button>
                     </span>

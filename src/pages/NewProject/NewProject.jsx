@@ -1,6 +1,7 @@
 import React from 'react';
 import FormComponent from "../../components/Forms/FormComponent";
 import NewProjectLayout from "../../layouts/NewProjectLayout/NewProjectLayout";
+import Swal from 'sweetalert2';
 import styles from "./newProject.module.css";
 
 const NewProject = () => {
@@ -67,12 +68,22 @@ const NewProject = () => {
 
   const handleSubmit = (formData) => {
     console.log('Project submitted:', formData);
-    alert('Project created successfully!');
+    
+   
+    Swal.fire({
+      title: 'Success!',
+      text: 'Project created successfully!',
+      icon: 'success',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#517ea6',
+      timer: 1000,
+     
+    });
   };
 
   return (
     <NewProjectLayout>
-        <div className={styles.pageContainer }>
+        <div className={styles.pageContainer}>
             <h1>Create New Project</h1>
             <p>Fill out the form below to create a new project</p>
             <FormComponent fields={fields} onSubmit={handleSubmit} />

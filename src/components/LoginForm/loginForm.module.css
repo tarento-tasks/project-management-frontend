@@ -1,17 +1,17 @@
 .formContainer {
     background-color: #ffffff; 
-    padding: 3rem; /* Increased padding */
+    padding: 3rem; 
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
-    max-width: 900px; /* Increased width */
+    max-width: 900px; 
     width: 100%;
-    height: auto; /* Adjust height dynamically */
+    height: auto; 
 }
 
 .loginForm {
-    max-width: 500px; /* Increased form width */
+    max-width: 500px; 
     margin: 0 auto;
-    padding: 4rem; /* Increased padding */
+    padding: 4rem; 
     background-color: #ffffff;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
