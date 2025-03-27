@@ -5,9 +5,9 @@ import styles from "./cardComponent.module.css";
 import { Card, Table } from "react-bootstrap";
 
 const statusColors = {
-  approved: "text-success",
+  Completed: "text-success",
   pending: "text-warning",
-  rejected: "text-danger",
+  In_Progress: "text-danger",
 };
 
 const CardComponent = ({ title = "Default Title", fields = [], data = [] }) => {

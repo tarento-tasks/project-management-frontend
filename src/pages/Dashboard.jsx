@@ -1,9 +1,27 @@
 import React from "react";
 import GeneralLayout from "../layouts/GeneralLayout";
 import CardComponent from "../components/Cards/CardComponent";
+import ProgressCard from "../components/ProgressCard/ProgressCard";
+import PieChartComponent from "../components/PieChart/PieChartComponent";
 import styles from "./dashboard.module.css";
 
 const Dashboard = () => {
+
+  const progressStats = {
+    title: "Project Overview",
+    data: [
+      { title: "Total Projects", value: 12 },
+      { title: "In Progress", value: 5 },
+      { title: "Completed", value: 7 }
+    ]
+  };
+
+  const pieChartData = {
+    title: "Project Status Distribution",
+    labels: ["Completed", "In Progress", "Pending", "On Hold"],
+    values: [15, 8, 5, 2],
+    colors: ["#4BC0C0", "#36A2EB", "#FFCE56", "#FF6384"]
+  };
   // User data for the first card
   const userData = {
     title: "User Management",
@@ -31,7 +49,7 @@ const Dashboard = () => {
       { key: "progress", label: "Progress" }
     ],
     data: [
-      { projectId: "P-001", projectName: "Website Redesign", status: "In Progress", progress: "65%" },
+      { projectId: "P-001", projectName: "Website Redesign", status: "In_Progress", progress: "65%" },
       { projectId: "P-002", projectName: "Mobile App", status: "Pending", progress: "15%" },
       { projectId: "P-003", projectName: "API Integration", status: "Completed", progress: "100%" }
     ]
@@ -59,19 +77,23 @@ const Dashboard = () => {
         <h2>Admin Dashboard</h2>
         
         <div className="row mb-4">
-          <div className="col-md-6 mb-3">
-            <CardComponent {...userData} />
-          </div>
-          <div className="col-md-6 mb-3">
-            <CardComponent {...projectData} />
+          <div className="col-12 mb-4">
+            <ProgressCard {...progressStats} />
           </div>
         </div>
         
-        <div className="row">
-          <div className="col-12">
-            <CardComponent {...taskData} />
+        {/* Your existing CardComponent */}
+        <div className="row mb-4">
+          <div className="col-md-9 mb-3">
+            <CardComponent {...projectData} />
+          </div>
+
+          <div className="col-md-3 mb-3">
+            <PieChartComponent {...pieChartData} />
           </div>
         </div>
+        
+        
       </div>
     </GeneralLayout>
   );
