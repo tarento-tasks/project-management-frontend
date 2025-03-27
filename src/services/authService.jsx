@@ -1,5 +1,3 @@
 export const getRole = () => {
-    // Fetch role from API or localStorage
-    return "admin"; // Example role
-  };
-  
+  return "admin"; // Change dynamically when integrating auth
+};

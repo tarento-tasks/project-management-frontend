@@ -10,7 +10,7 @@ import placeholderTeammate from "./teammate-placeholder.png";
 const bigStoneColors = {
   cardBg: "#f0f4f8", // Light Gray for better contrast
   primary: "#517ea6",  // 500
-  progressBar: "#3e648b", // 600
+  progressBar: "#4aa3df", // 600
   sectionBg: "#e3eaf1",  // Softer shade for mentor/team sections
   button: "#2a3c50",  // 900
   text: "#2a3c50" // Darker text for readability

@@ -1,0 +1,15 @@
+/* src/components/NewTask/newtask.module.css */
+.newTaskContainer {
+    padding: 20px;
+    max-width: 1800px;
+    margin: auto;
+    width: 100vw;
+  }
+  
+  .pageTitle {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  

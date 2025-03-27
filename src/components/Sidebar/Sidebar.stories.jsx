@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar"; // Make sure the path is correct
 
 export default {
   title: "Components/Sidebar",
@@ -16,17 +16,17 @@ export default {
 
 const Template = (args) => <Sidebar {...args} />;
 
-export const AdminSidebar = Template.bind({});
-AdminSidebar.args = {
+export const Admin = Template.bind({});
+Admin.args = {
   role: "admin",
 };
 
-export const MentorSidebar = Template.bind({});
-MentorSidebar.args = {
+export const Mentor = Template.bind({});
+Mentor.args = {
   role: "mentor",
 };
 
-export const StudentSidebar = Template.bind({});
-StudentSidebar.args = {
+export const Student = Template.bind({});
+Student.args = {
   role: "student",
 };
