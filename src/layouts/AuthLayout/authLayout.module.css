@@ -1,0 +1,25 @@
+ /*
+body{
+  background: url("/src/assets/bgimage.jpg") no-repeat center center/cover;
+}
+*/
+
+.authOverlay {
+
+  padding: 20px;
+  border-radius: 5px;
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+  width: 100;
+ 
+}
+
+.authContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100;
+  height: 100vh;
+}
