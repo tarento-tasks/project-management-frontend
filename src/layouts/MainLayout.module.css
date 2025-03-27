@@ -8,7 +8,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin-left: 250px; /* Matches expanded sidebar width */
   transition: margin-left 0.3s ease;
 }
 

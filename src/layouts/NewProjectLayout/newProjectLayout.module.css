@@ -1,31 +1,20 @@
-.layoutContainer {
-    display: flex;
-    min-height: 100vh;
-    background-color: #f8f9fa;
+.formContent {
+    padding: 2rem 0rem;
   }
   
-  .mainContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    margin-left: 250px; /* Matches expanded sidebar width */
-    transition: margin-left 0.3s ease;
+  .formContent h1 {
+    font-size: 1.8rem;
+    color: #2a3c50;
+    margin-bottom: 0.5rem;
   }
   
-  .contentArea {
-    flex: 1;
-    padding: 2rem;
-    overflow-y: auto;
+  .formContent p {
+    color: #6c757d;
+    margin-bottom: 2rem;
   }
   
-  /* Collapsed sidebar state */
-  .sidebarCollapsed .mainContent {
-    margin-left: 70px; /* Matches collapsed sidebar width */
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 992px) {
-    .mainContent {
-      margin-left: 0;
+  @media (max-width: 768px) {
+    .formContent {
+      padding: 1rem;
     }
   }

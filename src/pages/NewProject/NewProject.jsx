@@ -1,8 +1,7 @@
-
 import React from 'react';
 import FormComponent from "../../components/Forms/FormComponent";
-import DashboardLayout from "../../layouts/DashboardLayout";  // Correct path
-import styles from "./newProject.module.css"; 
+import NewProjectLayout from "../../layouts/NewProjectLayout/NewProjectLayout";
+import styles from "./newProject.module.css";
 
 const NewProject = () => {
   const skills = ["React", "Spring Boot", "Java", "Python", "Node.js", "Docker"];
@@ -72,20 +71,13 @@ const NewProject = () => {
   };
 
   return (
-    <DashboardLayout role="admin" userName="Admin" userRole="Administrator">
-      <div className={styles.pageContainer}>
-        <div className={styles.header}>
-          <h1>Create New Project</h1>
-          <p>Fill out the form below to create a new project</p>
+    <NewProjectLayout>
+        <div className={styles.pageContainer }>
+            <h1>Create New Project</h1>
+            <p>Fill out the form below to create a new project</p>
+            <FormComponent fields={fields} onSubmit={handleSubmit} />
         </div>
-        <div className={styles.formWrapper}>
-          <FormComponent 
-            fields={fields} 
-            onSubmit={handleSubmit} 
-          />
-        </div>
-      </div>
-    </DashboardLayout>
+    </NewProjectLayout>
   );
 };
 

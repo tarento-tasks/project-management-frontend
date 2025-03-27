@@ -1,45 +1,21 @@
 .pageContainer {
-    width: 89%;
-    margin: 0 auto;
-    padding: 20px;
+    padding: 2rem 0rem;
   }
   
-  .header {
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e9ecef;
-  }
-  
-  .header h1 {
-    font-size: 2rem;
-    color: #212529;
+  .pageContainer h1 {
+    font-size: 1.8rem;
+    color: #2a3c50;
     margin-bottom: 0.5rem;
   }
   
-  .header p {
+  .subtitle {
     color: #6c757d;
-    margin-bottom: 0;
+    margin-bottom: 2rem;
+    display: block;
   }
   
-  .formWrapper {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    padding: 2rem;
-    margin-top: 1rem;
-  }
-  
-  /* Responsive adjustments */
   @media (max-width: 768px) {
     .pageContainer {
-      padding: 15px;
-    }
-    
-    .formWrapper {
-      padding: 1.5rem;
-    }
-    
-    .header h1 {
-      font-size: 1.75rem;
+      padding: 1rem;
     }
   }

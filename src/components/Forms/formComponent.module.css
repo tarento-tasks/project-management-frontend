@@ -1,8 +1,9 @@
 /* formComponent.module.css */
 .formContainer {
-  width: 1200px; 
+  position:absolute;
+  width: 100vh; 
   padding: 20px;
-  margin-top: 500px; 
+  border-radius: 5px;
   background-color: #dde5ec;
    
 }

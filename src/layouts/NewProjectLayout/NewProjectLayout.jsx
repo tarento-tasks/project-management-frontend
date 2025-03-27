@@ -1,21 +1,17 @@
+import React from "react";
+import DashboardLayout from "../DashboardLayout"; // Relative path to DashboardLayout
+import styles from "./newProjectLayout.module.css";
 
-import React from 'react';
-import Sidebar from '../../components/Sidebar/Sidebar';
-import Header from '../../components/Header/Header';
-import styles from './newProjectLayout.module.css';
-
-const NewProjectLayout = ({ children, role = 'admin', userName = 'Admin', userRole = 'Administrator' }) => {
+const NewProjectLayout = ({ children, role = "admin" }) => {
   return (
-    <div className={styles.layoutContainer}>
-      <Sidebar role={role} />
-      <div className={styles.mainContent}>
-        <Header userName={userName} userRole={userRole} />
-        <main className={styles.contentArea}>
-          {children}
-        </main>
+    <DashboardLayout role={role}>
+      <div className={styles.formContent}>
+        {children}
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
 export default NewProjectLayout;
+
+
