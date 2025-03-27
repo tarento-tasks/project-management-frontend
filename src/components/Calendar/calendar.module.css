@@ -1,0 +1,25 @@
+.calendarContainer {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tableContainer {
+    overflow-x: auto;
+  }
+  
+  .today {
+    background-color: #0d6efd !important;
+    color: white !important;
+    font-weight: bold;
+  }
+  
+  .deadline {
+    background-color: #dc3545 !important;
+    color: white !important;
+    font-weight: bold;
+  }
+  
