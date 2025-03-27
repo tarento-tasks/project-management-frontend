@@ -4,6 +4,7 @@ import AdminDashboard from "../pages/AdminDashboard";
 import MentorDashboard from "../pages/MentorDashboard";
 import StudentDashboard from "../pages/StudentDashboard";
 import NewTask from "../pages/NewTask/NewTask"; // Import NewTask
+import AllProjects from "../pages/AllProjects/AllProjects";
 
 const AppRoutes = ({ role }) => {
   console.log("✅ AppRoutes.jsx is running");
@@ -24,6 +25,8 @@ const AppRoutes = ({ role }) => {
 
       {/* Catch-all route (redirect unknown routes to dashboard) */}
       <Route path="*" element={<Navigate to={`/${role}/dashboard`} />} />
+
+      <Route path="/all-projects" element={<AllProjects />} />
     </Routes>
   );
 };

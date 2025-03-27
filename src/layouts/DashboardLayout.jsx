@@ -10,6 +10,8 @@ import styles from "./dashboardLayout.module.css";
 
 const DashboardLayout = ({ children, role = "admin" }) => {
   return (
+    <>
+   
     <div className={styles.dashboardContainer}>
       <Header />
       <Sidebar role={role} />
@@ -17,6 +19,7 @@ const DashboardLayout = ({ children, role = "admin" }) => {
         {children}
       </main>
     </div>
+    </>
   );
 };
 

@@ -1,5 +1,5 @@
 .projectCard {
-    width: 500px;
+    width: 450px;
     min-height: 450px;
     border-radius: 12px;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -27,4 +27,7 @@
 
 .actionButton:hover {
     background-color: #212e3f;
+}
+.customProgress .progress-bar {
+    background-color: #4bbf73 !important; /* your custom filled color */
 }

@@ -1,26 +1,24 @@
 .dashboardContainer {
     display: flex;
-    background-color: #f8f9fa;
+    background-color: #d5dadf;
     position: relative; 
   }
-  
   .mainContent {
-    flex: 1;
-    min-height: calc(100vh - 70px); /* Adjust this if header height is actually 70px */
+    min-height: calc(100vh - 70px);
     transition: margin-left 0.3s ease;
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
+    flex-direction: column;  /* ✅ important to stack vertically */
+    justify-content: flex-start;
+    align-items: stretch;
     padding: 2rem;
+    gap: 30px;
     box-sizing: border-box;
-    margin-top: 70px; /* ✅ Only use the actual header height */
+    margin-top: 80px;   /* ✅ custom gap from top */
+    width: 100vw;
 }
 
-
   /* When sidebar is collapsed */
-  .sidebarCollapsed .mainContent {
-    margin-left: 4.5rem;
-  }
+
   
   /* Responsive adjustments */
   @media (max-width: 992px) {

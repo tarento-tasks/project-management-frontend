@@ -78,15 +78,15 @@ const ProjectCard = ({
 
         {/* Task Progress Bar */}
         <div className="mt-3">
-          <strong>📊 Task Progress:</strong>
-          <ProgressBar 
-            now={progress} 
-            label={`${progress.toFixed(0)}%`} 
-            className="mt-2"
-            style={{ backgroundColor: bigStoneColors.progressBar }}
-          />
-        </div>
+  <strong>📊 Task Progress:</strong>
+  <ProgressBar 
+    now={progress} 
+    label={`${progress.toFixed(0)}%`} 
+    className={`mt-2 ${styles.customProgress}`}
+    variant="none"  // ⬅ disables default color schemes
+/>
 
+</div>
         
       </Card.Body>
     </Card>

@@ -1,0 +1,21 @@
+.allprojectscontainer {
+    margin-left: 70px;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+.allprojectstitle {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 50px;
+    color: #2a3c50;
+}
+
+.cardsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); /* ✅ auto-fill will flow them into rows */
+    gap: 80px; /* space between cards */
+    width: 100%;  /* ✅ take full width */
+}
