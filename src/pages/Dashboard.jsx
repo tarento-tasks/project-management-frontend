@@ -1,22 +1,17 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useRecoilValue } from 'recoil';
+import { useNavigate } from "react-router-dom";
 import GeneralLayout from "../layouts/GeneralLayout";
 import CardComponent from "../components/Cards/CardComponent";
 import ProgressCard from "../components/ProgressCard/ProgressCard";
 import PieChartComponent from "../components/PieChart/PieChartComponent";
+import { authState } from '../states/authState'; 
 import styles from "./dashboard.module.css";
 
-const Dashboard = () => {
-  const { role } = useParams();
-  
-  // Validate role and redirect if invalid
-  if (!['admin', 'mentor', 'student'].includes(role)) {
-    return <Navigate to="/admin/dashboard" replace />;
-  }
-
-  // Progress Card Data (from your storybook)
-  const progressData = {
-    admin: {
+// Define all data structures with UPPERCASE keys to match your role values
+const DATA_TEMPLATES = {
+  progressData: {
+    ADMIN: {
       title: "Project Overview",
       data: [
         { title: "Active Projects", value: 5 },
@@ -24,7 +19,7 @@ const Dashboard = () => {
         { title: "Completed Tasks", value: 12 }
       ]
     },
-    mentor: {
+    MENTOR: {
       title: "My Projects Overview",
       data: [
         { title: "Active Projects", value: 3 },
@@ -32,7 +27,7 @@ const Dashboard = () => {
         { title: "Completed Tasks", value: 10 }
       ]
     },
-    student: {
+    STUDENT: {
       title: "My Work Overview",
       data: [
         { title: "Assigned Projects", value: 2 },
@@ -40,11 +35,9 @@ const Dashboard = () => {
         { title: "Completed Tasks", value: 5 }
       ]
     }
-  };
-
-  // Card Component Data
-  const cardData = {
-    admin: {
+  },
+  cardData: {
+    ADMIN: {
       title: "Project Status",
       fields: [
         { key: "projectId", label: "Project ID" },
@@ -57,7 +50,7 @@ const Dashboard = () => {
         { projectId: "P-002", projectName: "Mobile App", status: "Pending", progress: "15%" }
       ]
     },
-    mentor: {
+    MENTOR: {
       title: "My Projects",
       fields: [
         { key: "projectId", label: "Project ID" },
@@ -69,7 +62,7 @@ const Dashboard = () => {
         { projectId: "MP-102", projectName: "Mobile App", progress: "45%" }
       ]
     },
-    student: {
+    STUDENT: {
       title: "My Tasks",
       fields: [
         { key: "taskId", label: "Task ID" },
@@ -81,39 +74,73 @@ const Dashboard = () => {
         { taskId: "ST-202", taskName: "Implement Authentication", progress: "60%" }
       ]
     }
-  };
-
-  // Pie Chart Data
-  const pieChartData = {
-    admin: {
+  },
+  pieChartData: {
+    ADMIN: {
       title: "Project Status Distribution",
       labels: ["Completed", "In Progress", "Pending", "On Hold"],
       values: [15, 8, 5, 2],
       colors: ["#4BC0C0", "#36A2EB", "#FFCE56", "#FF6384"]
     },
-    mentor: {
+    MENTOR: {
       title: "Projects Completion",
       labels: ["Completed Projects", "Active Projects"],
       values: [8, 7],
       colors: ["#4BC0C0", "#36A2EB"]
     },
-    student: {
+    STUDENT: {
       title: "Tasks Completion",
       labels: ["Completed Tasks", "Pending Tasks"],
       values: [5, 5],
       colors: ["#4BC0C0", "#FFCE56"]
     }
-  };
+  }
+};
+
+const Dashboard = () => {
+  const auth = useRecoilValue(authState);
+  const navigate = useNavigate();
+  
+  // Ensure role is always uppercase to match data keys
+  const role = auth.role?.toUpperCase() || 'ADMIN';
+
+  // Debug logs
+  console.log("Current role:", role);
+  console.log("Available roles:", Object.keys(DATA_TEMPLATES.progressData));
+  console.log("Progress data:", DATA_TEMPLATES.progressData[role]);
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!auth.isAuthenticated) {
+      navigate('/login');
+    }
+  }, [auth.isAuthenticated, navigate]);
+
+  // Validate role exists in data
+  if (!DATA_TEMPLATES.progressData[role]) {
+    console.error("Invalid role detected:", role);
+    return (
+      <GeneralLayout role={role}>
+        <div className="alert alert-danger">
+          Error: No data configuration found for role "{role}"
+        </div>
+      </GeneralLayout>
+    );
+  }
+
+  if (!auth.isAuthenticated) {
+    return null;
+  }
 
   return (
     <GeneralLayout role={role}>
       <div className={styles.dashboardContent}>
-        <h2>{role.charAt(0).toUpperCase() + role.slice(1)} Dashboard</h2>
+        <h2>{role.charAt(0) + role.slice(1).toLowerCase()} Dashboard</h2>
         
         {/* Progress Card */}
         <div className="row mb-4">
           <div className="col-12 mb-4">
-            <ProgressCard {...progressData[role]} />
+            <ProgressCard {...DATA_TEMPLATES.progressData[role]} />
           </div>
         </div>
         
@@ -121,12 +148,12 @@ const Dashboard = () => {
         <div className="row mb-4">
           {/* Card Component (Left) */}
           <div className="col-md-8 mb-3">
-            <CardComponent {...cardData[role]} />
+            <CardComponent {...DATA_TEMPLATES.cardData[role]} />
           </div>
           
           {/* Pie Chart (Right) */}
           <div className="col-md-4 mb-3">
-            <PieChartComponent {...pieChartData[role]} />
+            <PieChartComponent {...DATA_TEMPLATES.pieChartData[role]} />
           </div>
         </div>
       </div>

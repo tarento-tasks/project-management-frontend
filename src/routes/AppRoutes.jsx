@@ -5,18 +5,14 @@ import { authState } from '../states/authState';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import Dashboard from '../pages/Dashboard';
 
-// Protected Route Component
-const ProtectedRoute = ({ children, allowedRoles }) => {
+const ProtectedRoute = ({ children }) => {
   const auth = useRecoilValue(authState);
   
   if (!auth.isAuthenticated) {
     return <Navigate to="/" replace />;
   }
-
-  if (allowedRoles && !allowedRoles.includes(auth.role)) {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
+  
+  // No need for role check here since Dashboard handles it
   return children;
 };
 
@@ -26,33 +22,20 @@ const AppRoutes = () => {
       {/* Public Routes */}
       <Route path="/" element={<LoginPage />} />
       
-      {/* Protected Role-Specific Routes */}
+      {/* Single Protected Dashboard Route */}
       <Route
-        path="/admin/dashboard"
+        path="/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['admin']}>
-            <Dashboard role="admin" />
+          <ProtectedRoute>
+            <Dashboard />
           </ProtectedRoute>
         }
       />
       
-      <Route
-        path="/mentor/dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['mentor']}>
-            <Dashboard role="mentor" />
-          </ProtectedRoute>
-        }
-      />
-      
-      <Route
-        path="/student/dashboard"
-        element={
-          <ProtectedRoute allowedRoles={['student']}>
-            <Dashboard role="student" />
-          </ProtectedRoute>
-        }
-      />
+      {/* Legacy Role-Specific Routes (Redirect to main dashboard) */}
+      <Route path="/admin/dashboard" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/mentor/dashboard" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/student/dashboard" element={<Navigate to="/dashboard" replace />} />
       
       {/* Fallback Routes */}
       <Route path="/unauthorized" element={<div>You don't have permission to access this page</div>} />
