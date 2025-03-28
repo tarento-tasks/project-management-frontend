@@ -69,12 +69,7 @@ const ProjectCard = ({
           </div>
         </div>
 
-        {/* Project Status */}
-        <div className="text-center mt-3">
-          <span className={`badge ${projectStatus === "Completed" ? "bg-success" : "bg-warning"}`}>
-            {projectStatus}
-          </span>
-        </div>
+    
 
         {/* Task Progress Bar */}
         <div className="mt-3">
