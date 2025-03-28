@@ -1,24 +1,47 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MainLayout from "../layouts/MainLayout";
-import AdminDashboard from "../pages/AdminDashboard";
-import MentorDashboard from "../pages/MentorDashboard";
-import StudentDashboard from "../pages/StudentDashboard";
-import NotFound from "../pages/NotFound";
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { authState } from '../states/authState';
+import LoginPage from '../pages/LoginPage/LoginPage';
+import Dashboard from '../pages/Dashboard/Dashboard';
 
-const AppRoutes = ({ role }) => {
+const ProtectedRoute = ({ children }) => {
+  const auth = useRecoilValue(authState);
+  
+  if (!auth.isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+  
+  // No need for role check here since Dashboard handles it
+  return children;
+};
+
+const AppRoutes = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<MainLayout role={role} />}>
-          <Route path="admin/dashboard" element={<AdminDashboard />} />
-          <Route path="mentor/dashboard" element={<MentorDashboard />} />
-          <Route path="student/dashboard" element={<StudentDashboard />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </Router>
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<LoginPage />} />
+      
+      {/* Single Protected Dashboard Route */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      
+      {/* Legacy Role-Specific Routes (Redirect to main dashboard) */}
+      <Route path="/admin/dashboard" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/mentor/dashboard" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/student/dashboard" element={<Navigate to="/dashboard" replace />} />
+      
+      {/* Fallback Routes */}
+      <Route path="/unauthorized" element={<div>You don't have permission to access this page</div>} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 };
 
 export default AppRoutes;
-

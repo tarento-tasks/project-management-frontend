@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { useNavigate } from 'react-router-dom';
+import { authState } from '../../states/authState';
+import { login } from '../../services/authService';
 import styles from './loginForm.module.css';
-import "bootstrap-icons/font/bootstrap-icons.css"; // Import Bootstrap Icons CSS
+import "bootstrap-icons/font/bootstrap-icons.css";
+import logo from '../../assets/logopms1.png'; 
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -9,60 +14,77 @@ const LoginForm = ({ onLogin }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const setAuth = useSetRecoilState(authState);
+  const navigate = useNavigate();
 
   const validateField = (name, value) => {
     const newErrors = { ...errors };
 
     if (name === 'email') {
-      if (!value) {
-        newErrors.email = 'Email is required';
-      } else if (!/\S+@\S+\.\S+/.test(value)) {
-        newErrors.email = 'Email is invalid';
-      } else {
-        delete newErrors.email;
-      }
+      if (!value) newErrors.email = 'Email is required';
+      else if (!/\S+@\S+\.\S+/.test(value)) newErrors.email = 'Email is invalid';
+      else delete newErrors.email;
     }
 
     if (name === 'password') {
-      if (!value) {
-        newErrors.password = 'Password is required';
-      } else if (value.length < 8) {
-        newErrors.password = 'Password must be at least 8 characters';
-      } else {
-        delete newErrors.password;
-      }
+      if (!value) newErrors.password = 'Password is required';
+      else if (value.length < 8) newErrors.password = 'Password must be at least 8 characters';
+      else delete newErrors.password;
     }
 
     setErrors(newErrors);
   };
 
-  const handleBlur = (e) => {
-    const { name, value } = e.target;
-    validateField(name, value);
-  };
+  const handleBlur = (e) => validateField(e.target.name, e.target.value);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    const newErrors = {};
-    if (!email) newErrors.email = 'Email is required';
-    if (!password) newErrors.password = 'Password is required';
+    // Validate before submission
+    validateField('email', email);
+    validateField('password', password);
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+    if (Object.keys(errors).length > 0) {
       setIsSubmitting(false);
       return;
     }
 
-    await onLogin({ email, password, rememberMe });
-    setIsSubmitting(false);
+    try {
+      const response = await login({ email, password });
+
+      setAuth({
+        isAuthenticated: true,
+        role: response.role,
+        token: response.token
+      });
+
+      if (rememberMe) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('role', response.role);
+      } else {
+        sessionStorage.setItem('token', response.token);
+        sessionStorage.setItem('role', response.role);
+      }
+
+      if (onLogin) onLogin({ email, password, rememberMe });
+
+      navigate(`/${response.role}/dashboard`); // ✅ Only navigates if login is successful
+
+    } catch (error) {
+      setErrors({
+        form: error.response?.data?.message || error.message || 'Login failed. Please try again.'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className={styles.formContainer}>
       <div className={styles.header}>
-        <img src="/src/assets/logopms1.png" alt="Logo" className={styles.logo} />
+        <img src={logo} alt="Logo" className={styles.logo} /> {/* ✅ Fixed Logo */}
       </div>
 
       <h2 className={styles.title}>Welcome Back!</h2>
@@ -113,9 +135,23 @@ const LoginForm = ({ onLogin }) => {
           {errors.password && <div className={styles.errorMessage}>{errors.password}</div>}
         </div>
 
-        
+        <div className={styles.rememberMe}>
+          <input
+            type="checkbox"
+            id="rememberMe"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="rememberMe">Remember me</label>
+        </div>
 
-        <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
+        {errors.form && <div className={styles.formError}>{errors.form}</div>}
+
+        <button 
+          type="submit" 
+          className={styles.submitButton} 
+          disabled={isSubmitting}
+        >
           {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </form>

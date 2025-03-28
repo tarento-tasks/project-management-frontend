@@ -1,0 +1,21 @@
+.pageContainer {
+    padding: 2rem 0rem;
+  }
+  
+  .pageContainer h1 {
+    font-size: 1.8rem;
+    color: #2a3c50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    color: #6c757d;
+    margin-bottom: 2rem;
+    display: block;
+  }
+  
+  @media (max-width: 768px) {
+    .pageContainer {
+      padding: 1rem;
+    }
+  }

@@ -2,9 +2,9 @@
 import React from "react";
 import Sidebar from "../components/Sidebar/Sidebar";
 import Header from "../components/Header/Header";
-import styles from "./dashboardLayout.module.css";
+import styles from "./generalLayout.module.css";
 
-const DashboardLayout = ({ children, role = "admin" }) => {
+const GeneralLayout = ({ children, role = "admin" }) => {
   return (
     <div className={styles.dashboardContainer}>
       <Header />
@@ -16,4 +16,4 @@ const DashboardLayout = ({ children, role = "admin" }) => {
   );
 };
 
-export default DashboardLayout;
+export default GeneralLayout;

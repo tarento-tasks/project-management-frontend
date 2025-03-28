@@ -1,16 +1,11 @@
-import { useState } from 'react';
 
-export const useAuthState = () => {
-  const [user, setUser] = useState(null);
+import { atom } from 'recoil';
 
-  const login = (credentials) => {
-    // Add login logic here
-    setUser({ email: credentials.email });
-  };
-
-  const logout = () => {
-    setUser(null);
-  };
-
-  return { user, login, logout };
-};
+export const authState = atom({
+  key: 'authState',
+  default: {
+    isAuthenticated: false,
+    role: null,
+    token: null
+  }
+});

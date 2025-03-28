@@ -1,12 +1,38 @@
 /* formComponent.module.css */
 .formContainer {
-  position:absolute;
+  position: absolute;
   width: 100vh; 
   padding: 20px;
   border-radius: 5px;
   background-color: #dde5ec;
-   
 }
+
+/* Error styles */
+.error {
+  border-color: #dc3545 !important;
+}
+
+.errorMessage {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.required {
+  color: #dc3545;
+  margin-left: 0.25rem;
+}
+
+/* Add this for form error summary */
+.formError {
+  color: #dc3545;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: #f8d7da;
+  border-radius: 0.25rem;
+  border: 1px solid #f5c6cb;
+}
+
 .selectedSkills {
   display: flex;
   flex-wrap: wrap;
@@ -28,10 +54,9 @@
   border: none;
   margin-left: 6px;
   cursor: pointer;
-  color: red;
+  color: #dc3545;
   font-size: 16px;
 }
-
 
 .sidebarCollapsed .formContainer {
   margin-left: 4.5rem; 
@@ -104,4 +129,44 @@ textarea.formControl {
   .formGroup {
     margin-bottom: 1rem;
   }
+}
+
+
+
+
+
+
+
+/* Remove the default red highlight */
+select.formControl option:checked,
+select.formControl option:hover,
+select.formControl option:focus {
+  background-color: #517ea6 !important;
+  color: white !important;
+}
+
+/* Style the dropdown options */
+select.formControl option {
+  color: #495057; /* Default text color */
+  background-color: white;
+  padding: 8px;
+}
+
+/* Hover state for options */
+select.formControl option:hover {
+  background-color: #517ea6;
+  color: white;
+}
+
+/* Selected option style */
+select.formControl option:checked {
+  background-color: #517ea6;
+  color: white;
+}
+
+/* Focus style */
+select.formControl:focus {
+  border-color: #517ea6;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(81, 126, 166, 0.25);
 }
