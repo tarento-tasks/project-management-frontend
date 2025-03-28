@@ -5,6 +5,7 @@ import MentorDashboard from "../pages/MentorDashboard";
 import StudentDashboard from "../pages/StudentDashboard";
 import NewTask from "../pages/NewTask/NewTask"; // Import NewTask
 import AllProjects from "../pages/AllProjects/AllProjects";
+import ProjectEnrollment from "../pages/ProjectEnrollment/ProjectEnrollment"
 
 const AppRoutes = ({ role }) => {
   console.log("✅ AppRoutes.jsx is running");
@@ -27,6 +28,7 @@ const AppRoutes = ({ role }) => {
       <Route path="*" element={<Navigate to={`/${role}/dashboard`} />} />
 
       <Route path="/all-projects" element={<AllProjects />} />
+      <Route path="/project-enrollment" element={<ProjectEnrollment />} />
     </Routes>
   );
 };
