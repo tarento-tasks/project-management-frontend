@@ -5,7 +5,7 @@ import { authState } from '../../states/authState';
 import { login } from '../../services/authService';
 import styles from './loginForm.module.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
-import logo from '../../assets/logopms1.png'; 
+import logo from '../../assets/logopms1.png';
 
 const LoginForm = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -42,7 +42,6 @@ const LoginForm = ({ onLogin }) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validate before submission
     validateField('email', email);
     validateField('password', password);
 
@@ -70,7 +69,7 @@ const LoginForm = ({ onLogin }) => {
 
       if (onLogin) onLogin({ email, password, rememberMe });
 
-      navigate(`/${response.role}/dashboard`); // ✅ Only navigates if login is successful
+      navigate(`/${response.role}/dashboard`);
 
     } catch (error) {
       setErrors({
@@ -84,15 +83,14 @@ const LoginForm = ({ onLogin }) => {
   return (
     <div className={styles.formContainer}>
       <div className={styles.header}>
-        <img src={logo} alt="Logo" className={styles.logo} /> {/* ✅ Fixed Logo */}
+        <img src={logo} alt="Logo" className={styles.logo} />
       </div>
 
       <h2 className={styles.title}>Welcome Back!</h2>
-      <p className={styles.subtitle}>Sign in if you have an account</p>
+      <p className={styles.subtitle}>Sign in to access your dashboard</p>
 
       <form onSubmit={handleSubmit} className={styles.loginForm}>
         <div className={styles.formGroup}>
-          <label htmlFor="email" className={styles.label}>Email</label>
           <input
             type="email"
             id="email"
@@ -107,7 +105,6 @@ const LoginForm = ({ onLogin }) => {
         </div>
 
         <div className={styles.formGroup}>
-          <label htmlFor="password" className={styles.label}>Password</label>
           <div className={styles.passwordWrapper}>
             <input
               type={showPassword ? 'text' : 'password'}
@@ -126,9 +123,9 @@ const LoginForm = ({ onLogin }) => {
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <i className="bi bi-eye-slash" style={{ fontSize: '1.2rem' }}></i>
+                <i className="bi bi-eye"></i>
               ) : (
-                <i className="bi bi-eye" style={{ fontSize: '1.2rem' }}></i>
+                <i className="bi bi-eye-slash"></i>
               )}
             </button>
           </div>
@@ -152,7 +149,14 @@ const LoginForm = ({ onLogin }) => {
           className={styles.submitButton} 
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Logging in...' : 'Login'}
+          {isSubmitting ? (
+            <>
+              <i className="bi bi-arrow-repeat spin" style={{ marginRight: '8px' }}></i>
+              Logging in...
+            </>
+          ) : (
+            'Login'
+          )}
         </button>
       </form>
     </div>

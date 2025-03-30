@@ -1,18 +1,25 @@
+// routes/AppRoutes.jsx
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { authState } from '../states/authState';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import Dashboard from '../pages/Dashboard/Dashboard';
+import StudentProjects from '../pages/StudentProjects/StudentProjects';
+import NewProject from '../pages/NewProject/NewProject';
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, roles = [] }) => {
   const auth = useRecoilValue(authState);
   
   if (!auth.isAuthenticated) {
     return <Navigate to="/" replace />;
   }
   
-  // No need for role check here since Dashboard handles it
+  // Check roles if specified
+  if (roles.length > 0 && !roles.includes(auth.user?.role)) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+  
   return children;
 };
 
@@ -21,8 +28,12 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LoginPage />} />
+      <Route path="/student/projects" element={ <StudentProjects />} />
+      <Route path="/newprojects" element={ <NewProject />} />
+    
+    
       
-      {/* Single Protected Dashboard Route */}
+      {/* Protected Dashboard Route */}
       <Route
         path="/dashboard"
         element={
@@ -31,6 +42,8 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+     
       
       {/* Legacy Role-Specific Routes (Redirect to main dashboard) */}
       <Route path="/admin/dashboard" element={<Navigate to="/dashboard" replace />} />

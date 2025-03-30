@@ -1,25 +1,112 @@
- /*
-body{
-  background: url("/src/assets/bgimage.jpg") no-repeat center center/cover;
-}
-*/
-
-.authOverlay {
-
-  padding: 20px;
-  border-radius: 5px;
+.container {
   display: flex;
-
-  justify-content: center;
-  align-items: center;
-  width: 100;
- 
+  min-height: 100vh;
+  width: 100%;
 }
 
-.authContainer {
+.imageSection {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100;
-  height: 100vh;
+}
+
+.authImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  z-index: 1;
+}
+
+
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg, 
+    rgba(81, 126, 166, 0.9) 0%,    
+    rgba(33, 46, 63, 0.9) 100%     
+  );
+  z-index: 2;
+  mix-blend-mode: multiply;
+}
+
+
+.imageOverlay-alternate {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg, 
+    rgba(62, 100, 139, 0.9) 0%,    
+    rgba(45, 69, 95, 0.9) 100%    
+  );
+  z-index: 2;
+  mix-blend-mode: multiply;
+}
+
+
+.imageContent {
+  position: relative;
+  z-index: 3;
+  color: #f8fafc;  
+  padding: 2rem;
+  max-width: 80%;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.imageContent h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: white;
+}
+
+.imageContent p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  color: #e2e8f0;
+}
+
+
+.formSection {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #fcfdfd;
+}
+
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+  
+  .imageSection {
+    height: 30vh;
+    flex: none;
+  }
+  
+  .imageContent {
+    max-width: 90%;
+  }
+  
+  .imageContent h2 {
+    font-size: 1.5rem;
+  }
+  
+  .formSection {
+    padding: 2rem 1.5rem;
+  }
 }

@@ -14,4 +14,11 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+export const ProjectService = {
+  getAllProjects: () => api.get('/projects'),
+  getRecommendedProjects: (studentId) => api.get(`/recommendations/projects/${studentId}`),
+  enrollInProject: (projectId, studentId) => api.post(`/projects/${projectId}/enroll`, { studentId })
+};
+
+
 export default api;

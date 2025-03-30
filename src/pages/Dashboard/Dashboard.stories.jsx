@@ -1,46 +1,37 @@
 import React from "react";
-import Dashboard from "./Dashboard"; // Correct path to the Dashboard component
-import { withKnobs, text } from "@storybook/addon-knobs"; // Knobs to dynamically update props
-import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter
+import Dashboard from "./Dashboard";
+import { BrowserRouter } from "react-router-dom";
 
-// Sample data for the user role
-const userName = "John Doe";
-
+// Storybook controls (replaces knobs)
 export default {
-  title: "Pages/Dashboard", // Organizing the Storybook in a 'Pages' section
+  title: "Pages/Dashboard",
   component: Dashboard,
-  decorators: [withKnobs], // Enable knobs for dynamic updates in Storybook
+  argTypes: {
+    userName: { control: "text" },
+    role: { control: "radio", options: ["admin", "mentor", "student"] },
+  },
 };
 
-export const AdminDashboard = () => {
-  return (
-    <BrowserRouter>
-      <Dashboard
-        role="admin"
-        userName={text("User Name", userName)} // Allow user to edit userName dynamically
-      />
-    </BrowserRouter>
-  );
+const Template = (args) => (
+  <BrowserRouter>
+    <Dashboard {...args} />
+  </BrowserRouter>
+);
+
+export const AdminDashboard = Template.bind({});
+AdminDashboard.args = {
+  role: "admin",
+  userName: "Admin User",
 };
 
-export const MentorDashboard = () => {
-  return (
-    <BrowserRouter>
-      <Dashboard
-        role="mentor"
-        userName={text("User Name", userName)}
-      />
-    </BrowserRouter>
-  );
+export const MentorDashboard = Template.bind({});
+MentorDashboard.args = {
+  role: "mentor",
+  userName: "Mentor User",
 };
 
-export const StudentDashboard = () => {
-  return (
-    <BrowserRouter>
-      <Dashboard
-        role="student"
-        userName={text("User Name", userName)}
-      />
-    </BrowserRouter>
-  );
+export const StudentDashboard = Template.bind({});
+StudentDashboard.args = {
+  role: "student",
+  userName: "Student User",
 };

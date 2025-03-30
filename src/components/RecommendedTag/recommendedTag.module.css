@@ -1,0 +1,61 @@
+/* components/RecommendedTag/RecommendedTag.module.css */
+.tag {
+    background-color: #517ea6;
+    color: white;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 10px;
+    margin-left: 0.5rem;
+    font-weight: 600;
+  }
+  /* components/RecommendedTag/recommendedTag.module.css */
+.tag {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #517ea6 0%, #3e648b 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.35rem 0.7rem;
+    border-radius: 12px;
+    margin-left: 0.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .tag::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      to bottom right,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0) 60%
+    );
+    transform: rotate(30deg);
+    transition: all 0.3s ease;
+  }
+  
+  .tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .tag:hover::before {
+    transform: rotate(30deg) translate(10px, 10px);
+  }
+  
+  /* Optional: Add a small icon */
+  .tag::after {
+    content: '★';
+    margin-left: 0.3rem;
+    font-size: 0.65rem;
+    color: #ffd700;
+  }

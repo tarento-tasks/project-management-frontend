@@ -5,41 +5,48 @@ import { authState } from "../../states/authState";
 import AuthLayout from "../../layouts/AuthLayout/AuthLayout";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import { login } from "../../services/authService";
+import styles from './loginPage.module.css';
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const setAuth = useSetRecoilState(authState); // Update auth state globally
+  const setAuth = useSetRecoilState(authState);
 
-  const handleLogin = async (loginData) => {
+  const handleLogin = async ({ email, password, rememberMe }) => {
     try {
-      const response = await login(loginData);
+      const response = await login({ email, password });
       
-      if (response && response.response.token) {
-        const { token, role, name, email } = response.response;
-
-        // Store token & user info in localStorage
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        localStorage.setItem("user", JSON.stringify({ name, email, role }));
-
-        // Update Recoil State
-        setAuth({ isAuthenticated: true, role, name, email });
-
-        // Navigate to dashboard
-        navigate("/dashboard");
-      } else {
-        alert("Invalid login response. Please try again.");
+      if (response?.token) {
+        const { token, role, name, email: userEmail } = response;
+        const user = { name, email: userEmail, role };
+  
+        // Store in storage
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem("token", token);
+        storage.setItem("role", role);  // Store role separately
+        storage.setItem("user", JSON.stringify(user));  // And in user object
+  
+        // Update Recoil state - must match authState structure
+        setAuth({
+          isAuthenticated: true,
+          token,
+          role,
+          user
+        });
+  
+        // Navigate - ensure role is lowercase in route
+        navigate(`/${role.toLowerCase()}/dashboard`);
       }
     } catch (error) {
-      alert("Login failed. Please check your credentials.");
-      console.error("Login error:", error);
+      console.error("Login failed:", error);
+      throw error;
     }
   };
-
   return (
-    <AuthLayout>
-      <LoginForm onLogin={handleLogin} />
-    </AuthLayout>
+    <div className={styles.loginPage}>
+      <AuthLayout>
+        <LoginForm onLogin={handleLogin} />
+      </AuthLayout>
+    </div>
   );
 };
 

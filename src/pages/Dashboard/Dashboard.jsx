@@ -104,15 +104,15 @@ const Dashboard = () => {
   const auth = useRecoilValue(authState);
   const navigate = useNavigate();
   
-  // Ensure role is always uppercase to match data keys
+ 
   const role = auth.role?.toUpperCase() || 'ADMIN';
 
-  // Debug logs
+
   console.log("Current role:", role);
   console.log("Available roles:", Object.keys(DATA_TEMPLATES.progressData));
   console.log("Progress data:", DATA_TEMPLATES.progressData[role]);
 
-  // Redirect to login if not authenticated
+ 
   useEffect(() => {
     if (!auth.isAuthenticated) {
       navigate('/login');
