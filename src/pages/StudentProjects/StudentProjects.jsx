@@ -101,6 +101,7 @@ export default StudentProjects;
 import { useState } from 'react';
 import GeneralLayout from '../../layouts/GeneralLayout';
 import ProjectCard from '../../components/ProjectCard/ProjectCard';
+import Modal from '../../components/Modal/Modal';
 import styles from './studentProjects.module.css';
 
 const StudentProjects = () => {
@@ -175,6 +176,28 @@ const StudentProjects = () => {
   const [filterOption, setFilterOption] = useState('all');
   const [skillFilter, setSkillFilter] = useState('');
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [enrollmentStatus, setEnrollmentStatus] = useState(null);
+
+  const handleEnrollClick = (projectId) => {
+    setSelectedProject(projectId);
+    setIsModalOpen(true);
+  };
+
+  const confirmEnrollment = () => {
+    setIsModalOpen(false);
+    // Simulate API call
+    setTimeout(() => {
+      setEnrollmentStatus({
+        success: true,
+        message: 'Enrollment request sent successfully!'
+      });
+      // Clear status after 3 seconds
+      setTimeout(() => setEnrollmentStatus(null), 3000);
+    }, 1000);
+  };
+
   const handleEnroll = (projectId) => {
     alert(`You would be enrolled in project ${projectId} (simulated)`);
   };
@@ -217,6 +240,13 @@ const allSkills = dummyProjects
   return (
     <GeneralLayout role="student">
       <div className={styles.container}>
+        {/* Success message */}
+        {enrollmentStatus?.success && (
+          <div className={styles.successMessage}>
+            {enrollmentStatus.message}
+          </div>
+        )}
+
         <h1 className={styles.title}>Available Projects</h1>
         <p className={styles.subtitle}>Browse and enroll in projects that match your interests</p>
         
@@ -269,11 +299,35 @@ const allSkills = dummyProjects
                 key={project.projectId}
                 project={project}
                 isRecommended={recommendedProjects.has(project.projectId)}
-                onEnroll={handleEnroll}
+                onEnroll={handleEnrollClick} 
               />
             ))}
           </div>
         )}
+      {/* Enrollment Confirmation Modal */}
+      <Modal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          title="Confirm Enrollment"
+        >
+          <div className={styles.modalContent}>
+            <p>Are you sure you want to enroll in this project?</p>
+            <div className={styles.modalActions}>
+              <button 
+                className={styles.cancelButton} 
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                className={styles.confirmButton}
+                onClick={confirmEnrollment}
+              >
+                Confirm Enrollment
+              </button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </GeneralLayout>
   );

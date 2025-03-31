@@ -119,7 +119,7 @@ const Dashboard = () => {
     }
   }, [auth.isAuthenticated, navigate]);
 
-  // Validate role exists in data
+  
   if (!DATA_TEMPLATES.progressData[role]) {
     console.error("Invalid role detected:", role);
     return (

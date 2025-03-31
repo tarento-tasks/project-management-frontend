@@ -1,23 +1,24 @@
 import React, { useState, useRef, useEffect } from "react";
-import { FaSearch, FaUserCircle, FaChevronDown, FaSignOutAlt, FaUserEdit } from "react-icons/fa";
-import Modal from "../Modal/Modal";
+import { FaSearch, FaUserCircle, FaChevronDown, FaSignOutAlt, FaUserEdit, FaTimes, FaPlus } from "react-icons/fa";
 import FormComponent from "../Forms/FormComponent";
 import styles from "./header.module.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const Header = ({ userName = "Admin", userRole = "Administrator", profileImage = null }) => {
+const Header = ({ 
+  userName = "Admin", 
+  userRole = "Administrator", 
+  profileImage = null,
+  onSearch,
+  onLogout
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showEditProfileModal, setShowEditProfileModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedImage, setSelectedImage] = useState(profileImage);
   const dropdownRef = useRef(null);
+  const fileInputRef = useRef(null);
 
-  // Edit Profile form fields
   const editProfileFields = [
-    { 
-      name: "profileImage", 
-      label: "Profile Image", 
-      type: "file", 
-      accept: "image/*"
-    },
     { 
       name: "name", 
       label: "Name", 
@@ -55,34 +56,38 @@ const Header = ({ userName = "Admin", userRole = "Administrator", profileImage =
       label: "Date of Birth", 
       type: "date",
       required: true
-    },
-    { 
-      name: "qualifications", 
-      label: "Qualifications", 
-      type: "textarea", 
-      placeholder: "Enter your qualifications",
-      rows: 3
-    },
-    { 
-      name: "skills", 
-      label: "Skills", 
-      type: "select", 
-      options: ["React", "Node.js", "Python", "Java", "UI/UX", "Project Management"],
-      multiple: true
-    },
-    { 
-      name: "previousWorks", 
-      label: "Previous Works", 
-      type: "textarea", 
-      placeholder: "Describe your previous works/experience",
-      rows: 4
     }
   ];
 
   const handleEditProfileSubmit = (formData) => {
-    console.log("Profile updated:", formData);
+    console.log("Profile updated:", { ...formData, profileImage: selectedImage });
     setShowEditProfileModal(false);
-    // Add your profile update logic here
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (onSearch && searchQuery.trim()) {
+      onSearch(searchQuery.trim());
+    }
   };
 
   const toggleDropdown = () => {
@@ -92,6 +97,13 @@ const Header = ({ userName = "Admin", userRole = "Administrator", profileImage =
   const handleEditProfileClick = () => {
     setIsDropdownOpen(false);
     setShowEditProfileModal(true);
+  };
+
+  const handleLogoutClick = () => {
+    setIsDropdownOpen(false);
+    if (onLogout) {
+      onLogout();
+    }
   };
 
   useEffect(() => {
@@ -112,16 +124,27 @@ const Header = ({ userName = "Admin", userRole = "Administrator", profileImage =
       <header className={styles.headerContainer}>
         <div className={`${styles.headerContent} container-fluid`}>
           <div className={`${styles.searchContainer} d-flex align-items-center`}>
-            <div className={styles.searchGroup}>
+            <form 
+              className={styles.searchGroup}
+              onSubmit={handleSearchSubmit}
+            >
               <input 
                 type="text" 
                 className={`${styles.searchInput} form-control`} 
-                placeholder="Search for anything..." 
+                placeholder="Search for anything..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                aria-label="Search"
               />
-              <button className={`${styles.searchButton} btn`}>
+              <button 
+                type="submit" 
+                className={`${styles.searchButton} btn`}
+                aria-label="Submit search"
+              >
                 <FaSearch />
               </button>
-            </div>
+            </form>
+            
             <div 
               className={`${styles.userInfo} d-flex align-items-center ps-3 position-relative`}
               ref={dropdownRef}
@@ -129,6 +152,8 @@ const Header = ({ userName = "Admin", userRole = "Administrator", profileImage =
               <div 
                 className="d-flex align-items-center cursor-pointer"
                 onClick={toggleDropdown}
+                aria-expanded={isDropdownOpen}
+                aria-haspopup="true"
               >
                 {profileImage ? (
                   <img 
@@ -161,7 +186,10 @@ const Header = ({ userName = "Admin", userRole = "Administrator", profileImage =
                     <span>Edit Profile</span>
                   </div>
                   <div className={`${styles.dropdownDivider} my-1`}></div>
-                  <div className={`${styles.dropdownItem} py-2 px-3`}>
+                  <div 
+                    className={`${styles.dropdownItem} py-2 px-3`}
+                    onClick={handleLogoutClick}
+                  >
                     <FaSignOutAlt className="me-2" />
                     <span>Logout</span>
                   </div>
@@ -171,30 +199,63 @@ const Header = ({ userName = "Admin", userRole = "Administrator", profileImage =
           </div>
         </div>
       </header>
-
-      {/* Edit Profile Modal */}
-      <Modal 
-        isOpen={showEditProfileModal}
-        onClose={() => setShowEditProfileModal(false)}
-        title="Edit Profile"
-      >
-        <div className={styles.profileImageContainer}>
-          {profileImage ? (
-            <img 
-              src={profileImage} 
-              alt="Profile" 
-              className={styles.profileImagePreview}
-            />
-          ) : (
-            <FaUserCircle size={100} className={styles.profileImagePlaceholder} />
-          )}
+      {showEditProfileModal && (
+  <div className={styles.modalOverlay}>
+    <div className={styles.modalContainer}>
+      <div className={styles.modalHeader}>
+        <h3>Edit Profile</h3>
+        <button 
+          onClick={() => setShowEditProfileModal(false)}
+          className={styles.closeButton}
+          aria-label="Close modal"
+        >
+          <FaTimes />
+        </button>
+      </div>
+      
+      <div className={styles.modalContent}>
+        <div className={styles.imageUploadContainer}>
+          <div 
+            className={styles.profileImageWrapper}
+            onClick={handleImageClick}
+            aria-label="Change profile picture"
+          >
+            {selectedImage ? (
+              <img 
+                src={selectedImage} 
+                alt="Profile" 
+                className={styles.profileImageLarge}
+              />
+            ) : (
+              <div className={styles.uploadPlaceholder}>
+                <FaPlus className={styles.plusIcon} />
+                <span>Add Photo</span>
+              </div>
+            )}
+          </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+            accept="image/*"
+            className={styles.hiddenFileInput}
+          />
         </div>
-        <FormComponent 
-          fields={editProfileFields} 
-          onSubmit={handleEditProfileSubmit}
-          validateOnBlur={true}
-        />
-      </Modal>
+        
+        <div className={styles.formWrapper}>
+          <FormComponent 
+            fields={editProfileFields}
+            onSubmit={handleEditProfileSubmit}
+            validateOnBlur={true}
+            submitButtonText="Save Changes"
+            cancelButtonText="Cancel"
+            onCancel={() => setShowEditProfileModal(false)}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+)}
     </>
   );
 };

@@ -2,7 +2,7 @@ import React from "react";
 import Dashboard from "./Dashboard";
 import { BrowserRouter } from "react-router-dom";
 
-// Storybook controls (replaces knobs)
+
 export default {
   title: "Pages/Dashboard",
   component: Dashboard,

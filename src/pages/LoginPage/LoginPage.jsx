@@ -19,13 +19,13 @@ const LoginPage = () => {
         const { token, role, name, email: userEmail } = response;
         const user = { name, email: userEmail, role };
   
-        // Store in storage
+        
         const storage = rememberMe ? localStorage : sessionStorage;
         storage.setItem("token", token);
-        storage.setItem("role", role);  // Store role separately
-        storage.setItem("user", JSON.stringify(user));  // And in user object
+        storage.setItem("role", role);  
+        storage.setItem("user", JSON.stringify(user));  
   
-        // Update Recoil state - must match authState structure
+        
         setAuth({
           isAuthenticated: true,
           token,
@@ -33,7 +33,7 @@ const LoginPage = () => {
           user
         });
   
-        // Navigate - ensure role is lowercase in route
+        
         navigate(`/${role.toLowerCase()}/dashboard`);
       }
     } catch (error) {
