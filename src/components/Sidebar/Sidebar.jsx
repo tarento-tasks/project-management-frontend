@@ -5,7 +5,7 @@ import logo from "/src/assets/logopms1.png";
 import styles from "./sidebar.module.css";
 
 const sidebarItems = {
-  admin: [
+  ADMIN: [
     { 
       name: "Home", 
       path: "/admin/dashboard", 
@@ -17,7 +17,7 @@ const sidebarItems = {
       subItems: [
         { name: "All Projects", path: "/admin/projects" },
         { name: "Tasks", path: "/admin/projects/tasks" },
-        { name: "New Project", path: "/admin/new-project" }
+        { name: "New Project", path: "/newprojects" }
       ]
     },
     { 
@@ -33,7 +33,14 @@ const sidebarItems = {
         { name: "Students", path: "/admin/students" }
       ]
     },
-    
+    { 
+      name: "Add Users", 
+      icon: <i className="bi bi-person-plus"></i>,
+      subItems: [
+        { name: "New User", path: "/admin/new-user" },
+        { name: "Edit Profiles", path: "/admin/edit-profile" }
+      ]
+    },
     { 
       name: "Review", 
       path: "/admin/review", 
@@ -45,7 +52,7 @@ const sidebarItems = {
       icon: <i className="bi bi-chat-left-text"></i> 
     }
   ],
-  mentor: [
+  MENTOR: [
     { 
       name: "Home", 
       path: "/mentor/dashboard", 
@@ -75,7 +82,7 @@ const sidebarItems = {
       icon: <i className="bi bi-chat-left-text"></i> 
     }
   ],
-  student: [
+  STUDENT: [
     { 
       name: "Home", 
       path: "/student/dashboard", 
@@ -106,9 +113,12 @@ const sidebarItems = {
   ]
 };
 
-const Sidebar = ({ role = "admin" }) => {
-  const [expanded, setExpanded] = useState(true);
+const Sidebar = ({ role = "ADMIN" }) => {
+  const [expanded, setExpanded] = useState(false);
   const [openSubmenus, setOpenSubmenus] = useState({});
+
+  // Normalize role to uppercase to match our keys
+  const normalizedRole = role?.toUpperCase() || "ADMIN";
 
   const toggleSubmenu = (name) => {
     setOpenSubmenus(prev => ({ ...prev, [name]: !prev[name] }));
@@ -146,6 +156,9 @@ const Sidebar = ({ role = "admin" }) => {
     ));
   };
 
+  // Get items for current role or empty array if role not found
+  const currentItems = sidebarItems[normalizedRole] || [];
+
   return (
     <div className={styles.sidebarContainer}>
       <div className={`${styles.sidebar} ${expanded ? styles.expanded : styles.collapsed}`}>
@@ -166,7 +179,7 @@ const Sidebar = ({ role = "admin" }) => {
         </button>
 
         <div className={styles.navContainer}>
-          {renderSubItems(sidebarItems[role] || [])}
+          {renderSubItems(currentItems)}
         </div>
       </div>
     </div>

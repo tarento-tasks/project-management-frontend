@@ -105,7 +105,7 @@ import Modal from '../../components/Modal/Modal';
 import styles from './studentProjects.module.css';
 
 const StudentProjects = () => {
-  // Dummy data for projects
+ 
   const dummyProjects = [
     {
       projectId: '1',

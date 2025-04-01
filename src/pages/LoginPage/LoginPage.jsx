@@ -11,7 +11,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const setAuth = useSetRecoilState(authState);
 
-  const handleLogin = async ({ email, password, rememberMe }) => {
+  const handleLogin = async ({ email, password }) => {
     try {
       const response = await login({ email, password });
       
@@ -19,21 +19,20 @@ const LoginPage = () => {
         const { token, role, name, email: userEmail } = response;
         const user = { name, email: userEmail, role };
   
-        
-        const storage = rememberMe ? localStorage : sessionStorage;
-        storage.setItem("token", token);
-        storage.setItem("role", role);  
-        storage.setItem("user", JSON.stringify(user));  
-  
-        
+        // Store in local storage
+        localStorage.setItem("token", token);
+        localStorage.setItem("role", role);  
+        localStorage.setItem("user", JSON.stringify(user));  
+
+        // Update Recoil state
         setAuth({
           isAuthenticated: true,
           token,
           role,
           user
         });
-  
-        
+
+        // Redirect to role-specific dashboard
         navigate(`/${role.toLowerCase()}/dashboard`);
       }
     } catch (error) {
@@ -41,6 +40,7 @@ const LoginPage = () => {
       throw error;
     }
   };
+
   return (
     <div className={styles.loginPage}>
       <AuthLayout>

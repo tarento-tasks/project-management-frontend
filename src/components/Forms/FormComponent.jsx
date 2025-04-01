@@ -113,7 +113,9 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    if (!formData.criteria) {
+      formData.criteria = "Default Criteria"; // Set a default value or fetch from the form
+    }
     if (!validateForm()) {
       
       return;

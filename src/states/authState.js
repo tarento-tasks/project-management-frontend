@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
 
-// Helper to safely parse localStorage
+
 const getStoredAuth = () => {
   const token = localStorage.getItem('token') || sessionStorage.getItem('token');
   let role, user;

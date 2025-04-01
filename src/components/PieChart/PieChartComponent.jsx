@@ -6,7 +6,7 @@ import styles from "./pieChartComponent.module.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PieChartComponent = ({ title, labels, values }) => {
+const DonutChartComponent = ({ title, labels, values }) => {
   const bigStoneColors = [
     "#517ea6", // 500
     "#3e648b", // 600
@@ -23,6 +23,7 @@ const PieChartComponent = ({ title, labels, values }) => {
         data: values,
         backgroundColor: bigStoneColors.slice(0, values.length),
         hoverBackgroundColor: bigStoneColors.slice(0, values.length).map(color => color + "CC"),
+        borderWidth: 0, // Remove borders for cleaner look
       },
     ],
   };
@@ -67,6 +68,9 @@ const PieChartComponent = ({ title, labels, values }) => {
         bodyColor: "#fff",
       },
     },
+    // Donut-specific configurations
+    cutout: "65%", // This creates the donut hole (adjust percentage for hole size)
+    radius: "90%", // Adjust the overall radius of the chart
     maintainAspectRatio: false,
   };
 
@@ -80,10 +84,10 @@ const PieChartComponent = ({ title, labels, values }) => {
   );
 };
 
-PieChartComponent.propTypes = {
+DonutChartComponent.propTypes = {
   title: PropTypes.string.isRequired,
   labels: PropTypes.arrayOf(PropTypes.string).isRequired,
   values: PropTypes.arrayOf(PropTypes.number).isRequired,
 };
 
-export default PieChartComponent;
+export default DonutChartComponent;

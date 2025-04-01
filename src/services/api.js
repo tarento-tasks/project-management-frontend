@@ -1,24 +1,61 @@
-
 import axios from 'axios';
 
-const api = axios.create({
-  baseURL: 'http://localhost:8080/api'
-});
+const API_BASE_URL = 'http://localhost:8080/api'; // Update if needed
 
-
-api.interceptors.request.use((config) => {
+const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export const ProjectService = {
-  getAllProjects: () => api.get('/projects'),
-  getRecommendedProjects: (studentId) => api.get(`/recommendations/projects/${studentId}`),
-  enrollInProject: (projectId, studentId) => api.post(`/projects/${projectId}/enroll`, { studentId })
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`
+  };
 };
 
+const API = {
+  createProject: async (projectData) => {
+    try {
+      const token = localStorage.getItem('token'); 
+      const response = await axios.post(`${API_BASE_URL}/projects`, projectData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error creating project:", error.response?.data || error.message);
+      throw error;
+    }
+  },
 
-export default api;
+  getAllSkills: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/skills`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching skills:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  getMentors: async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/users?role=MENTOR`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching mentors:", error.response?.data || error.message);
+      throw error;
+    }
+  }
+};
+
+export default API;

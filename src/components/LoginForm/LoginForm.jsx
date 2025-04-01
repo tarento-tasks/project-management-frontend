@@ -132,15 +132,7 @@ const LoginForm = ({ onLogin }) => {
           {errors.password && <div className={styles.errorMessage}>{errors.password}</div>}
         </div>
 
-        <div className={styles.rememberMe}>
-          <input
-            type="checkbox"
-            id="rememberMe"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <label htmlFor="rememberMe">Remember me</label>
-        </div>
+       
 
         {errors.form && <div className={styles.formError}>{errors.form}</div>}
 
