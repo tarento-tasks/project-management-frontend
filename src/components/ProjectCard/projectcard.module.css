@@ -1,6 +1,6 @@
 .projectCard {
     width: 400px;
-    min-height: 400px;
+    min-height: 200px;
     border-radius: 12px;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
