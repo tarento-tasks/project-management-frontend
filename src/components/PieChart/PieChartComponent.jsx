@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2"; // Changed from Pie to Doughnut
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import styles from "./pieChartComponent.module.css";
 
@@ -22,7 +22,7 @@ const PieChartComponent = ({ title, labels, values, colors }) => {
   return (
     <div className={styles.chartContainer}>
       <h5 className="text-center">{title}</h5>
-      <Pie data={data} />
+      <Doughnut data={data} /> {/* Changed from Pie to Doughnut */}
     </div>
   );
 };
