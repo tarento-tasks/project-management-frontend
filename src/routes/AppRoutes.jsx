@@ -7,6 +7,8 @@ import LoginPage from '../pages/LoginPage/LoginPage';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import StudentProjects from '../pages/StudentProjects/StudentProjects';
 import NewProject from '../pages/NewProject/NewProject';
+import NewTask from '../pages/NewTask/NewTask';
+import Calendar from '../components/Calendar/Calendar';
 
 const ProtectedRoute = ({ children, roles = [] }) => {
   const auth = useRecoilValue(authState);
@@ -30,6 +32,8 @@ const AppRoutes = () => {
       <Route path="/" element={<LoginPage />} />
       <Route path="/student/projects" element={ <StudentProjects />} />
       <Route path="/newprojects" element={ <NewProject />} />
+      <Route path="/newtask" element={ <NewTask />} />
+      <Route path="/calendar" element={ <Calendar />} />
     
     
       

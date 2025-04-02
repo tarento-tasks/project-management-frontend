@@ -56,14 +56,18 @@ const LoginForm = ({ onLogin }) => {
       setAuth({
         isAuthenticated: true,
         role: response.role,
-        token: response.token
+        token: response.token,
+        userId: response.userId
+      
       });
 
       if (rememberMe) {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.userId);
         localStorage.setItem('role', response.role);
       } else {
         sessionStorage.setItem('token', response.token);
+        sessionStorage.setItem('userId', response.userId);
         sessionStorage.setItem('role', response.role);
       }
 

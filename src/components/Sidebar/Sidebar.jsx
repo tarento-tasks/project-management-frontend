@@ -63,7 +63,7 @@ const sidebarItems = {
       icon: <i className="bi bi-folder"></i>,
       subItems: [
         { name: "Tasks", path: "/mentor/tasks" },
-        { name: "New Task", path: "/mentor/new-task", icon: <i className="bi bi-plus-circle"></i> }
+        { name: "New Task", path: "/newtask", icon: <i className="bi bi-plus-circle"></i> }
       ]
     },
     { 
@@ -102,7 +102,7 @@ const sidebarItems = {
     },
     { 
       name: "Explore", 
-      path: "/student/explore", 
+      path: "/student/projects", 
       icon: <i className="bi bi-compass"></i> 
     },
     { 
