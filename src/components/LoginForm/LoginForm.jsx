@@ -57,15 +57,18 @@ const LoginForm = ({ onLogin }) => {
       setAuth({
         isAuthenticated: true,
         role: response.role,
-        token: response.token
+        token: response.token,
+        userId: response.userId
       });
 
       if (rememberMe) {
         localStorage.setItem('token', response.token);
         localStorage.setItem('role', response.role);
+        localStorage.setItem('userId', response.userId);
       } else {
         sessionStorage.setItem('token', response.token);
         sessionStorage.setItem('role', response.role);
+        sessionStorage.setItem('userId', response.userId);
       }
 
       if (onLogin) onLogin({ email, password, rememberMe });
