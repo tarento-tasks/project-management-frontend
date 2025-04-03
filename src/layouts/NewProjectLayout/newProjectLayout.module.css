@@ -1,0 +1,20 @@
+.formContent {
+    padding: 2rem 0rem;
+  }
+  
+  .formContent h1 {
+    font-size: 1.8rem;
+    color: #2a3c50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .formContent p {
+    color: #6c757d;
+    margin-bottom: 2rem;
+  }
+  
+  @media (max-width: 768px) {
+    .formContent {
+      padding: 1rem;
+    }
+  }
