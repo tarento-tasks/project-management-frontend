@@ -25,15 +25,15 @@ const Dashboard = () => {
     const { projects = [], tasks = [], enrollments = [], studentTasks = [] } = rawData;
 
     // Common calculations
-    const completedTasks = tasks.filter(t => t.complete_status === 'Completed').length;
-    const pendingTasks = tasks.filter(t => t.complete_status === 'Pending').length;
-    const activeProjects = projects.filter(p => p.open_status === 'true').length;
+    const completedTasks = tasks.filter(t => t.completeStatus === 'Completed').length;
+    const pendingTasks = tasks.filter(t => t.completeStatus === 'Pending').length;
+    const activeProjects = projects.filter(p => p.openStatus === true).length;
 
     // Helper function to calculate project progress
     const calculateProjectProgress = (projectId) => {
       const projectTasks = tasks.filter(t => t.projectId === projectId);
       if (projectTasks.length === 0) return '0%';
-      const completed = projectTasks.filter(t => t.complete_status === 'Completed').length;
+      const completed = projectTasks.filter(t => t.completeStatus === 'Completed').length;
       return `${Math.round((completed / projectTasks.length) * 100)}%`;
     };
 
@@ -43,7 +43,7 @@ const Dashboard = () => {
           progressData: {
             title: "Project Overview",
             data: [
-              { title: "Projects", value: projects.length },
+              { title: "Projects", value: activeProjects  },
               { title: "Total Tasks", value: tasks.length },
               { title: "Completed Tasks", value: completedTasks }
             ]
@@ -88,7 +88,7 @@ const Dashboard = () => {
             data: [
               { title: "Active Projects", value: mentorProjects.length },
               { title: "Total Tasks", value: mentorTasks.length },
-              { title: "Completed Tasks", value: mentorTasks.filter(t => t.complete_status === 'Completed').length }
+              { title: "Completed Tasks", value: mentorTasks.filter(t => t.completeStatus === 'Completed').length }
             ]
           },
           cardData: {
@@ -112,12 +112,12 @@ const Dashboard = () => {
             console.log('All mentor tasks:', mentorTasks);
             
             // 2. Log status values found in tasks
-            const allStatuses = [...new Set(mentorTasks.map(t => t.complete_status))];
+            const allStatuses = [...new Set(mentorTasks.map(t => t.completeStatus))];
             console.log('Unique status values found:', allStatuses);
             
             // 3. Calculate and log counts
-            const completedCount = mentorTasks.filter(t => t.complete_status =='completed').length;
-            const pendingCount = mentorTasks.filter(t => t.complete_status == 'pending').length;
+            const completedCount = mentorTasks.filter(t => t.completeStatus =='Completed').length;
+            const pendingCount = mentorTasks.filter(t => t.completeStatus == 'Pending').length;
             
             console.log('Completed tasks count:', completedCount);
             console.log('Pending tasks count:', pendingCount);
@@ -151,7 +151,7 @@ const Dashboard = () => {
             data: [
               { title: "Assigned Projects", value: approvedProjects.length },
               { title: "Total Tasks", value: assignedTasks.length },
-              { title: "Completed Tasks", value: assignedTasks.filter(t => t.complete_status === 'Completed').length }
+              { title: "Completed Tasks", value: assignedTasks.filter(t => t.completeStatus === 'Completed').length }
             ]
           },
           cardData: {
@@ -174,10 +174,10 @@ const Dashboard = () => {
             title: "Tasks Completion",
             labels: ["Completed", "Pending"],
             values: [
-              assignedTasks.filter(t => t.complete_status === 'Completed').length,
-              assignedTasks.filter(t => t.complete_status !== 'Completed').length
+              assignedTasks.filter(t => t.completeStatus === 'Completed').length,
+              assignedTasks.filter(t => t.completeStatus !== 'Completed').length
             ],
-            colors: ["#4BC0C0", "#FFCE56"]
+            colors: ["#4BC0C0", "#3e648b"]
           }
         };
 
