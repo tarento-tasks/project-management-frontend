@@ -66,9 +66,9 @@ const LoginForm = ({ onLogin }) => {
         localStorage.setItem('userId', response.userId);
         localStorage.setItem('role', response.role);
       } else {
-        sessionStorage.setItem('token', response.token);
-        sessionStorage.setItem('userId', response.userId);
-        sessionStorage.setItem('role', response.role);
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.userId);
+        localStorage.setItem('role', response.role);
       }
 
       if (onLogin) onLogin({ email, password, rememberMe });
