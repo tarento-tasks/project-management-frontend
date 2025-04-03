@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import Swal from 'sweetalert2';
+
 import styles from "./formComponent.module.css";
 
 const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChange = false }) => {
@@ -24,17 +24,16 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
 
     const { validation } = field;
 
-    // Required validation
+  
     if (field.required && (!value || (Array.isArray(value) && value.length === 0))) {
       return "This field is required";
     }
 
-    // Min length validation
     if (validation.minLength && value?.length < validation.minLength) {
       return validation.message || `Minimum ${validation.minLength} characters required`;
     }
 
-    // Max length validation
+   
     if (validation.maxLength && value?.length > validation.maxLength) {
       return validation.message || `Maximum ${validation.maxLength} characters allowed`;
     }
@@ -114,7 +113,7 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.criteria) {
-      formData.criteria = "Default Criteria"; // Set a default value or fetch from the form
+      formData.criteria = "Default Criteria"; 
     }
     if (!validateForm()) {
       

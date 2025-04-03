@@ -17,3 +17,4 @@ const GeneralLayout = ({ children, role = "admin" }) => {
 };
 
 export default GeneralLayout;
+

@@ -1,19 +1,12 @@
+import Sidebar from "../components/Sidebar/Sidebar";
+import { Outlet } from "react-router-dom";
 
-
-import React from 'react';
-import Sidebar from '../components/Sidebar/Sidebar';
-import Header from '../components/Header/Header';
-import styles from './MainLayout.module.css';
-
-const MainLayout = ({ children, role = 'admin', userName = 'Admin', userRole = 'Administrator' }) => {
+const MainLayout = ({ role }) => {
   return (
-    <div className={styles.appContainer}>
+    <div className="d-flex">
       <Sidebar role={role} />
-      <div className={styles.mainContent}>
-        <Header userName={userName} userRole={userRole} />
-        <main className={styles.contentArea}>
-          {children}
-        </main>
+      <div className="content p-4">
+        <Outlet /> {/* This will load different pages */}
       </div>
     </div>
   );

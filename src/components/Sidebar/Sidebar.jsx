@@ -27,20 +27,12 @@ const sidebarItems = {
     },
     { 
       name: "Users", 
+      path: "/users", 
       icon: <i className="bi bi-people"></i>,
-      subItems: [
-        { name: "Mentors", path: "/admin/mentors" },
-        { name: "Students", path: "/admin/students" }
-      ]
+      
     },
-    { 
-      name: "Add Users", 
-      icon: <i className="bi bi-person-plus"></i>,
-      subItems: [
-        { name: "New User", path: "/admin/new-user" },
-        { name: "Edit Profiles", path: "/admin/edit-profile" }
-      ]
-    },
+    
+   
     { 
       name: "Review", 
       path: "/admin/review", 
