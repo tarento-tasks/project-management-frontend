@@ -5,6 +5,7 @@ import { authState } from '../states/authState';
 import LoginPage from '../pages/LoginPage/LoginPage';
 import Dashboard from '../pages/Dashboard';
 import NewProject from '../pages/NewProject/NewProject';
+import UserManagementPage from '../pages/UserManagement/UserManagementPage';
 
 const ProtectedRoute = ({ children }) => {
   const auth = useRecoilValue(authState);
@@ -33,6 +34,7 @@ const AppRoutes = () => {
         }
       />
       <Route path="/newprojects" element={ <ProtectedRoute><NewProject />  </ProtectedRoute>} />
+      <Route path="/users" element={ <ProtectedRoute><UserManagementPage /> </ProtectedRoute>} />
       
       {/* Legacy Role-Specific Routes (Redirect to main dashboard) */}
       <Route path="/admin/dashboard" element={<Navigate to="/dashboard" replace />} />
