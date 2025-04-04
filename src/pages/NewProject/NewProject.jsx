@@ -3,7 +3,7 @@ import FormComponent from "../../components/Forms/FormComponent";
 import NewProjectLayout from "../../layouts/NewProjectLayout/NewProjectLayout";
 import Swal from 'sweetalert2';
 import styles from "./newProject.module.css";
-import API from '../../services/api'; // ✅ Correct import
+import newProjectService from '../../services/newProjectService'; // ✅ Import new service
 
 const NewProject = () => {
   const [skills, setSkills] = useState([]);
@@ -17,12 +17,17 @@ const NewProject = () => {
     const fetchData = async () => {
       try {
         const [skillsResponse, mentorsResponse] = await Promise.all([
-          API.getAllSkills(),  // ✅ Use API.getAllSkills()
-          API.getMentors()     // ✅ Use API.getMentors()
+          newProjectService.getAllSkills(),  // ✅ Use newProjectService
+          newProjectService.getMentors()     // ✅ Use newProjectService
         ]);
 
         console.log("✅ Skills fetched:", skillsResponse);
         console.log("✅ Mentors fetched:", mentorsResponse);
+
+        
+        
+        console.log("Type of skillsResponse.response:", typeof skillsResponse.response);
+        console.log("Is skillsResponse.response an array?", Array.isArray(skillsResponse.response));
 
         setSkills(skillsResponse.response.map(skill => skill.skillName));
         setMentors(mentorsResponse.response.map(mentor => ({
@@ -52,12 +57,12 @@ const NewProject = () => {
     { name: "title", label: "Project Title", type: "text", placeholder: "Enter project title", required: true },
     { name: "objective", label: "Objective", type: "text", placeholder: "Enter project objective", required: true },
     { name: "description", label: "Description", type: "textarea", placeholder: "Enter detailed description", rows: 5, required: true },
-    { name: "criteria", label: "Eligibility Criteria", type: "textarea", placeholder: "Enter eligibility requirements", rows: 3 ,required: true},
+    { name: "criteria", label: "Eligibility Criteria", type: "textarea", placeholder: "Enter eligibility requirements", rows: 3, required: true },
     { name: "skills", label: "Skills Required", type: "select", options: skills, required: true },
     {
       name: "repo",
       label: "Repository Link",
-      type: "url",  // Added field for the repository link
+      type: "url",
       required: true,
       validation: { maxLength: 255 }
     },
@@ -89,23 +94,16 @@ const NewProject = () => {
         objective: formData.objective,
         description: formData.description,
         criteria: formData.criteria,
-        repo : formData.repo,
+        repo: formData.repo,
         skills: formData.skills,
         mentorId: selectedMentor.userId,
         lastEnrollDate: formData.lastDate,
         dueDate: formData.dueDate
       };
 
-      try {
-        await ProjectService.createProject(projectData);  // Make sure criteria is passed here
-      } catch (error) {
-        console.error('Error creating project:', error);
-      }
-    
-
       console.log("📌 Sending project data to API:", projectData);
 
-      const response = await API.createProject(projectData);
+      const response = await newProjectService.createProject(projectData); // ✅ Use newProjectService
       console.log("✅ Project Created:", response);
 
       Swal.fire({
