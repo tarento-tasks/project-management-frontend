@@ -22,7 +22,7 @@ const sidebarItems = {
     },
     { 
       name: "Requests", 
-      path: "/admin/requests", 
+      path: "/enrollments", 
       icon: <i className="bi bi-list-check"></i> 
     },
     { 
@@ -99,7 +99,7 @@ const sidebarItems = {
     },
     { 
       name: "Enrollment Status", 
-      path: "/student/enrollments", 
+      path: "/enrollments", 
       icon: <i className="bi bi-clipboard-check"></i> 
     }
   ]

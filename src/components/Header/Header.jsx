@@ -65,7 +65,7 @@ const Header = () => {
     getUserData();
   }, []);
 
-  
+  // Fetch all available skills for dropdown when modal opens
   useEffect(() => {
     const fetchSkills = async () => {
       try {
