@@ -1,3 +1,4 @@
+/*
 import Sidebar from "../components/Sidebar/Sidebar";
 import { Outlet } from "react-router-dom";
 
@@ -6,10 +7,12 @@ const MainLayout = ({ role }) => {
     <div className="d-flex">
       <Sidebar role={role} />
       <div className="content p-4">
-        <Outlet /> {/* This will load different pages */}
+        <Outlet /> {/* This will load different pages 
       </div>
     </div>
   );
 };
 
 export default MainLayout;
+
+*/

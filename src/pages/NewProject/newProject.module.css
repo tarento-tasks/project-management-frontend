@@ -1,11 +1,11 @@
 .pageContainer {
-    padding: 2rem 0rem;
+    padding: 2rem;
   }
   
   .pageContainer h1 {
     font-size: 1.8rem;
     color: #2a3c50;
-    margin-bottom: 0.5rem;
+
   }
   
   .subtitle {

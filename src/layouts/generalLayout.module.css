@@ -1,16 +1,17 @@
 .dashboardContainer {
     display: flex;
     flex: 1;
-    width: 100vh;
+    width: 100%;
   }
   
   .mainContent {
     display:flex;
+    width: 100%;
     flex: 1;
     margin-top: 270px; /* Header height */
     min-height: calc(100vh - 70px);
     transition: margin-left 0.3s ease;
-    width: 100vh;
+    min-width: 900px;
   }
   
   /* When sidebar is collapsed */

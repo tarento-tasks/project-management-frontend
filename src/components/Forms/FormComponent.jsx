@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-
 import styles from "./formComponent.module.css";
 
-const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChange = false }) => {
+const FormComponent = ({
+  fields,
+  onSubmit,
+  validateOnBlur = true,
+  validateOnChange = false,
+  className = "", // 🆕 added className prop
+}) => {
   const [formData, setFormData] = useState(
     fields.reduce((acc, field) => ({
       ...acc,
@@ -24,7 +29,6 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
 
     const { validation } = field;
 
-  
     if (field.required && (!value || (Array.isArray(value) && value.length === 0))) {
       return "This field is required";
     }
@@ -33,17 +37,14 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
       return validation.message || `Minimum ${validation.minLength} characters required`;
     }
 
-   
     if (validation.maxLength && value?.length > validation.maxLength) {
       return validation.message || `Maximum ${validation.maxLength} characters allowed`;
     }
 
-    // Future date validation
     if (validation.isFutureDate && new Date(value) <= new Date()) {
       return validation.message || "Date must be in the future";
     }
 
-    // Date after another field validation
     if (validation.isAfterField && formData[validation.isAfterField]) {
       if (new Date(value) <= new Date(formData[validation.isAfterField])) {
         return validation.message || `Date must be after ${validation.isAfterField}`;
@@ -56,7 +57,7 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
   const handleChange = (e, fieldName) => {
     const { value } = e.target;
     let newValue = value;
-    
+
     if (fieldName === "skills" && value) {
       if (!formData.skills.includes(value)) {
         newValue = [...formData.skills, value];
@@ -113,18 +114,14 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.criteria) {
-      formData.criteria = "Default Criteria"; 
+      formData.criteria = "Default Criteria";
     }
-    if (!validateForm()) {
-      
-      return;
-    }
-
+    if (!validateForm()) return;
     onSubmit(formData);
   };
 
   return (
-    <div className={styles.formContainer}>
+    <div className={`${styles.formContainer} ${className}`}>
       <form onSubmit={handleSubmit}>
         {fields.map((field) => (
           <div key={field.name} className={styles.formGroup}>
@@ -245,6 +242,7 @@ FormComponent.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   validateOnBlur: PropTypes.bool,
   validateOnChange: PropTypes.bool,
+  className: PropTypes.string, // 🆕 added className prop type
 };
 
 export default FormComponent;
