@@ -41,13 +41,13 @@ const CommentsFeedbackPage = () => {
   }, [taskId, auth.role]);
 
   const commentColumns = [
-    { key: "comments", label: "Comment" },
-    { key: "userName", label: "By" }
+    { key: "comment", label: "Comment" },
+    { key: "userId", label: "By" }
   ];
 
   const feedbackColumns = [
     { key: "feedback", label: "Feedback" },
-    { key: "userName", label: "By" }
+    { key: "mentorId", label: "By" }
   ];
 
   const handleAdd = () => {

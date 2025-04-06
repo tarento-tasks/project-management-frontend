@@ -33,7 +33,12 @@ const Table = ({ columns, data, onDelete, onEdit, onView }) => {
         <tbody>
           {data.length > 0 ? (
             data.map((row) => (
-              <tr key={row.id} onClick={() => onView(row)} className={styles.tableRow}>
+              <tr
+                  key={row.commentId || row.feedbackId}
+                  onClick={() => onView(row)}
+                  className={styles.tableRow}
+              >
+
                 {columns.map((col) => (
                   <td key={col.key}>{row[col.key] || "N/A"}</td>
                 ))}
