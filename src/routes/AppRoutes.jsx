@@ -6,6 +6,8 @@ import LoginPage from '../pages/LoginPage/LoginPage';
 import Dashboard from '../pages/Dashboard';
 import NewProject from '../pages/NewProject/NewProject';
 import UserManagementPage from '../pages/UserManagement/UserManagementPage';
+import CommentsFeedbackPage from "../pages/CommentsFeedbackPage";
+
 
 const ProtectedRoute = ({ children }) => {
   const auth = useRecoilValue(authState);
@@ -23,6 +25,9 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LoginPage />} />
+
+      <Route path="/tasks/:taskId/comments-feedback" element={<CommentsFeedbackPage />} />
+
       
       {/* Single Protected Dashboard Route */}
       <Route

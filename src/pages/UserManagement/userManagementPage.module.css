@@ -25,6 +25,7 @@
     color: #6b7280;
     position: relative;
     transition: all 0.3s ease;
+    z-index: 1;
   }
   
   .tabButton:hover {

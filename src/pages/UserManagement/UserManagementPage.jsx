@@ -31,6 +31,7 @@ const UserManagementPage = () => {
 
   // Fetch initial data
   useEffect(() => {
+    console.log("Mentors Button:", document.getElementById("mentorBtn"));
     const fetchData = async () => {
       try {
         setIsLoading(true);
@@ -218,6 +219,8 @@ const UserManagementPage = () => {
     const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return regex.test(uuid);
   };
+
+  console.log("Button Rendered");
   return (
     <GeneralLayout role={auth.role}>
       <div className={styles.container}>
@@ -238,7 +241,12 @@ const UserManagementPage = () => {
           <div className={styles.tabs}>
             <button
               className={`${styles.tabButton} ${activeTab === 'mentors' ? styles.active : ''}`}
-              onClick={() => setActiveTab('mentors')}
+              
+              onClick={() => {
+                 
+                console.log("Mentors Clicked"); // Debugging log
+                setActiveTab('mentors');
+            }}
             >
               <FaChalkboardTeacher className={styles.tabIcon} />
               Mentors

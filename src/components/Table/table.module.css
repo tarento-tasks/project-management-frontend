@@ -1,0 +1,38 @@
+.tableContainer {
+    width: 100%;
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table th {
+    padding: 1rem;
+    text-align: left;
+    background-color: #517ea6;
+    color: white;
+    font-weight: 500;
+  }
+  
+  .table td {
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    color: #4b5563;
+  }
+  
+  .tableRow:hover {
+    background-color: #f3f4f6;
+    cursor: pointer;
+  }
+  
+  .noData {
+    text-align: center;
+    padding: 2rem;
+    color: #6b7280;
+  }
+  
