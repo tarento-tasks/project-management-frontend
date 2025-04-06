@@ -27,7 +27,7 @@ const Table = ({ columns, data, onDelete, onEdit, onView }) => {
             {columns.map((col) => (
               <th key={col.key}>{col.label}</th>
             ))}
-            <th>Actions</th>
+            
           </tr>
         </thead>
         <tbody>
@@ -42,30 +42,7 @@ const Table = ({ columns, data, onDelete, onEdit, onView }) => {
                 {columns.map((col) => (
                   <td key={col.key}>{row[col.key] || "N/A"}</td>
                 ))}
-                <td className={styles.actions}>
-                  {onEdit && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onEdit(row);
-                      }}
-                      className={styles.editButton}
-                      title="Edit"
-                    >
-                      <FiEdit2 />
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={(e) => handleDelete(e, row.id)}
-                      className={styles.deleteButton}
-                      disabled={deletingId === row.id}
-                      title="Delete"
-                    >
-                      {deletingId === row.id ? <span className={styles.spinner}></span> : <FiTrash2 />}
-                    </button>
-                  )}
-                </td>
+                
               </tr>
             ))
           ) : (

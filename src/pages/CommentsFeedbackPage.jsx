@@ -5,7 +5,6 @@ import { useRecoilValue } from "recoil";
 import { authState } from "../states/authState";
 import { getComments, addComment } from "../services/CommentService";
 import { getFeedback, addFeedback } from "../services/FeedbackService";
-
 import Table from "../components/Table/Table";
 import AddEntryModal from "../components/Modal/AddEntryModal";
 import styles from "./commentsFeedbackPage.module.css";
@@ -25,38 +24,85 @@ const CommentsFeedbackPage = () => {
 
   useEffect(() => {
     if (!taskId) return;
+
     const fetchData = async () => {
       try {
         if (isMentorOrAdmin || isStudent) {
           const commentRes = await getComments(taskId);
-          setComments(commentRes);
+          const commentWithNames = await injectUserNames(commentRes);
+          setComments(commentWithNames);
+
           const feedbackRes = await getFeedback(taskId);
-          setFeedbacks(feedbackRes);
+          const feedbackWithNames = await injectUserNames(feedbackRes);
+          setFeedbacks(feedbackWithNames);
         }
       } catch (error) {
         console.error("Failed to fetch comments/feedback:", error);
       }
     };
+
     fetchData();
   }, [taskId, auth.role]);
 
+  const injectUserNames = async (entries, token) => {
+    const ids = [...new Set(entries.map(e => e.userId || e.mentorId))];
+    const userMap = {};
+  
+    for (const id of ids) {
+      try {
+        const token = localStorage.getItem("token"); 
+
+        const res = await fetch(`http://localhost:8080/api/users?userId=${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+  
+        const contentType = res.headers.get("Content-Type");
+  
+        if (!res.ok) {
+          console.error(`User fetch failed: ${res.status} ${res.statusText}`);
+          throw new Error("Fetch failed");
+        }
+  
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await res.text();
+          console.error("Expected JSON but got:", text);
+          throw new Error("Invalid content type");
+        }
+  
+        const data = await res.json();
+        userMap[id] = data.response?.name || "Unknown";
+  
+      } catch (err) {
+        console.warn("User fetch failed for ID:", id, err);
+        userMap[id] = "Unknown";
+      }
+    }
+  
+    return entries.map(e => ({
+      ...e,
+      userName: userMap[e.userId || e.mentorId],
+      createdAt: new Date(e.createdAt).toLocaleString()
+    }));
+  };
+  
+  
+
   const commentColumns = [
     { key: "comment", label: "Comment" },
-    { key: "userId", label: "By" }
+    { key: "userName", label: "By" },
+    { key: "createdAt", label: "Created At" }
   ];
 
   const feedbackColumns = [
     { key: "feedback", label: "Feedback" },
-    { key: "mentorId", label: "By" }
+    { key: "userName", label: "By" },
+    { key: "createdAt", label: "Created At" }
   ];
 
-  const handleAdd = () => {
-    setShowModal(true);
-  };
-
-  const handleClose = () => {
-    setShowModal(false);
-  };
+  const handleAdd = () => setShowModal(true);
+  const handleClose = () => setShowModal(false);
 
   const handleSubmit = async (text) => {
     if (!text) return;
@@ -66,11 +112,13 @@ const CommentsFeedbackPage = () => {
       if (activeTab === "comments") {
         await addComment(taskId, auth.userId, text);
         const updated = await getComments(taskId);
-        setComments(updated);
+        const withNames = await injectUserNames(updated);
+        setComments(withNames);
       } else {
         await addFeedback(taskId, auth.userId, text);
         const updated = await getFeedback(taskId);
-        setFeedbacks(updated);
+        const withNames = await injectUserNames(updated);
+        setFeedbacks(withNames);
       }
       setShowModal(false);
     } catch (err) {
@@ -116,15 +164,14 @@ const CommentsFeedbackPage = () => {
         </div>
 
         {showModal && (
-        <AddEntryModal
+          <AddEntryModal
             onClose={handleClose}
             onSubmit={handleSubmit}
             title={activeTab === "comments" ? "Add Comment" : "Add Feedback"}
             placeholder={`Enter your ${activeTab === "comments" ? "comment" : "feedback"} here...`}
             loading={loading}
-        />
+          />
         )}
-
       </div>
     </GeneralLayout>
   );
