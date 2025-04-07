@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import GeneralLayout from "../../layouts/GeneralLayout";
 import ProjectCard from "../../components/ProjectCard/ProjectCard";
 import styles from "./allProjects.module.css";
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 import axios from "axios";
 import dayjs from "dayjs";
 
@@ -18,6 +20,7 @@ const AllProjects = () => {
   });
 
   const [role, setRole] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -27,12 +30,10 @@ const AllProjects = () => {
       setRole(userRole);
 
       try {
-        // Fetch all projects
         const projectResponse = await axios.get(API_URL, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Fetch approved project IDs for student
         let studentApprovedProjectIds = [];
         if (userRole === "STUDENT") {
           const approvedRes = await axios.get(STUDENT_PROJECTS_API, {
@@ -64,10 +65,9 @@ const AllProjects = () => {
             const isAdmin = userRole === "ADMIN";
 
             if (!isMentor && !isStudent && !isAdmin) {
-              continue; // Skip if not related
+              continue;
             }
 
-            // Fetch tasks for this project
             let tasks = [];
             try {
               const tasksResponse = await axios.get(
@@ -89,7 +89,6 @@ const AllProjects = () => {
                   taskErr
                 );
               }
-              // Keep tasks as empty array if error is expected
             }
 
             const today = dayjs();
@@ -131,62 +130,81 @@ const AllProjects = () => {
     fetchProjects();
   }, []);
 
+  const filterBySearch = (list) =>
+    list.filter((project) =>
+      project.title.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
   return (
     <GeneralLayout>
-      <div className={styles.allprojectscontainer}>
-        <h2 className={styles.allprojectstitle}>All Projects</h2>
+  <div className={styles.allprojectscontainer}>
+    {/* Title + Search in one row */}
+    <div className={styles.headerRow}>
+      <h2 className={styles.allprojectstitle}>All Projects</h2>
+      <div className={styles.searchWrapper}>
+      <i className={`bi bi-search ${styles.searchIcon}`}></i>
 
-        <div className={styles.kanbanBoard}>
-          {/* To Do Column */}
-          <div className={styles.columnWrapper}>
-            <div className={`${styles.columnHeader} ${styles.toBeReviewedHeader}`}>
-              <h3>To Do</h3>
-            </div>
-            <div className={`${styles.column} ${styles.toBeReviewed}`}>
-              {projects.todo.map((project, index) => (
-                <ProjectCard key={index} {...project} />
-              ))}
-            </div>
-          </div>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Search projects..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+    </div>
 
-          {/* In Progress Column */}
-          <div className={styles.columnWrapper}>
-            <div className={`${styles.columnHeader} ${styles.inProgressHeader}`}>
-              <h3>In Progress</h3>
-            </div>
-            <div className={`${styles.column} ${styles.inProgress}`}>
-              {projects.inProgress.map((project, index) => (
-                <ProjectCard key={index} {...project} />
-              ))}
-            </div>
-          </div>
-
-          {/* Completed Column */}
-          <div className={styles.columnWrapper}>
-            <div className={`${styles.columnHeader} ${styles.completedHeader}`}>
-              <h3>Completed</h3>
-            </div>
-            <div className={`${styles.column} ${styles.completed}`}>
-              {projects.completed.map((project, index) => (
-                <ProjectCard key={index} {...project} />
-              ))}
-            </div>
-          </div>
-
-          {/* Overdue Column */}
-          <div className={styles.columnWrapper}>
-            <div className={`${styles.columnHeader} ${styles.overdueHeader}`}>
-              <h3>Overdue</h3>
-            </div>
-            <div className={`${styles.column} ${styles.overdue}`}>
-              {projects.overdue.map((project, index) => (
-                <ProjectCard key={index} {...project} />
-              ))}
-            </div>
-          </div>
+    <div className={styles.kanbanBoard}>
+      {/* To Do Column */}
+      <div className={styles.columnWrapper}>
+        <div className={`${styles.columnHeader} ${styles.toBeReviewedHeader}`}>
+          <h3>To Do</h3>
+        </div>
+        <div className={`${styles.column} ${styles.toBeReviewed}`}>
+          {filterBySearch(projects.todo).map((project, index) => (
+            <ProjectCard key={index} {...project} />
+          ))}
         </div>
       </div>
-    </GeneralLayout>
+
+      {/* In Progress Column */}
+      <div className={styles.columnWrapper}>
+        <div className={`${styles.columnHeader} ${styles.inProgressHeader}`}>
+          <h3>In Progress</h3>
+        </div>
+        <div className={`${styles.column} ${styles.inProgress}`}>
+          {filterBySearch(projects.inProgress).map((project, index) => (
+            <ProjectCard key={index} {...project} />
+          ))}
+        </div>
+      </div>
+
+      {/* Completed Column */}
+      <div className={styles.columnWrapper}>
+        <div className={`${styles.columnHeader} ${styles.completedHeader}`}>
+          <h3>Completed</h3>
+        </div>
+        <div className={`${styles.column} ${styles.completed}`}>
+          {filterBySearch(projects.completed).map((project, index) => (
+            <ProjectCard key={index} {...project} />
+          ))}
+        </div>
+      </div>
+
+      {/* Overdue Column */}
+      <div className={styles.columnWrapper}>
+        <div className={`${styles.columnHeader} ${styles.overdueHeader}`}>
+          <h3>Overdue</h3>
+        </div>
+        <div className={`${styles.column} ${styles.overdue}`}>
+          {filterBySearch(projects.overdue).map((project, index) => (
+            <ProjectCard key={index} {...project} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</GeneralLayout>
 
   );
 };
