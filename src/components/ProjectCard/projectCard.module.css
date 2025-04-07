@@ -23,6 +23,15 @@
     justify-content: space-between;
     align-items: center;
   }
+  .enrolledButton {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: default;
+  }
+  
   
   .title {
     margin: 0;

@@ -39,15 +39,19 @@ export const fetchCurrentUser = async () => {
       formData.append("name", userData.name);
       formData.append("dob", userData.dob);
       formData.append("roleId", userData.roleId);
-      
+  
       if (userData.previousWork) {
         formData.append("previousWork", userData.previousWork);
       }
-      
+  
       if (userData.qualifications) {
         formData.append("qualifications", userData.qualifications);
       }
-      
+  
+      if (userData.password && userData.password.trim() !== "") {
+        formData.append("password", userData.password); // 🔐 change password
+      }
+  
       if (image && image instanceof File) {
         formData.append("image", image);
       }
@@ -55,7 +59,7 @@ export const fetchCurrentUser = async () => {
       const response = await fetch(`http://localhost:8080/api/users`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         credentials: "include",
         body: formData
@@ -72,6 +76,7 @@ export const fetchCurrentUser = async () => {
       throw error;
     }
   };
+  
   
   export const fetchAllSkills = async () => {
     try {
@@ -123,6 +128,7 @@ export const fetchCurrentUser = async () => {
     }
   };
   
+ 
   export const addSkillToUser = async (userId, skillId) => {
     try {
       const token = localStorage.getItem("token");

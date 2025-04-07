@@ -33,6 +33,8 @@ const dashboardService = {
         }
       },
 
+ 
+ 
   getTasks: async (projectId = null) => {
     try {
       let endpoint = '/api/tasks';
@@ -54,44 +56,50 @@ const dashboardService = {
       throw error;
     }
   },
+  
+getStudentEnrollments: async (studentId, status = null) => {
+  try {
+      const params = { studentId };
+      if (status) {
+          params.status = status; // 👈 Add status only if provided
+      }
 
-  getStudentEnrollments: async (studentId) => {
-    try {
-        console.log("Calling API: /api/project-enrollment with studentId:", studentId);  // ✅ Log before call
-        const response = await axios.get(`${API_BASE_URL}/api/project-enrollment`, {
-            params: { studentId },
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log("Student Enrollments API Response:", response.data);
-        return response.data.response || [];
-    } catch (error) {
-        console.error('Error fetching student enrollments:', error);
-        throw error;
-    }
+      console.log("Calling API: /api/project-enrollment with params:", params);
+      const response = await axios.get(`${API_BASE_URL}/api/project-enrollment`, {
+          params,
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json'
+          }
+      });
+
+      console.log("Student Enrollments API Response:", response.data);
+      return response.data.response || [];
+  } catch (error) {
+      console.error('Error fetching student enrollments:', error);
+      throw error;
+  }
 },
+
 
 
 getTasksByProjectId: async (projectId) => {
-    try {
-        const response = await axios.get(`${API_BASE_URL}/api/tasks`, {
-            params: { projectId },  // Send projectId as a query parameter
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-            }
-        });
+  try {
+      const response = await axios.get(`${API_BASE_URL}/api/tasks`, {
+          params: { projectId },  // Send projectId as a query parameter
+          headers: {
+              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json'
+          }
+      });
 
-        console.log(`Tasks for project ${projectId}:`, response.data);
-        return response.data.response || [];
-    } catch (error) {
-        console.error(`Error fetching tasks for project ${projectId}:`, error);
-        throw error;
-    }
+      console.log(`Tasks for project ${projectId}:`, response.data);
+      return response.data.response || [];
+  } catch (error) {
+      console.error(`Error fetching tasks for project ${projectId}:`, error);
+      throw error;
+  }
 },
-
 
 
   getStudentTasks: async (studentId) => {

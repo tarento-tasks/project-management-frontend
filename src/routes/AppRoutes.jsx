@@ -39,6 +39,7 @@ const AppRoutes = () => {
       <Route path="/enrollments" element={ <EnrollmentPage />} />
       <Route path="/calendar" element={ <Calendar />} />
     
+      
     
       
       {/* Protected Dashboard Route */}

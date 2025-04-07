@@ -1,44 +1,38 @@
-// components/ProjectCard/ProjectCard.jsx
 import styles from './projectCard.module.css';
 import RecommendedTag from '../RecommendedTag/RecommendedTag';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+import ExploreService from '../../services/explore';
 
-const ProjectCard = ({ 
-  project, 
-  isRecommended, 
-  onEnroll 
-}) => {
+const MySwal = withReactContent(Swal);
+
+const ProjectCard = ({ project, isRecommended, isEnrolled, onEnrollSuccess, studentId }) => {
   const today = new Date();
   const lastDate = new Date(project.lastDate);
-  const isOpen = lastDate >= today;
+  const isOpen = lastDate >= today && project.openStatus;
 
   const handleEnrollClick = async () => {
-    if (isOpen) {
-      const result = await MySwal.fire({
-        title: 'Confirm Enrollment',
-        text: `Are you sure you want to enroll in "${project.title}"?`,
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3e648b',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, enroll!',
-        cancelButtonText: 'Cancel'
-      });
-      
-      if (result.isConfirmed) {
-        try {
-          await onEnroll(project.projectId);
-          MySwal.fire(
-            'Enrolled!',
-            'You have successfully enrolled in the project.',
-            'success'
-          );
-        } catch (error) {
-          MySwal.fire(
-            'Error',
-            error.message || 'Failed to enroll in the project',
-            'error'
-          );
-        }
+    if (!isOpen) return;
+
+    const result = await MySwal.fire({
+      title: 'Confirm Enrollment',
+      text: `Are you sure you want to enroll in "${project.title}"?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3e648b',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, enroll!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await ExploreService.enrollInProject(project.projectId, studentId);
+onEnrollSuccess(project.projectId); // ✅ Updates parent state
+MySwal.fire('Enrolled!', 'Enrollment request sent successfully.', 'success');
+
+      } catch (error) {
+        MySwal.fire('Error', error.response?.data?.message || 'Failed to enroll.', 'error');
       }
     }
   };
@@ -71,13 +65,23 @@ const ProjectCard = ({
           <span>Due: {new Date(project.dueDate).toLocaleDateString()}</span>
           <span>Enroll by: {new Date(project.lastDate).toLocaleDateString()}</span>
         </div>
-        <button 
-          className={`${styles.enrollButton} ${!isOpen ? styles.disabled : ''}`}
-          onClick={handleEnrollClick}
-          disabled={!isOpen}
-        >
-          {isOpen ? 'Enroll' : 'Closed'}
-        </button>
+        {isEnrolled ? (
+  <button className={styles.enrolledButton} disabled>
+    Enrolled
+  </button>
+) : isOpen ? (
+  <button
+    className={styles.enrollButton}
+    onClick={handleEnrollClick}
+  >
+    Enroll
+  </button>
+) : (
+  <button className={`${styles.enrollButton} ${styles.disabled}`} disabled>
+    Closed
+  </button>
+)}
+
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ const FormComponent = ({
   onSubmit,
   validateOnBlur = true,
   validateOnChange = false,
-  className = "", // 🆕 added className prop
+  className = "",
 }) => {
   const [formData, setFormData] = useState(
     fields.reduce((acc, field) => ({
@@ -55,7 +55,7 @@ const FormComponent = ({
   };
 
   const handleChange = (e, fieldName) => {
-    const { value } = e.target;
+    const value = e.target.value;
     let newValue = value;
 
     if (fieldName === "skills" && value) {
@@ -70,7 +70,7 @@ const FormComponent = ({
     }));
 
     if (validateOnChange) {
-      const error = validateField(fieldName, fieldName === "skills" ? newValue : value);
+      const error = validateField(fieldName, newValue);
       setErrors(prev => ({ ...prev, [fieldName]: error }));
     }
   };
@@ -189,8 +189,8 @@ const FormComponent = ({
                 >
                   <option value="">Select {field.label}</option>
                   {field.options.map((option, index) => (
-                    <option key={index} value={option}>
-                      {option}
+                    <option key={index} value={option.value}>
+                      {option.label}
                     </option>
                   ))}
                 </select>
@@ -242,7 +242,7 @@ FormComponent.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   validateOnBlur: PropTypes.bool,
   validateOnChange: PropTypes.bool,
-  className: PropTypes.string, // 🆕 added className prop type
+  className: PropTypes.string,
 };
 
 export default FormComponent;

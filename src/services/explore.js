@@ -1,5 +1,8 @@
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
@@ -21,7 +24,7 @@ const handleError = (error) => {
     return;
   }
 
-  Swal.fire({
+  MySwal.fire({
     title: 'Error',
     text: error.response?.data?.message || error.message || 'Something went wrong',
     icon: 'error',
@@ -32,11 +35,6 @@ const handleError = (error) => {
 };
 
 const ExploreService = {
-  /**
-   * Get all projects or a specific project by ID
-   * @param {string} [projectId] - Optional project ID
-   * @returns {Promise<Array>} List of projects or single project
-   */
   getProjects: async (projectId = null) => {
     try {
       const params = projectId ? { id: projectId } : {};
@@ -50,11 +48,6 @@ const ExploreService = {
     }
   },
 
-  /**
-   * Get skills required for a specific project
-   * @param {string} projectId - Project ID
-   * @returns {Promise<Array>} List of skills
-   */
   getProjectSkills: async (projectId) => {
     try {
       const response = await axios.get(
@@ -67,11 +60,6 @@ const ExploreService = {
     }
   },
 
-  /**
-   * Get recommended projects for a student
-   * @param {string} studentId - Student ID
-   * @returns {Promise<Array>} List of recommended projects
-   */
   getRecommendedProjects: async (studentId) => {
     try {
       const response = await axios.get(
@@ -81,48 +69,30 @@ const ExploreService = {
       return response.data.response;
     } catch (error) {
       console.error('Recommendations error:', error);
-      // Return empty array if recommendations fail
       return [];
     }
   },
 
-  /**
-   * Enroll a student in a project
-   * @param {string} projectId - Project ID
-   * @param {string} studentId - Student ID
-   * @returns {Promise<Object>} Enrollment response
-   */
   enrollInProject: async (projectId, studentId) => {
     try {
+      const enrollmentDto = {
+        projectId,
+        studentId,
+        status: 'PENDING'
+      };
+      
       const response = await axios.post(
-        `${API_BASE_URL}/api/project-enrollments`,
-        { projectId, studentId },
+        `${API_BASE_URL}/api/project-enrollment`,
+        enrollmentDto,
         { headers: getAuthHeaders() }
       );
       
-      Swal.fire({
-        title: 'Success!',
-        text: response.data?.message || 'Enrollment successful',
-        icon: 'success',
-        confirmButtonColor: '#517ea6'
-      });
-      
       return response.data;
     } catch (error) {
-      Swal.fire({
-        title: 'Error',
-        text: error.response?.data?.message || 'Enrollment failed',
-        icon: 'error',
-        confirmButtonColor: '#517ea6'
-      });
       throw error;
     }
   },
 
-  /**
-   * Get all available skills (for filtering)
-   * @returns {Promise<Array>} List of all skills
-   */
   getAllSkills: async () => {
     try {
       const response = await axios.get(
@@ -136,11 +106,6 @@ const ExploreService = {
     }
   },
 
-  /**
-   * Get projects that match specific filters
-   * @param {Object} filters - Filter criteria
-   * @returns {Promise<Array>} Filtered projects
-   */
   getFilteredProjects: async (filters = {}) => {
     try {
       const response = await axios.get(
@@ -149,6 +114,18 @@ const ExploreService = {
           params: filters,
           headers: getAuthHeaders()
         }
+      );
+      return response.data.response;
+    } catch (error) {
+      return handleError(error);
+    }
+  },
+
+  getEnrollmentsByStudent: async (studentId) => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/api/project-enrollment/student/${studentId}`,
+        { headers: getAuthHeaders() }
       );
       return response.data.response;
     } catch (error) {

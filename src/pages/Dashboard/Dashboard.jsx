@@ -24,7 +24,7 @@ const Dashboard = () => {
     cardData: null,
     pieChartData: null
   });
-
+  
   const processDashboardData = (role, rawData) => {
     const { projects = [], tasks = [], enrollments = [], studentTasks = [] } = rawData;
 
@@ -82,9 +82,8 @@ const Dashboard = () => {
 
       case 'MENTOR':
         const mentorProjects = projects.filter(p => p.mentorId === auth.userId);
-        const mentorTasks = tasks.filter(t => 
-          mentorProjects.some(p => p.projectId === t.projectId)
-        );
+        const mentorTasks = tasks; // already filtered in fetchData
+
 
         return {
           progressData: {
@@ -145,45 +144,47 @@ const Dashboard = () => {
           })()
         };
 
-      case 'STUDENT':
-        const approvedProjects = enrollments;
-        const assignedTasks = studentTasks;
+        case 'STUDENT':
+  const approvedProjects = enrollments || [];
+  const assignedTasks = studentTasks || [];
 
-        return {
-          progressData: {
-            title: "My Work Overview",
-            data: [
-              { title: "Assigned Projects", value: approvedProjects.length },
-              { title: "Total Tasks", value: assignedTasks.length },
-              { title: "Completed Tasks", value: assignedTasks.filter(t => t.completeStatus === 'Completed').length }
-            ]
-          },
-          cardData: {
-            title: "My Tasks",
-            fields: [
-              { key: "taskId", label: "Task ID" },
-              { key: "taskName", label: "Task Name" },
-              { key: "status", label: "Status" },
-              { key: "dueDate", label: "Due Date" }
-            ],
-            data: assignedTasks.slice(0, 5).map(task => ({
-              taskId: task.taskId.substring(0, 6).toUpperCase(),
-              taskName: task.taskName || 'Unnamed Task',
-              status: task.completeStatus || 'Pending',
-              dueDate: task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'
-            }))
-            
-          },
-          pieChartData: {
-            title: "Tasks Completion",
-            labels: ["Completed", "Pending"],
-            values: [
-              assignedTasks.filter(t => t.completeStatus === 'Completed').length,
-              assignedTasks.filter(t => t.completeStatus !== 'Completed').length
-            ],
-            colors: ["#4BC0C0", "#3e648b"]
-          }
-        };
+  return {
+    progressData: {
+      title: "My Work Overview",
+      data: [
+        { title: "Assigned Projects", value: approvedProjects.length },
+        { title: "Total Tasks", value: assignedTasks.length },
+        { title: "Completed Tasks", value: assignedTasks.filter(t => t.completeStatus === 'Completed').length }
+      ]
+    },
+    cardData: {
+      title: "My Tasks",
+      fields: [
+        { key: "taskId", label: "Task ID" },
+        { key: "taskName", label: "Task Name" },
+        { key: "status", label: "Status" },
+        { key: "dueDate", label: "Due Date" }
+      ],
+      data: assignedTasks.slice(0, 5).map(task => ({
+        taskId: task.taskId?.substring(0, 6).toUpperCase() || 'NA',
+        taskName: task.taskName || 'Unnamed Task',
+        status: task.completeStatus || 'Pending',
+        dueDate: task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'
+      }))
+    },
+    pieChartData: {
+      title: "Task Completion Status",
+      labels: ["Completed", "Pending"],
+      values: [
+        assignedTasks.filter(t => t.completeStatus === 'Completed').length,
+        assignedTasks.filter(t => t.completeStatus !== 'Completed').length
+      ],
+      colors: ["#4BC0C0", "#FF6384"]
+    }
+  };
+
+         
+      
 
       default:
         throw new Error(`Unsupported role: ${role}`);
@@ -253,28 +254,28 @@ const Dashboard = () => {
         } 
         
         else if (upperRole === 'STUDENT') {
-            console.log("Fetching Student Enrollments and Tasks...");
-            const [enrollments, studentTasks] = await Promise.all([
-                dashboardService.getStudentEnrollments(userId),
-                dashboardService.getStudentTasks(userId)
-            ]);
-            rawData = { enrollments, studentTasks };
-            console.log("Student Data Fetched:", rawData);
+          const [allEnrollments, approvedProjects, studentTasks] = await Promise.all([
+            dashboardService.getStudentEnrollments(userId),
+            dashboardService.getStudentEnrollments(userId, "APPROVED"),
+            dashboardService.getStudentTasks(userId)
+          ]);
+    
+          rawData = {
+            enrollments: allEnrollments,
+            approvedProjects: approvedProjects.map(e => e.project),
+            studentTasks
+          };
         }
-
-        console.log("Processing dashboard data...");
+    
         const processedData = processDashboardData(upperRole, rawData);
-        console.log("Processed Data:", processedData);
-
         setDashboardData(processedData);
-    } catch (err) {
+      } catch (err) {
         console.error("Error fetching dashboard data:", err);
-        setError(err.message || "Failed to load dashboard data");
-    } finally {
-        console.log("Fetching complete.");
+        setError("Something went wrong while loading the dashboard.");
+      } finally {
         setLoading(false);
-    }
-};
+      }
+    };
 
   
 
