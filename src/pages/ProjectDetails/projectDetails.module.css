@@ -1,0 +1,28 @@
+.projectDetailsContainer {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+h2 {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+}
+
+p {
+    font-size: 1.1rem;
+    margin: 10px 0;
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}

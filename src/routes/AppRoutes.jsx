@@ -6,6 +6,8 @@ import StudentDashboard from "../pages/StudentDashboard";
 import NewTask from "../pages/NewTask/NewTask"; // Import NewTask
 import AllProjects from "../pages/AllProjects/AllProjects";
 import ProjectEnrollment from "../pages/ProjectEnrollment/ProjectEnrollment"
+import ProjectDetails from "../pages/ProjectDetails/ProjectDetails";
+
 
 const AppRoutes = ({ role }) => {
   console.log("✅ AppRoutes.jsx is running");
@@ -28,6 +30,11 @@ const AppRoutes = ({ role }) => {
       <Route path="*" element={<Navigate to={`/${role}/dashboard`} />} />
 
       <Route path="/all-projects" element={<AllProjects />} />
+
+       {/* Individual Project Details Page */}
+       <Route path="/projects/:projectId" element={<ProjectDetails />} />
+    
+
       <Route path="/project-enrollment" element={<ProjectEnrollment />} />
     </Routes>
   );

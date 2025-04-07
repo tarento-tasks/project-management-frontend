@@ -15,7 +15,7 @@ const sidebarItems = {
       name: "Projects", 
       icon: <i className="bi bi-folder"></i>,
       subItems: [
-        { name: "All Projects", path: "/admin/projects" },
+        { name: "All Projects",path: "/all-projects" },
         { name: "Tasks", path: "/admin/projects/tasks" },
         { name: "New Project", path: "/admin/new-project" }
       ]
