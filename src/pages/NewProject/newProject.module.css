@@ -1,12 +1,11 @@
-/*.pageContainer {
+.pageContainer {
     padding: 2rem 0rem;
   }
-  
-  .pageContainer h1 {
-    font-size: 1.8rem;
-    color: #2a3c50;
-    margin-bottom: 0.5rem;
+.pageTitle {
+    margin-left: 20px; /* adjust as needed */
   }
+  
+  
   
   .subtitle {
     color: #6c757d;
@@ -19,4 +18,4 @@
       padding: 1rem;
     }
   }
-    */
+    

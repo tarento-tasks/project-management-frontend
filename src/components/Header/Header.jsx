@@ -3,7 +3,6 @@ import { FaUserCircle, FaChevronDown, FaSignOutAlt, FaUserEdit, FaTimes, FaPlus 
 import { logout } from "../../services/authService";
 import { fetchCurrentUser, updateUserProfile, fetchAllSkills, getUserSkills, addSkillToUser } from "../../services/headerService";
 import defaultProfileImage from "../../assets/default-dp.jpeg";
-
 import styles from "./header.module.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -15,7 +14,8 @@ const Header = () => {
   const [imageFile, setImageFile] = useState(null);
   const [allSkills, setAllSkills] = useState([]);
   const [userSkills, setUserSkills] = useState([]);
-  const [selectedSkill, setSelectedSkill] = useState("");
+  const [skillsToAdd, setSkillsToAdd] = useState([]);
+  const [tempSelectedSkill, setTempSelectedSkill] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -35,7 +35,6 @@ const Header = () => {
         const user = await fetchCurrentUser();
         setUserData(user);
         
-     
         setFormData({
           name: user.name || "",
           email: user.email || "",
@@ -45,12 +44,10 @@ const Header = () => {
           qualifications: user.qualifications || ""
         });
 
-    
         if (user.imageBase64) {
           setSelectedImage(`data:image/jpeg;base64,${user.imageBase64}`);
         }
 
-       
         if (user.userId) {
           const skills = await getUserSkills(user.userId);
           setUserSkills(skills || []);
@@ -65,7 +62,6 @@ const Header = () => {
     getUserData();
   }, []);
 
-  // Fetch all available skills for dropdown when modal opens
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -89,6 +85,17 @@ const Header = () => {
     }));
   };
 
+  const handleAddSkill = () => {
+    if (tempSelectedSkill && !skillsToAdd.includes(tempSelectedSkill)) {
+      setSkillsToAdd([...skillsToAdd, tempSelectedSkill]);
+      setTempSelectedSkill("");
+    }
+  };
+
+  const handleRemoveSkill = (skillId) => {
+    setSkillsToAdd(skillsToAdd.filter(id => id !== skillId));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -101,12 +108,14 @@ const Header = () => {
       
       await updateUserProfile(updatedData, imageFile);
       
-      // Add new skill if selected
-      if (selectedSkill) {
-        await addSkillToUser(userData.userId, selectedSkill);
+      if (skillsToAdd.length > 0) {
+        await Promise.all(
+          skillsToAdd.map(skillId => 
+            addSkillToUser(userData.userId, skillId)
+          )
+        );
       }
       
-      // Refresh user data
       const user = await fetchCurrentUser();
       setUserData(user);
       
@@ -114,10 +123,10 @@ const Header = () => {
         setSelectedImage(`data:image/jpeg;base64,${user.imageBase64}`);
       }
       
-      // Refresh user skills
       const skills = await getUserSkills(user.userId);
       setUserSkills(skills || []);
       
+      setSkillsToAdd([]);
       setShowEditProfileModal(false);
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -164,10 +173,6 @@ const Header = () => {
     }
   };
 
-  const handleSkillChange = (e) => {
-    setSelectedSkill(e.target.value);
-  };
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -179,7 +184,6 @@ const Header = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Get profile image with fallback
   const profileImage = selectedImage || defaultProfileImage;
 
   if (isLoading) {
@@ -214,11 +218,9 @@ const Header = () => {
                   className={`${styles.profileImage} me-2`} 
                   onError={(e) => { e.target.src = defaultProfileImage }} 
                 />
-
                 <div className="lh-1 me-2">
                   <p className="mb-0 fw-medium small">{userData?.name || "User"}</p>
                 </div>
-
                 <FaChevronDown size={14} className={`text-muted ${isDropdownOpen ? styles.rotateUp : ''}`} />
               </div>
 
@@ -240,7 +242,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Edit Profile Modal */}
       {showEditProfileModal && userData && (
         <div className={styles.modalOverlay}>
           <div className={styles.modalContainer}>
@@ -354,38 +355,70 @@ const Header = () => {
                   />
                 </div>
 
-                {/* Skills Section */}
+                {/* Updated Skills Section */}
                 <div className="mb-3">
-                  <label htmlFor="skillSelect" className="form-label">Add Skill</label>
-                  <div className="d-flex">
+                  <label htmlFor="skillSelect" className="form-label">Add Skills</label>
+                  <div className="d-flex align-items-center mb-2">
                     <select
                       id="skillSelect"
                       className="form-select me-2"
-                      value={selectedSkill}
-                      onChange={handleSkillChange}
+                      value={tempSelectedSkill}
+                      onChange={(e) => setTempSelectedSkill(e.target.value)}
                     >
                       <option value="">Select a skill</option>
-                      {allSkills.map(skill => (
-                        <option key={skill.skillId} value={skill.skillId}>
-                          {skill.skillName}
-                        </option>
-                      ))}
+                      {allSkills
+                        .filter(skill => ![...userSkills.map(s => s.skillId), ...skillsToAdd].includes(skill.skillId))
+                        .map(skill => (
+                          <option key={skill.skillId} value={skill.skillId}>
+                            {skill.skillName}
+                          </option>
+                        ))}
                     </select>
+                    <button 
+                      type="button" 
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={handleAddSkill}
+                      disabled={!tempSelectedSkill}
+                    >
+                      Add
+                    </button>
                   </div>
-                </div>
 
-                {userSkills.length > 0 && (
-                  <div className="mb-3">
-                    
-                    <div className="d-flex flex-wrap gap-2">
-                      {userSkills.map((skill, index) => (
-                        <span key={index} className="badge bg-primary">
-                          {skill.skillName}
-                        </span>
-                      ))}
+                  {skillsToAdd.length > 0 && (
+                    <div className="mb-3">
+                      <h6>Skills to be added:</h6>
+                      <div className="d-flex flex-wrap gap-2 mb-3">
+                        {skillsToAdd.map(skillId => {
+                          const skill = allSkills.find(s => s.skillId === skillId);
+                          return (
+                            <span key={skillId} className="badge bg-primary">
+                              {skill?.skillName}
+                              <button 
+                                type="button" 
+                                className="ms-2 btn-close btn-close-white"
+                                onClick={() => handleRemoveSkill(skillId)}
+                                aria-label="Remove skill"
+                              />
+                            </span>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+
+                  {userSkills.length > 0 && (
+                    <div className="mb-3">
+                      <h6>Current Skills:</h6>
+                      <div className="d-flex flex-wrap gap-2">
+                        {userSkills.map((skill, index) => (
+                          <span key={index} className="badge bg-secondary">
+                            {skill.skillName}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="d-flex justify-content-end mt-4">
                   <button

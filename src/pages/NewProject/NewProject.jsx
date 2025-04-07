@@ -3,7 +3,7 @@ import FormComponent from "../../components/Forms/FormComponent";
 import NewProjectLayout from "../../layouts/NewProjectLayout/NewProjectLayout";
 import Swal from 'sweetalert2';
 import styles from "./newProject.module.css";
-import newProjectService from '../../services/newProjectService'; // ✅ Import new service
+import newProjectService from '../../services/newProjectService'; 
 
 const NewProject = () => {
   const [skills, setSkills] = useState([]);
@@ -151,17 +151,18 @@ const NewProject = () => {
 
   return (
     <NewProjectLayout>
-        <div className={styles.pageContainer}>
-            <h1>Create New Project</h1>
-            <p>Fill out the form below to create a new project</p>
-            <FormComponent 
-              fields={fields} 
-              onSubmit={handleSubmit} 
-              validateOnBlur={true}
-              validateOnChange={true}
-            />
-        </div>
+      <div className={styles.pageContainer}>
+        <h1 className={styles.pageTitle}>Create New Project</h1>
+        
+        <FormComponent 
+          fields={fields} 
+          onSubmit={handleSubmit} 
+          validateOnBlur={true}
+          validateOnChange={true}
+        />
+      </div>
     </NewProjectLayout>
+
   );
 };
 
