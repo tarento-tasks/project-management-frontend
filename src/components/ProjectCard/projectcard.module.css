@@ -1,9 +1,11 @@
 .projectCard {
-    width: 400px;
-    min-height: 200px;
-    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 12px;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    background: white;
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
+  }
 
 .projectCard:hover {
     transform: scale(1.03);
@@ -18,6 +20,8 @@
     border: 2px solid #517ea6;
 }
 
+
+
 .actionButton {
     background-color: #2a3c50;
     border: none;
@@ -29,5 +33,5 @@
     background-color: #212e3f;
 }
 .customProgress .progress-bar {
-    background-color: #4bbf73 !important; /* your custom filled color */
+    background-color: #4bbf73 !important; 
 }

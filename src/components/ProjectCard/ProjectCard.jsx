@@ -9,16 +9,15 @@ const ProjectCard = ({ title, description, lastDate, dueDate,/* mentorId,*/ repo
   return (
     <Card className={styles.projectCard}>
       <Card.Body>
-        <Card.Title className="text-center fw-bold">{title}</Card.Title>
+        <Card.Title className="text-center fw-bold" style={{ fontSize: "12px" }}>{title}</Card.Title>
         <Card.Text className="text-muted">{description}</Card.Text>
 
-        <div className="d-flex justify-content-between mt-3">
+        <div className="d-flex justify-content-between mt-3" style={{ fontSize: "9.5px" }}>
           <div><strong>📅 Start:</strong> {lastDate || "N/A"}</div>
           <div><strong>⏳ End:</strong> {dueDate || "N/A"}</div>
         </div>
 
-     
- {/* Repository Link */}
+ {/*
  {repo && (
           <div className="mt-3">
             <strong>🔗 Repository:</strong>{" "}
@@ -27,6 +26,7 @@ const ProjectCard = ({ title, description, lastDate, dueDate,/* mentorId,*/ repo
             </a>
           </div>
         )}
+        */}
       </Card.Body>
     </Card>
   );

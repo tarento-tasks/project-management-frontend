@@ -138,39 +138,56 @@ const AllProjects = () => {
 
         <div className={styles.kanbanBoard}>
           {/* To Do Column */}
-          <div className={`${styles.column} ${styles.toBeReviewed}`}>
-            <h3>To Do</h3>
-            {projects.todo.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
+          <div className={styles.columnWrapper}>
+            <div className={`${styles.columnHeader} ${styles.toBeReviewedHeader}`}>
+              <h3>To Do</h3>
+            </div>
+            <div className={`${styles.column} ${styles.toBeReviewed}`}>
+              {projects.todo.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
+            </div>
           </div>
 
           {/* In Progress Column */}
-          <div className={`${styles.column} ${styles.inProgress}`}>
-            <h3>In Progress</h3>
-            {projects.inProgress.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
+          <div className={styles.columnWrapper}>
+            <div className={`${styles.columnHeader} ${styles.inProgressHeader}`}>
+              <h3>In Progress</h3>
+            </div>
+            <div className={`${styles.column} ${styles.inProgress}`}>
+              {projects.inProgress.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
+            </div>
           </div>
 
           {/* Completed Column */}
-          <div className={`${styles.column} ${styles.completed}`}>
-            <h3>Completed</h3>
-            {projects.completed.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
+          <div className={styles.columnWrapper}>
+            <div className={`${styles.columnHeader} ${styles.completedHeader}`}>
+              <h3>Completed</h3>
+            </div>
+            <div className={`${styles.column} ${styles.completed}`}>
+              {projects.completed.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
+            </div>
           </div>
 
           {/* Overdue Column */}
-          <div className={`${styles.column} ${styles.overdue}`}>
-            <h3>Overdue</h3>
-            {projects.overdue.map((project, index) => (
-              <ProjectCard key={index} {...project} />
-            ))}
+          <div className={styles.columnWrapper}>
+            <div className={`${styles.columnHeader} ${styles.overdueHeader}`}>
+              <h3>Overdue</h3>
+            </div>
+            <div className={`${styles.column} ${styles.overdue}`}>
+              {projects.overdue.map((project, index) => (
+                <ProjectCard key={index} {...project} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
     </GeneralLayout>
+
   );
 };
 
