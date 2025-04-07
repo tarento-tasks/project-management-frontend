@@ -3,6 +3,7 @@ import GeneralLayout from "../../layouts/GeneralLayout";
 import ProjectCard from "../../components/ProjectCard/ProjectCard";
 import styles from "./allProjects.module.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Link } from "react-router-dom";
 
 import axios from "axios";
 import dayjs from "dayjs";
@@ -162,7 +163,13 @@ const AllProjects = () => {
         </div>
         <div className={`${styles.column} ${styles.toBeReviewed}`}>
           {filterBySearch(projects.todo).map((project, index) => (
-            <ProjectCard key={index} {...project} />
+            <Link
+            key={index}
+            to={`/projects/${project.projectId}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ProjectCard {...project} />
+          </Link>
           ))}
         </div>
       </div>
@@ -174,7 +181,13 @@ const AllProjects = () => {
         </div>
         <div className={`${styles.column} ${styles.inProgress}`}>
           {filterBySearch(projects.inProgress).map((project, index) => (
-            <ProjectCard key={index} {...project} />
+            <Link
+            key={index}
+            to={`/projects/${project.projectId}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ProjectCard {...project} />
+          </Link>
           ))}
         </div>
       </div>
@@ -186,7 +199,13 @@ const AllProjects = () => {
         </div>
         <div className={`${styles.column} ${styles.completed}`}>
           {filterBySearch(projects.completed).map((project, index) => (
-            <ProjectCard key={index} {...project} />
+            <Link
+            key={index}
+            to={`/projects/${project.projectId}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ProjectCard {...project} />
+          </Link>
           ))}
         </div>
       </div>
@@ -198,7 +217,13 @@ const AllProjects = () => {
         </div>
         <div className={`${styles.column} ${styles.overdue}`}>
           {filterBySearch(projects.overdue).map((project, index) => (
-            <ProjectCard key={index} {...project} />
+            <Link
+            key={index}
+            to={`/projects/${project.projectId}`}
+            style={{ textDecoration: "none", color: "inherit" }}
+          >
+            <ProjectCard {...project} />
+          </Link>
           ))}
         </div>
       </div>

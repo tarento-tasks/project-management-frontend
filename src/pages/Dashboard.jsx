@@ -53,13 +53,13 @@ const Dashboard = () => {
             fields: [
               { key: "projectId", label: "Project ID" },
               { key: "projectName", label: "Project Name" },
-              { key: "status", label: "Status" },
+             
               { key: "progress", label: "Progress" }
             ],
             data: projects.slice(0, 5).map(project => ({
               projectId: project.projectId.substring(0, 6).toUpperCase(),
               projectName: project.title || 'Unnamed Project',
-              status: project.openStatus ? 'Open' : 'Closed',
+              
               progress: calculateProjectProgress(project.projectId)
             }))
             
