@@ -7,6 +7,7 @@ import Dashboard from '../pages/Dashboard';
 import NewProject from '../pages/NewProject/NewProject';
 import UserManagementPage from '../pages/UserManagement/UserManagementPage';
 import CommentsFeedbackPage from "../pages/CommentsFeedbackPage";
+import AllProjects from "../pages/AllProjects/AllProjects";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -27,7 +28,7 @@ const AppRoutes = () => {
       <Route path="/" element={<LoginPage />} />
 
       <Route path="/tasks/:taskId/comments-feedback" element={<CommentsFeedbackPage />} />
-
+      <Route path="/all-projects" element={<AllProjects />} />
       
       {/* Single Protected Dashboard Route */}
       <Route

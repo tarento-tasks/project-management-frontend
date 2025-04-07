@@ -15,7 +15,7 @@ const sidebarItems = {
       name: "Projects", 
       icon: <i className="bi bi-folder"></i>,
       subItems: [
-        { name: "All Projects", path: "/admin/projects" },
+        { name: "All Projects", path: "/all-projects" },
         { name: "Tasks", path: "/admin/projects/tasks" },
         { name: "New Project", path: "/newprojects" }
       ]
@@ -54,7 +54,7 @@ const sidebarItems = {
       name: "Projects", 
       icon: <i className="bi bi-folder"></i>,
       subItems: [
-        { name: "Tasks", path: "/mentor/tasks" },
+        { name: "Tasks", path: "/all-projects" },
         { name: "New Task", path: "/newtask", icon: <i className="bi bi-plus-circle"></i> },
         
 
@@ -86,7 +86,7 @@ const sidebarItems = {
       name: "Projects", 
       icon: <i className="bi bi-folder"></i>,
       subItems: [
-        { name: "Tasks", path: "/student/tasks" }
+        { name: "Tasks", path: "/all-projects" }
       ]
     },
     { 
