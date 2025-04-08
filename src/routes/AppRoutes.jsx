@@ -8,7 +8,7 @@ import NewProject from '../pages/NewProject/NewProject';
 import UserManagementPage from '../pages/UserManagement/UserManagementPage';
 import CommentsFeedbackPage from "../pages/CommentsFeedbackPage";
 import AllProjects from "../pages/AllProjects/AllProjects";
-import ProjectDetails from "../pages/ProjectDetails";
+import ProjectDetails from "../pages/ProjectDetails/ProjectDetails";
 
 
 

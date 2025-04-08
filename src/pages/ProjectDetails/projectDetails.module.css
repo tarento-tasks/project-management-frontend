@@ -1,0 +1,56 @@
+.container {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  
+  .infoGroup {
+    margin-bottom: 16px;
+  }
+  
+  .label {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .value {
+    margin: 4px 0 0 0;
+    color: #555;
+  }
+  
+  .link {
+    color: #0077cc;
+    text-decoration: none;
+  }
+  
+  .link:hover {
+    text-decoration: underline;
+  }
+  
+  .studentList {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #444;
+  }
+  
+  .studentItem {
+    margin-bottom: 4px;
+  }
+  
+  .loading {
+    text-align: center;
+    font-size: 18px;
+  }
+  
+  .error {
+    color: red;
+    text-align: center;
+  }
