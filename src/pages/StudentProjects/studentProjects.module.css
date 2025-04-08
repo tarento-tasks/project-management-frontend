@@ -141,6 +141,40 @@
     background-color: #3e648b;
   }
   
+Copy
+.projectWrapper {
+  position: relative;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  margin-right: 15px;
+}
+
+.searchInput {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  width: 250px;
+}
+
+.searchIcon {
+  margin-left: -30px;
+  color: #666;
+}
+
+.filterGroup {
+  display: flex;
+  gap: 10px;
+}
+
+.filterSelect {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
  
   .successMessage {
     position: fixed;
@@ -153,6 +187,7 @@
     z-index: 1000;
     animation: fadeIn 0.3s ease-out;
   }
+  
   
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-20px); }

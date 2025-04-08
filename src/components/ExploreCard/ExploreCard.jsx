@@ -1,4 +1,4 @@
-import styles from './projectCard.module.css';
+import styles from './exploreCard.module.css';
 import RecommendedTag from '../RecommendedTag/RecommendedTag';
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';

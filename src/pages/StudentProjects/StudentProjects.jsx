@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { authState } from '../../states/authState';
 import GeneralLayout from '../../layouts/GeneralLayout';
-import ProjectCard from '../../components/ProjectCard/ProjectCard';
+import ProjectCard from '../../components/ExploreCard/ExploreCard';
+import RecommendedTag from '../../components/RecommendedTag/RecommendedTag';
 import ExploreService from '../../services/explore';
 import styles from './studentProjects.module.css';
 
 const StudentProjects = () => {
   const auth = useRecoilValue(authState);
   const [projects, setProjects] = useState([]);
-  const [recommendedProjects, setRecommendedProjects] = useState(new Set());
+  const [recommendedProjects, setRecommendedProjects] = useState([]); 
   const [allSkills, setAllSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOption, setFilterOption] = useState('all');
@@ -17,12 +18,8 @@ const StudentProjects = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [enrolledProjects, setEnrolledProjects] = useState(new Set());
-  const [isDataReady, setIsDataReady] = useState(false); // ✅ NEW
+  const [isDataReady, setIsDataReady] = useState(false);
   const [isEnrolledReady, setIsEnrolledReady] = useState(false);
-
-
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,12 +39,12 @@ const StudentProjects = () => {
             ExploreService.getRecommendedProjects(auth.user.id),
             ExploreService.getEnrollmentsByStudent(auth.user.id)
           ]);
-  
-          setRecommendedProjects(new Set(recommended.map(p => p.projectId)));
+          
+          setRecommendedProjects(recommended || []);
           setEnrolledProjects(new Set(enrolled.map(e => e.projectId)));
-          setIsEnrolledReady(true); // ✅ HERE
+          setIsEnrolledReady(true);
         } else {
-          setIsEnrolledReady(true); // In case user is not logged in (optional)
+          setIsEnrolledReady(true);
         }
   
         setIsDataReady(true);
@@ -60,32 +57,35 @@ const StudentProjects = () => {
   
     fetchData();
   }, [auth]);
-  
 
-  // Update enrolled projects locally after enroll action
+  // Create a Set of recommended project IDs for easy checking
+  const recommendedProjectIds = new Set(recommendedProjects.map(p => p.projectId));
+
   const handleEnrollment = (projectId) => {
     setEnrolledProjects((prev) => new Set([...prev, projectId]));
   };
 
   const filteredProjects = projects.filter(project => {
-    const matchesSearch =
+    // Search filter - matches title, description, or objective
+    const matchesSearch = searchTerm === '' || 
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.objective?.toLowerCase().includes(searchTerm.toLowerCase());
+      (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (project.objective && project.objective.toLowerCase().includes(searchTerm.toLowerCase()));
 
+    // Main filter options
     let matchesFilter = true;
     if (filterOption === 'recommended') {
-      matchesFilter = recommendedProjects.has(project.projectId);
+      matchesFilter = recommendedProjectIds.has(project.projectId);
     } else if (filterOption === 'open') {
       const today = new Date();
       const lastDate = new Date(project.lastDate);
       matchesFilter = lastDate >= today && project.openStatus;
     }
 
-    const matchesSkill =
-      !skillFilter ||
-      (project.skillsRequired &&
-        project.skillsRequired.toLowerCase().includes(skillFilter.toLowerCase()));
+    // Skill filter
+    const matchesSkill = skillFilter === '' || 
+      (project.skillsRequired && 
+       project.skillsRequired.toLowerCase().includes(skillFilter.toLowerCase()));
 
     return matchesSearch && matchesFilter && matchesSkill;
   });
@@ -142,16 +142,19 @@ const StudentProjects = () => {
         ) : (
           <div className={styles.projectsGrid}>
             {isEnrolledReady && filteredProjects.map(project => (
-  <ProjectCard
-    key={project.projectId}
-    project={project}
-    isRecommended={recommendedProjects.has(project.projectId)}
-    isEnrolled={enrolledProjects.has(project.projectId)}
-    onEnrollSuccess={handleEnrollment}
-    studentId={auth.user?.id}
-  />
-))}
-
+              <div key={project.projectId} className={styles.projectWrapper}>
+                {recommendedProjectIds.has(project.projectId) && (
+                  <RecommendedTag />
+                )}
+                <ProjectCard
+                  project={project}
+                  isRecommended={recommendedProjectIds.has(project.projectId)}
+                  isEnrolled={enrolledProjects.has(project.projectId)}
+                  onEnrollSuccess={handleEnrollment}
+                  studentId={auth.user?.id}
+                />
+              </div>
+            ))}
           </div>
         )}
       </div>

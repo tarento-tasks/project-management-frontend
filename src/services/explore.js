@@ -106,20 +106,7 @@ const ExploreService = {
     }
   },
 
-  getFilteredProjects: async (filters = {}) => {
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/api/projects/filter`,
-        {
-          params: filters,
-          headers: getAuthHeaders()
-        }
-      );
-      return response.data.response;
-    } catch (error) {
-      return handleError(error);
-    }
-  },
+ 
 
   getEnrollmentsByStudent: async (studentId) => {
     try {
