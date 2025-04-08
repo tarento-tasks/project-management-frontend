@@ -41,40 +41,47 @@ const LoginForm = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
-    validateField('email', email);
-    validateField('password', password);
-
-    if (Object.keys(errors).length > 0) {
+  
+    const newErrors = {};
+  
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Email is invalid';
+    }
+  
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+  
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       setIsSubmitting(false);
       return;
     }
-
+  
+    setErrors({}); // clear previous errors
+  
     try {
       const response = await login({ email, password });
-
+  
       setAuth({
         isAuthenticated: true,
         role: response.role,
         token: response.token,
         userId: response.userId
-      
       });
-
-      if (rememberMe) {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('userId', response.userId);
-        localStorage.setItem('role', response.role);
-      } else {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('userId', response.userId);
-        localStorage.setItem('role', response.role);
-      }
-
+  
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('userId', response.userId);
+      localStorage.setItem('role', response.role);
+  
       if (onLogin) onLogin({ email, password, rememberMe });
-
+  
       navigate(`/${response.role}/dashboard`);
-
+  
     } catch (error) {
       setErrors({
         form: error.response?.data?.message || error.message || 'Login failed. Please try again.'
@@ -83,6 +90,7 @@ const LoginForm = ({ onLogin }) => {
       setIsSubmitting(false);
     }
   };
+  
 
   return (
     <div className={styles.formContainer}>
