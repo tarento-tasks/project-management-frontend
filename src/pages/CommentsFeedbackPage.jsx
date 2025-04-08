@@ -132,35 +132,45 @@ const CommentsFeedbackPage = () => {
     <GeneralLayout role={auth.role}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2>Task Comments & Feedback</h2>
-          <div className={styles.tabs}>
-            <button
-              className={`${styles.tab} ${activeTab === "comments" ? styles.active : ""}`}
-              onClick={() => setActiveTab("comments")}
-            >
-              <FaComments /> Comments
-            </button>
-            <button
-              className={`${styles.tab} ${activeTab === "feedback" ? styles.active : ""}`}
-              onClick={() => setActiveTab("feedback")}
-            >
-              <FaCommentDots /> Feedback
-            </button>
+          <h2 className={styles.title}>Task Comments & Feedback</h2>
+          <div className={styles.controls}>
+            <div className={styles.tabs}>
+              <button
+                className={`${styles.tab} ${activeTab === "comments" ? styles.active : ""}`}
+                onClick={() => setActiveTab("comments")}
+              >
+                <FaComments className={styles.tabIcon} /> 
+                <span>Comments</span>
+                {comments.length > 0 && <span className={styles.badge}>{comments.length}</span>}
+              </button>
+              <button
+                className={`${styles.tab} ${activeTab === "feedback" ? styles.active : ""}`}
+                onClick={() => setActiveTab("feedback")}
+              >
+                <FaCommentDots className={styles.tabIcon} /> 
+                <span>Feedback</span>
+                {feedbacks.length > 0 && <span className={styles.badge}>{feedbacks.length}</span>}
+              </button>
+            </div>
+
+            {(isMentorOrAdmin && activeTab === "feedback") ||
+            (isStudent && activeTab === "comments") ? (
+              <button className={styles.addButton} onClick={handleAdd}>
+                <FaPlus className={styles.addIcon} />
+                {activeTab === "comments" ? "Add Comment" : "Add Feedback"}
+              </button>
+            ) : null}
           </div>
-          {(isMentorOrAdmin && activeTab === "feedback") ||
-          (isStudent && activeTab === "comments") ? (
-            <button className={styles.addButton} onClick={handleAdd}>
-              {activeTab === "comments" ? "Add Comment" : "Add Feedback"}
-            </button>
-          ) : null}
         </div>
 
-        <div className={styles.tableWrapper}>
-          {activeTab === "comments" ? (
-            <Table columns={commentColumns} data={comments} />
-          ) : (
-            <Table columns={feedbackColumns} data={feedbacks} />
-          )}
+        <div className={styles.content}>
+          <div className={styles.tableWrapper}>
+            {activeTab === "comments" ? (
+              <Table columns={commentColumns} data={comments} />
+            ) : (
+              <Table columns={feedbackColumns} data={feedbacks} />
+            )}
+          </div>
         </div>
 
         {showModal && (
@@ -178,3 +188,4 @@ const CommentsFeedbackPage = () => {
 };
 
 export default CommentsFeedbackPage;
+

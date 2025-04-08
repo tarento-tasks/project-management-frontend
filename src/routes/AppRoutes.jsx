@@ -44,9 +44,8 @@ const AppRoutes = () => {
       <Route path="/newtask" element={ <NewTask />} />
       <Route path="/users" element={ <UserManagementPage />} />
       <Route path="/enrollments" element={ <EnrollmentPage />} />
-      {/* <Route path="/tasks/:taskId/comments-feedback" element={ <ProtectedRoute><CommentsFeedbackPage /> </ProtectedRoute>} />
-      <Route path="/all-projects" element={ <ProtectedRoute><AllProjects /> </ProtectedRoute>} />
-     <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectDetails /> </ProtectedRoute>} /> */} 
+      <Route path="/tasks/:taskId/comments-feedback" element={ <ProtectedRoute><CommentsFeedbackPage /> </ProtectedRoute>} />
+      
       <Route path="/enrollments" element={<ProtectedRoute> <EnrollmentPage /> </ProtectedRoute>} />
       <Route path="/student/projects" element={<ProtectedRoute> <StudentProjects /> </ProtectedRoute>} />
       <Route path="/all-projects" element={ <ProtectedRoute><AllProjects /> </ProtectedRoute>} />

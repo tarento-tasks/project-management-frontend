@@ -1,163 +1,235 @@
 .allprojectscontainer {
-    margin-left: 40px;
-    width: calc(100% - 70px);
-    padding: 0 20px;
-    box-sizing: border-box;
-    overflow-x: hidden;
+  margin: 0 auto;
+  width: 95%;
+  max-width: 1400px;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #f0f5fa; /* Lighter background */
+  border-radius: 18px;
+}
+
+.allprojectstitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 30px;
+  color: #2a3c50; /* 900 from palette */
+  position: relative;
+  padding-bottom: 15px;
+  font-family: 'Poppins', sans-serif;
+}
+
+.allprojectstitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #517ea6, #3e648b); /* 500 to 600 */
+  border-radius: 2px;
+}
+
+/* Header Row Styling */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 20px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(81, 126, 166, 0.08); /* 500 with opacity */
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 300px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 15px;
+  font-size: 18px;
+  color: #517ea6; /* 500 */
+  z-index: 1;
+}
+
+.searchInput {
+  padding: 12px 20px 12px 45px;
+  font-size: 16px;
+  width: 100%;
+  border: 2px solid #d6e3f0;
+  border-radius: 12px;
+  outline: none;
+  transition: all 0.3s ease;
+  background-color: white;
+  font-family: 'Inter', sans-serif;
+  color: #2d455f; /* 800 */
+}
+
+.searchInput:focus {
+  border-color: #517ea6; /* 500 */
+  box-shadow: 0 0 0 4px rgba(81, 126, 166, 0.2); /* 500 with opacity */
+}
+
+/* Kanban Board Styling */
+.kanbanBoard {
+  display: flex;
+  gap: 25px;
+  width: 100%;
+  overflow-x: auto;
+  padding: 10px 5px 25px;
+  scrollbar-width: thin;
+  scrollbar-color: #517ea6 #f0f5fa; /* 500 */
+}
+
+.kanbanBoard::-webkit-scrollbar {
+  height: 8px;
+}
+
+.kanbanBoard::-webkit-scrollbar-thumb {
+  background-color: #517ea6; /* 500 */
+  border-radius: 4px;
+}
+
+.kanbanBoard::-webkit-scrollbar-track {
+  background-color: #f0f5fa;
+  border-radius: 4px;
+}
+
+/* Column Styling */
+.columnWrapper {
+  flex: 1;
+  min-width: 280px;
+  display: flex;
+  flex-direction: column;
+  max-height: 75vh;
+  background-color: white;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(81, 126, 166, 0.1); /* 500 */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e2e8f0;
+}
+
+.columnWrapper:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(81, 126, 166, 0.15); /* 500 */
+}
+
+/* Column Headers - Using your full palette */
+.columnHeader {
+  padding: 18px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.countBadge {
+  background-color: rgba(255, 255, 255, 0.25);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Custom Header Colors from Your Palette */
+.toBeReviewedHeader {
+  background: linear-gradient(135deg, #c8d1a0, #8f8f8a); /* 500 to 600 */
+}
+
+.inProgressHeader {
+  background: linear-gradient(135deg, #527a72, #acd1bd); /* 600 to 700 */
+}
+
+.completedHeader {
+  background: linear-gradient(135deg, #b9b9b4, #2d455f); /* 700 to 800 */
+}
+
+.overdueHeader {
+  background: linear-gradient(135deg,  #d3ebb9,#c3cfce); /* 800 to 900 */
+}
+
+.column {
+  flex: 1;
+  padding: 18px;
+  overflow-y: auto;
+  background-color: white;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Empty State */
+.emptyState {
+  padding: 30px 15px;
+  text-align: center;
+  color: #7d9bbd;
+  font-size: 14px;
+  background-color: rgba(240, 245, 250, 0.5);
+  border-radius: 12px;
+  margin: 10px;
+  border: 2px dashed #d6e3f0;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .headerRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .searchWrapper {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .allprojectscontainer {
+    padding: 20px 15px;
+    width: 100%;
+    border-radius: 0;
   }
   
   .allprojectstitle {
-    text-align: left;
-    font-size: 34px;
-    font-weight: bold;
-    margin: 20px 0;
-    color: #2a3c50;
-  }
-
-  .headerRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; 
-    margin-bottom: 20px;
-  }
-  
-
-  .searchWrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-  }
-  
-  .searchIcon {
-    position: absolute;
-    left: 10px;
-    font-size: 16px;
-    color: #888;
-  }
-  
-  .searchInput {
-    padding: 6px 10px 6px 30px;
-    font-size: 14px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-  }
-  
-  .searchInput:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
-  }
-  
-  
-  
-  
-  
-  .kanbanBoard {
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-    overflow-x: auto;
-    padding-bottom: 20px;
+    font-size: 2rem;
   }
   
   .columnWrapper {
-    flex: 0 0 24%;
-    display: flex;
-    flex-direction: column;
-    max-height: 72vh;
-    background-color: #f8f9fa;
-    border-radius: 6px;
+    min-width: 260px;
   }
-  
-  /* Separate Header Section */
-  .columnHeader {
-    
-    height: 40px;
-    padding: 6px 0px;
-    text-align: center;
-    font-size: 12px;
-    font-weight: bold;
-    font-family: 'Poppins', sans-serif;
-    box-shadow: 2px 4px 10px rgba(.1, 0, 0, 0.15);
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
+}
+
+/* Animation */
+@keyframes cardEntrance {
+  from { 
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  .column {
-    flex: 1;
-    min-height: 0;
-    padding: 10px;
-    overflow-y: auto;
-    background-color: #fff;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    box-shadow: 1px 1px 4px rgba(0.1, 0.1, 0.1, 0.1);
+  to { 
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .column::-webkit-scrollbar {
-    width: 6px;
-  }
-  .column::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
-  }
-  
-  .column > * + * {
-    margin-top: 10px;
-  }
-  
-  
-  .toBeReviewedHeader {
-    background: linear-gradient(135deg, #ffe0b2, #ffcc80);
-    color: #804000;
-  }
-  .inProgressHeader {
-    background: linear-gradient(135deg, #fff3b0, #ffe680);
-    color: #7a6500;
-  }
-  .completedHeader {
-    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
-    color: #2e7d32;
-  }
-  .overdueHeader {
-    background: linear-gradient(115deg, #ffcdd2, #ef9a9a);
-    color: #b71c1c;
-  }
-  
-  /* Light background below headers */
-  .toBeReviewed,
-  .inProgress,
-  .completed,
-  .overdue {
-    background: #f8f9fa;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 1024px) {
-    .kanbanBoard {
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  
-    .columnWrapper {
-      width: 48%;
-      margin-bottom: 15px;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .kanbanBoard {
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-  
-    .columnWrapper {
-      width: 90%;
-    }
-  }
-  
+}
+
+.column > * {
+  animation: cardEntrance 0.5s ease forwards;
+}
+
+/* Staggered animation delays */
+.column > *:nth-child(1) { animation-delay: 0.1s; }
+.column > *:nth-child(2) { animation-delay: 0.2s; }
+.column > *:nth-child(3) { animation-delay: 0.3s; }
+.column > *:nth-child(4) { animation-delay: 0.4s; }

@@ -494,3 +494,63 @@
     width: 100%;
   }
 }
+.assignedStudents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.studentBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+}
+
+.studentAvatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarSmall {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #6366f1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+.mentorDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mentorAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatarSmall {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #6366f1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+}

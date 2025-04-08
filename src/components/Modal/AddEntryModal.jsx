@@ -15,7 +15,12 @@ const AddEntryModal = ({ title, placeholder, onClose, onSubmit }) => {
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h3>{title}</h3>
+        <div className={styles.header}>
+          <h3>{title}</h3>
+          <button onClick={onClose} className={styles.closeButton}>
+            &times;
+          </button>
+        </div>
         <form onSubmit={handleSubmit}>
           <textarea
             value={text}
@@ -25,8 +30,12 @@ const AddEntryModal = ({ title, placeholder, onClose, onSubmit }) => {
             className={styles.textarea}
           />
           <div className={styles.actions}>
-            <button type="submit" className={styles.submit}>Submit</button>
-            <button type="button" onClick={onClose} className={styles.cancel}>Cancel</button>
+            <button type="button" onClick={onClose} className={styles.cancel}>
+              Cancel
+            </button>
+            <button type="submit" className={styles.submit}>
+              Submit
+            </button>
           </div>
         </form>
       </div>

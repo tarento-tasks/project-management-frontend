@@ -20,8 +20,10 @@ const ProjectDetails = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [mentorName, setMentorName] = useState("Loading...");
+  const [mentorImage, setMentorImage] = useState(null);
   const [approvedStudents, setApprovedStudents] = useState([]);
   const [taskStudentsMap, setTaskStudentsMap] = useState({});
+  const [studentImages, setStudentImages] = useState({}); 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -72,9 +74,10 @@ const ProjectDetails = () => {
       setProject(projectData);
 
       if (projectData.mentorId) {
-        fetchMentorName(projectData.mentorId);
+        fetchMentorDetails(projectData.mentorId);
       } else {
         setMentorName("Not Assigned");
+        setMentorImage(null);
       }
     } catch (err) {
       console.error("Error fetching project:", err);
@@ -84,7 +87,7 @@ const ProjectDetails = () => {
     }
   };
 
-  const fetchMentorName = async (mentorId) => {
+  const fetchMentorDetails = async (mentorId) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${USERS_API}?userId=${mentorId}`, {
@@ -93,14 +96,18 @@ const ProjectDetails = () => {
         },
       });
   
-      if (response.data) {
-        setMentorName(response.data.name || "Unknown Mentor");
+      if (response.data?.response) {
+        const mentorData = response.data.response;
+        setMentorName(mentorData.name || "Unknown Mentor");
+        setMentorImage(mentorData.imageBase64 || null);
       } else {
         setMentorName("Unknown Mentor");
+        setMentorImage(null);
       }
     } catch (error) {
       console.error("Error fetching mentor details:", error);
       setMentorName("Unknown Mentor");
+      setMentorImage(null);
     }
   };
 
@@ -115,12 +122,33 @@ const ProjectDetails = () => {
   
       const students = response.data.response || [];
       setApprovedStudents(students);
+      
+      // Fetch profile pictures for all students
+      const images = {};
+      await Promise.all(
+        students.map(async (student) => {
+          try {
+            const userRes = await axios.get(`${USERS_API}?userId=${student.userId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (userRes.data?.response?.imageBase64) {
+              images[student.userId] = userRes.data.response.imageBase64;
+            }
+          } catch (err) {
+            console.error(`Error fetching image for student ${student.userId}:`, err);
+          }
+        })
+      );
+      setStudentImages(images);
     } catch (err) {
       console.error("Error fetching approved students:", err);
       setApprovedStudents([]);
     }
   };
-
+  
+  
   const fetchStudentsForTasks = async (tasks) => {
     const token = localStorage.getItem("token");
     const newMap = {};
@@ -135,8 +163,23 @@ const ProjectDetails = () => {
           if (res.data?.response) {
             const enriched = await Promise.all(
               res.data.response.map(async (s) => {
-                const name = await fetchStudentName(s.studentId);
-                return { ...s, name };
+                try {
+                  const userRes = await axios.get(`${USERS_API}?userId=${s.studentId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                  });
+                  return {
+                    ...s,
+                    name: userRes.data?.response?.name || s.studentId,
+                    image: userRes.data?.response?.imageBase64 || null
+                  };
+                } catch (err) {
+                  console.error(`Error fetching user ${s.studentId}:`, err);
+                  return {
+                    ...s,
+                    name: s.studentId,
+                    image: null
+                  };
+                }
               })
             );
             newMap[task.taskId] = enriched;
@@ -416,9 +459,27 @@ const ProjectDetails = () => {
               </span>
             </div>
             <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>Mentor:</span>
-              <span className={styles.infoValue}>{mentorName}</span>
-            </div>
+  <span className={styles.infoLabel}>Mentor:</span>
+  <span className={styles.infoValue}>
+    {mentorImage ? (
+      <div className={styles.mentorDisplay}>
+        <img 
+          src={`data:image/jpeg;base64,${mentorImage}`} 
+          alt={mentorName}
+          className={styles.mentorAvatar}
+        />
+        <span>{mentorName}</span>
+      </div>
+    ) : (
+      <div className={styles.mentorDisplay}>
+        <div className={styles.avatarSmall}>
+          {getInitials(mentorName)}
+        </div>
+        <span>{mentorName}</span>
+      </div>
+    )}
+  </span>
+</div>
           </div>
 
           <div className={styles.infoCard}>
@@ -486,18 +547,29 @@ const ProjectDetails = () => {
                       </span>
                     </td>
                     <td>
-                      {taskStudentsMap[task.taskId] && taskStudentsMap[task.taskId].length > 0 ? (
-                        <div className={styles.assignedStudents}>
-                          {taskStudentsMap[task.taskId].map((student, index) => (
-                            <span key={index} className={styles.studentBadge}>
-                              <FiUser /> {student.name || student.studentId}
-                            </span>
-                          ))}
-                        </div>
-                      ) : (
-                        <span>No students assigned</span>
-                      )}
-                    </td>
+  {taskStudentsMap[task.taskId] && taskStudentsMap[task.taskId].length > 0 ? (
+    <div className={styles.assignedStudents}>
+      {taskStudentsMap[task.taskId].map((student, index) => (
+        <div key={index} className={styles.studentBadge}>
+          {student.image ? (
+            <img 
+              src={`data:image/jpeg;base64,${student.image}`} 
+              alt={student.name}
+              className={styles.studentAvatar}
+            />
+          ) : (
+            <div className={styles.avatarSmall}>
+              {getInitials(student.name)}
+            </div>
+          )}
+          <span>{student.name}</span>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <span>No students assigned</span>
+  )}
+</td>
                     {(userRole === "admin" || userRole === "mentor") && (
                       <td>
                         <div className={styles.actionButtons}>
