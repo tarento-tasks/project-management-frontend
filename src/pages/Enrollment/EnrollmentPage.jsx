@@ -117,18 +117,28 @@ const EnrollmentPage = () => {
 
   const handleStatusUpdate = async (status) => {
     try {
-      const updatedEnrollment = await updateEnrollmentStatus(
-        selectedEnrollment.enrollmentId, 
-        status
-      );
-      
+      // Optimistic update - update UI immediately
       setEnrollments(prev => prev.map(e => 
-        e.enrollmentId === updatedEnrollment.enrollmentId ? updatedEnrollment : e
+        e.enrollmentId === selectedEnrollment.enrollmentId 
+          ? { ...e, status } 
+          : e
       ));
       
+      // Close modal before API call to prevent white flash
       setIsModalOpen(false);
+      
+      // Make API call
+      await updateEnrollmentStatus(selectedEnrollment.enrollmentId, status);
+      
       toast.success(`Enrollment ${status.toLowerCase()} successfully!`);
     } catch (err) {
+      // Revert on error
+      setEnrollments(prev => prev.map(e => 
+        e.enrollmentId === selectedEnrollment.enrollmentId 
+          ? { ...e, status: selectedEnrollment.status } 
+          : e
+      ));
+      
       console.error('Error updating status:', err);
       toast.error(`Failed to update status: ${err.message}`);
     }
@@ -138,11 +148,21 @@ const EnrollmentPage = () => {
     if (!window.confirm('Are you sure you want to delete this enrollment?')) return;
     
     try {
-      await deleteEnrollment(selectedEnrollment.enrollmentId);
-      setEnrollments(prev => prev.filter(e => e.enrollmentId !== selectedEnrollment.enrollmentId));
+      // Optimistic update
+      const deletedId = selectedEnrollment.enrollmentId;
+      setEnrollments(prev => prev.filter(e => e.enrollmentId !== deletedId));
+      
+      // Close modal before API call
       setIsModalOpen(false);
+      
+      // Make API call
+      await deleteEnrollment(deletedId);
+      
       toast.success('Enrollment deleted successfully!');
     } catch (err) {
+      // Revert on error
+      setEnrollments(prev => [...prev, selectedEnrollment]);
+      
       console.error('Error deleting enrollment:', err);
       toast.error(`Failed to delete enrollment: ${err.message}`);
     }
@@ -345,34 +365,43 @@ const EnrollmentPage = () => {
 <div className={styles.modalActions}>
   {auth.role === 'ADMIN' && selectedEnrollment.status === 'PENDING' && (
     <>
-      <button
-        onClick={() => handleStatusUpdate('APPROVED')}
-        className={`${styles.actionButton} ${styles.approve}`}
-        title="Approve"
-      >
-        <FaCheckCircle className={styles.icon} />
-        Approve
-      </button>
+     <button
+                    onClick={async () => {
+                      await handleStatusUpdate('APPROVED');
+                      setSelectedEnrollment(null); // Clear selected enrollment after action
+                    }}
+                    className={`${styles.actionButton} ${styles.approve}`}
+                    title="Approve"
+                  >
+                    <FaCheckCircle className={styles.icon} />
+                    Approve
+                  </button>
 
-      <button
-        onClick={() => handleStatusUpdate('REJECTED')}
-        className={`${styles.actionButton} ${styles.reject}`}
-        title="Reject"
-      >
-        <FaTimesCircle className={styles.icon} />
-        Reject
-      </button>
+                  <button
+                    onClick={async () => {
+                      await handleStatusUpdate('REJECTED');
+                      setSelectedEnrollment(null); // Clear selected enrollment after action
+                    }}
+                    className={`${styles.actionButton} ${styles.reject}`}
+                    title="Reject"
+                  >
+                    <FaTimesCircle className={styles.icon} />
+                    Reject
+                  </button>
     </>
   )}
 
-  <button
-    onClick={handleDelete}
-    className={`${styles.actionButton} ${styles.delete}`}
-    title="Delete Enrollment"
-  >
-    <FaTrashAlt className={styles.icon} />
-    Delete
-  </button>
+<button
+                onClick={async () => {
+                  await handleDelete();
+                  setSelectedEnrollment(null); // Clear selected enrollment after action
+                }}
+                className={`${styles.actionButton} ${styles.delete}`}
+                title="Delete Enrollment"
+              >
+                <FaTrashAlt className={styles.icon} />
+                Delete
+              </button>
 </div>
     </div>
   ) : null}

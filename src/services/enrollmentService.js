@@ -26,6 +26,68 @@ export const getEnrollments = async (enrollmentId = null, studentId = null) => {
   }
 };
 
+// Fetch all skills
+export const getAllSkills = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
+
+    const response = await axios.get(`${API_BASE_URL}/api/skills`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    return response.data.response || [];
+  } catch (error) {
+    console.error('Error fetching skills:', error);
+    throw error;
+  }
+};
+
+// Fetch skills for a specific user
+export const getUserSkills = async (userId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
+
+    const response = await axios.get(`${API_BASE_URL}/api/skill-mapping`, {
+      params: { userId },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    return response.data.response || [];
+  } catch (error) {
+    console.error('Error fetching user skills:', error);
+    throw error;
+  }
+};
+export const getStudentSkills = async (userId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No authentication token found');
+
+    const response = await axios.get(`${API_BASE_URL}/api/skill-mapping`, {
+      params: { userId },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    return response.data.response || [];
+  } catch (error) {
+    console.error('Error fetching student skills:', error);
+    throw error;
+  }
+};
+
+
+
 export const getRecommendedStudents = async (projectId) => {
   try {
     const token = localStorage.getItem('token');

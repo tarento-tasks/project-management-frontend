@@ -7,12 +7,10 @@
 .sidebarContainer {
   position: fixed;
   left: 0;
-  right: 0;
   top: 0;
-  bottom: 0;
-  z-index: 1000; /* Higher than header */
+  bottom: 0;/* Higher than header */
   height: 100vh;
-  width: 14rem;
+  z-index: 1000;
   transition: width 0.3s ease;
 }
 .navContainer {
@@ -30,16 +28,62 @@
   flex-direction: column;
   border-right: 1px solid #e9ecef;
   gap: 0.5rem;
+  z-index: 1;
 }
 
 .sidebar.collapsed {
   width: 4.5rem;
+  
 }
 
 /* Rest of your sidebar styles remain the same */
 
 .sidebar.expanded {
-  width: 14rem; /* Wider to accommodate text */
+  width: 14rem;
+   
+}
+
+/* Mobile styles */
+.mobileToggle {
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1040;
+  padding: 0.25rem 0.5rem;
+  display: none;
+}
+
+.mobileSidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1050;
+  transition: transform 0.3s ease;
+}
+
+.sidebarOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+@media (max-width: 767.98px) {
+  .mobileToggle {
+    display: block;
+  }
+  
+  .sidebarContainer.collapsed .sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .sidebarContainer.expanded .sidebar {
+    transform: translateX(0);
+  }
 }
 
 .logoSection {
@@ -200,5 +244,3 @@
 .navLink i {
   margin-right: 0; /* Let the gap property handle spacing */
 }
-
-

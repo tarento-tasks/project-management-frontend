@@ -1,0 +1,163 @@
+.allprojectscontainer {
+    margin-left: 40px;
+    width: calc(100% - 70px);
+    padding: 0 20px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+  
+  .allprojectstitle {
+    text-align: left;
+    font-size: 34px;
+    font-weight: bold;
+    margin: 20px 0;
+    color: #2a3c50;
+  }
+
+  .headerRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; 
+    margin-bottom: 20px;
+  }
+  
+
+  .searchWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .searchIcon {
+    position: absolute;
+    left: 10px;
+    font-size: 16px;
+    color: #888;
+  }
+  
+  .searchInput {
+    padding: 6px 10px 6px 30px;
+    font-size: 14px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+  }
+  
+  .searchInput:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+  }
+  
+  
+  
+  
+  
+  .kanbanBoard {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 20px;
+  }
+  
+  .columnWrapper {
+    flex: 0 0 24%;
+    display: flex;
+    flex-direction: column;
+    max-height: 72vh;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+  }
+  
+  /* Separate Header Section */
+  .columnHeader {
+    
+    height: 40px;
+    padding: 6px 0px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 2px 4px 10px rgba(.1, 0, 0, 0.15);
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+  
+  .column {
+    flex: 1;
+    min-height: 0;
+    padding: 10px;
+    overflow-y: auto;
+    background-color: #fff;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    box-shadow: 1px 1px 4px rgba(0.1, 0.1, 0.1, 0.1);
+  }
+  
+  .column::-webkit-scrollbar {
+    width: 6px;
+  }
+  .column::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+  }
+  
+  .column > * + * {
+    margin-top: 10px;
+  }
+  
+  
+  .toBeReviewedHeader {
+    background: linear-gradient(135deg, #ffe0b2, #ffcc80);
+    color: #804000;
+  }
+  .inProgressHeader {
+    background: linear-gradient(135deg, #fff3b0, #ffe680);
+    color: #7a6500;
+  }
+  .completedHeader {
+    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
+    color: #2e7d32;
+  }
+  .overdueHeader {
+    background: linear-gradient(115deg, #ffcdd2, #ef9a9a);
+    color: #b71c1c;
+  }
+  
+  /* Light background below headers */
+  .toBeReviewed,
+  .inProgress,
+  .completed,
+  .overdue {
+    background: #f8f9fa;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .kanbanBoard {
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  
+    .columnWrapper {
+      width: 48%;
+      margin-bottom: 15px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .kanbanBoard {
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+  
+    .columnWrapper {
+      width: 90%;
+    }
+  }
+  

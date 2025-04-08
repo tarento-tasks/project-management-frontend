@@ -12,23 +12,42 @@ import {
 } from "../../services/taskService";
 
 const NewTask = () => {
-  const [projects, setProjects] = useState([]);
+  const [allProjects, setAllProjects] = useState([]);
+  const [mentorProjects, setMentorProjects] = useState([]);
   const [students, setStudents] = useState([]);
   const [mentorId, setMentorId] = useState(null);
   const [selectedProject, setSelectedProject] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const user = await getUserProfile();
         console.log("Logged-in user:", user);
         setMentorId(user.userId);
 
-        const mentorProjects = await getMentorProjects(user.userId);
-        console.log("Mentor projects:", mentorProjects);
-        setProjects(mentorProjects);
+        // Fetch all projects first
+        const allProjects = await getMentorProjects();
+        console.log("All projects:", allProjects);
+        setAllProjects(allProjects);
+
+        // Filter projects where mentorId matches logged-in mentor's userId
+        const filteredProjects = allProjects.filter(project => project.mentorId === user.userId);
+        console.log("Filtered Mentor Projects:", filteredProjects);
+        setMentorProjects(filteredProjects);
+
       } catch (error) {
-        console.error("Error fetching mentor projects:", error);
+        console.error("Error fetching data:", error);
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to load projects data",
+          icon: "error",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#517ea6"
+        });
+      } finally {
+        setLoading(false);
       }
     };
     fetchData();
@@ -37,12 +56,27 @@ const NewTask = () => {
   const handleProjectChange = async (projectId) => {
     console.log("Project selected:", projectId);
     setSelectedProject(projectId);
+    
     try {
       const enrolledStudents = await getProjectStudents(projectId);
-      console.log("Enrolled students:", enrolledStudents);
-      setStudents(enrolledStudents);
+      console.log("Approved students for project:", enrolledStudents);
+      
+      // Filter only approved students
+      const approvedStudents = enrolledStudents.filter(student => 
+        student.status === 'APPROVED' // Assuming status field exists
+      );
+      
+      setStudents(approvedStudents);
     } catch (error) {
       console.error("Error fetching students:", error);
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to load students for this project",
+        icon: "error",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#517ea6"
+      });
+      setStudents([]);
     }
   };
 
@@ -51,7 +85,10 @@ const NewTask = () => {
       name: "projectId",
       label: "Project Title",
       type: "select",
-      options: projects.map((p) => ({ value: p.projectId, label: p.title })),
+      options: mentorProjects.map((p) => ({ 
+        value: p.projectId, 
+        label: p.title 
+      })),
       required: true,
       validation: { message: "Please select a project title" },
       onChange: (e) => handleProjectChange(e.target.value)
@@ -89,7 +126,8 @@ const NewTask = () => {
         label: s.name
       })),
       required: true,
-      validation: { message: "Please select a student" }
+      validation: { message: "Please select a student" },
+      disabled: students.length === 0
     },
     {
       name: "dueDate",
@@ -156,6 +194,17 @@ const NewTask = () => {
       });
     }
   };
+
+  if (loading) {
+    return (
+      <NewProjectLayout>
+        <div className={styles.pageContainer}>
+          <h1>Create New Task</h1>
+          <p>Loading projects data...</p>
+        </div>
+      </NewProjectLayout>
+    );
+  }
 
   return (
     <NewProjectLayout>
