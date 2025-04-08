@@ -6,13 +6,13 @@ import ExploreService from '../../services/explore';
 
 const MySwal = withReactContent(Swal);
 
-const ProjectCard = ({ project, isRecommended, isEnrolled, onEnrollSuccess, studentId }) => {
+const ProjectCard = ({ project, skills, isRecommended, isEnrolled, onEnrollSuccess, studentId }) => {
   const today = new Date();
   const lastDate = new Date(project.lastDate);
   const isOpen = lastDate >= today && project.openStatus;
 
   const handleEnrollClick = async () => {
-    if (!isOpen) return;
+    if (!isOpen || !studentId) return;
 
     const result = await MySwal.fire({
       title: 'Confirm Enrollment',
@@ -28,9 +28,8 @@ const ProjectCard = ({ project, isRecommended, isEnrolled, onEnrollSuccess, stud
     if (result.isConfirmed) {
       try {
         await ExploreService.enrollInProject(project.projectId, studentId);
-onEnrollSuccess(project.projectId); // ✅ Updates parent state
-MySwal.fire('Enrolled!', 'Enrollment request sent successfully.', 'success');
-
+        onEnrollSuccess(project.projectId);
+        MySwal.fire('Enrolled!', 'Enrollment request sent successfully.', 'success');
       } catch (error) {
         MySwal.fire('Error', error.response?.data?.message || 'Failed to enroll.', 'error');
       }
@@ -56,7 +55,17 @@ MySwal.fire('Enrolled!', 'Enrollment request sent successfully.', 'success');
           </div>
           <div className={styles.detailItem}>
             <span className={styles.detailLabel}>Skills:</span>
-            <span>{project.skillsRequired}</span>
+            <div className={styles.skillTags}>
+              {skills && skills.length > 0 ? (
+                skills.map(skill => (
+                  <span key={skill.skillId} className={styles.skillTag}>
+                    {skill.skillName}
+                  </span>
+                ))
+              ) : (
+                <span>{project.skillsRequired || 'None specified'}</span>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -66,22 +75,21 @@ MySwal.fire('Enrolled!', 'Enrollment request sent successfully.', 'success');
           <span>Enroll by: {new Date(project.lastDate).toLocaleDateString()}</span>
         </div>
         {isEnrolled ? (
-  <button className={styles.enrolledButton} disabled>
-    Enrolled
-  </button>
-) : isOpen ? (
-  <button
-    className={styles.enrollButton}
-    onClick={handleEnrollClick}
-  >
-    Enroll
-  </button>
-) : (
-  <button className={`${styles.enrollButton} ${styles.disabled}`} disabled>
-    Closed
-  </button>
-)}
-
+          <button className={styles.enrolledButton} disabled>
+            Enrolled
+          </button>
+        ) : isOpen ? (
+          <button
+            className={styles.enrollButton}
+            onClick={handleEnrollClick}
+          >
+            Enroll
+          </button>
+        ) : (
+          <button className={`${styles.enrollButton} ${styles.disabled}`} disabled>
+            Closed
+          </button>
+        )}
       </div>
     </div>
   );
