@@ -9,6 +9,8 @@ import UserManagementPage from '../pages/UserManagement/UserManagementPage';
 import CommentsFeedbackPage from "../pages/CommentsFeedbackPage";
 import AllProjects from "../pages/AllProjects/AllProjects";
 import ProjectDetails from "../pages/ProjectDetails/ProjectDetails";
+import StudentProjects from '../pages/StudentProjects/StudentProjects';
+import EnrollmentPage from '../pages/Enrollment/EnrollmentPage';
 
 
 
@@ -29,9 +31,11 @@ const AppRoutes = () => {
       {/* Public Routes */}
       <Route path="/" element={<LoginPage />} />
 
-      <Route path="/tasks/:taskId/comments-feedback" element={<CommentsFeedbackPage />} />
-      <Route path="/all-projects" element={<AllProjects />} />
-      <Route path="/projects/:projectId" element={<ProjectDetails />} />
+      <Route path="/tasks/:taskId/comments-feedback" element={ <ProtectedRoute><CommentsFeedbackPage /> </ProtectedRoute>} />
+      <Route path="/all-projects" element={ <ProtectedRoute><AllProjects /> </ProtectedRoute>} />
+      <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectDetails /> </ProtectedRoute>} />
+      <Route path="/enrollments" element={<ProtectedRoute> <EnrollmentPage /> </ProtectedRoute>} />
+      <Route path="/student/projects" element={<ProtectedRoute> <StudentProjects /> </ProtectedRoute>} />
 
       
       {/* Single Protected Dashboard Route */}

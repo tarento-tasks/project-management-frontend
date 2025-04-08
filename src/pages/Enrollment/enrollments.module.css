@@ -1,0 +1,319 @@
+.container {
+    padding: 2rem;
+    min-height: 80vh;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+    color: #2a3c50;
+  }
+  
+  .filterContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  
+  .searchBox {
+    position: relative;
+    flex-grow: 1;
+  }
+  
+  .searchBox input {
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    width: 100%;
+    font-size: 1rem;
+  }
+  
+  .searchIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+  }
+  
+  .statusFilter {
+    position: relative;
+  }
+  
+  .statusFilter select {
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    appearance: none;
+  }
+  
+  .filterIcon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+  }
+  
+  .tableContainer {
+    width: 100%;
+    overflow-x: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .enrollmentTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .enrollmentTable th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    background-color: #3e648b;
+    color: white;
+    position: sticky;
+    top: 0;
+  }
+  
+  .enrollmentTable th svg {
+    margin-right: 8px;
+  }
+  
+  .enrollmentTable td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .tableRow {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .tableRow:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .tableRow[data-status="approved"] {
+    background-color: #e8f5e9;
+  }
+  
+  .tableRow[data-status="rejected"] {
+    background-color: #ffebee;
+  }
+  
+  .tableRow[data-status="pending"] {
+    background-color: #fff3cd;
+  }
+  
+  .tableRow.recommended {
+    background-color: #fffacd;
+  }
+  
+  .status {
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-weight: 500;
+    text-transform: capitalize;
+    font-size: 0.85rem;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+  }
+  
+  .status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+  }
+  
+  .status.approved {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  
+  .status.rejected {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+  
+  .recommendedBadge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 0.2rem 0.5rem;
+    background-color: #ffc107;
+    color: #212529;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+  }
+  
+  .viewButton {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #517ea6;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .viewButton:hover {
+    background-color: #3e648b;
+  }
+  
+  .emptyMessage {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+    font-style: italic;
+  }
+  
+  .modalTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .modalTitleIcon {
+    display: flex;
+    align-items: center;
+  }
+  
+  .modalContent {
+    padding: 1rem 0;
+  }
+  
+  .detailsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  
+  .detailSection {
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+  }
+  
+  .sectionTitle {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2a3c50;
+  }
+  
+  .detailItem {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    margin-bottom: 0.8rem;
+  }
+  
+  .detailLabel {
+    font-weight: 600;
+    color: #2a3c50;
+  }
+  
+  .modalActions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+  }
+  
+  .iconButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+  
+  .iconButton:hover {
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    .filterContainer {
+      flex-direction: column;
+    }
+    
+    .detailsGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .detailItem {
+      grid-template-columns: 1fr;
+      gap: 0.3rem;
+    }
+    
+    .modalActions {
+      justify-content: center;
+    }
+    
+    .enrollmentTable th, 
+    .enrollmentTable td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+  .modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  
+  .actionButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    color: white;
+  }
+  
+  .actionButton:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+  
+  .approve {
+    background-color: #28a745; /* green */
+  }
+  
+  .reject {
+    background-color: #dc3545; /* red */
+  }
+  
+  .delete {
+    background-color: #ffc107; /* yellow */
+    color: #212529;
+  }
+  
+  .icon {
+    font-size: 1.1rem;
+  }

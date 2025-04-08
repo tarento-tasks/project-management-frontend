@@ -97,8 +97,9 @@ const NewProject = () => {
         repo: formData.repo,
         skills: formData.skills,
         mentorId: selectedMentor.userId,
-        lastEnrollDate: formData.lastDate,
-        dueDate: formData.dueDate
+        lastDate: formData.lastDate,
+        dueDate: formData.dueDate,
+        openStatus: true
       };
 
       console.log("📌 Sending project data to API:", projectData);

@@ -16,13 +16,13 @@ const sidebarItems = {
       icon: <i className="bi bi-folder"></i>,
       subItems: [
         { name: "All Projects", path: "/all-projects" },
-        { name: "Tasks", path: "/admin/projects/tasks" },
+        
         { name: "New Project", path: "/newprojects" }
       ]
     },
     { 
       name: "Requests", 
-      path: "/admin/requests", 
+      path: "/enrollments", 
       icon: <i className="bi bi-list-check"></i> 
     },
     { 
@@ -33,16 +33,7 @@ const sidebarItems = {
     },
     
    
-    { 
-      name: "Review", 
-      path: "/admin/review", 
-      icon: <i className="bi bi-clipboard-check"></i> 
-    },
-    { 
-      name: "Comments", 
-      path: "/admin/comments", 
-      icon: <i className="bi bi-chat-left-text"></i> 
-    }
+    
   ],
   MENTOR: [
     { 
@@ -53,28 +44,11 @@ const sidebarItems = {
     { 
       name: "Projects", 
       icon: <i className="bi bi-folder"></i>,
-      subItems: [
-        { name: "Tasks", path: "/all-projects" },
-        { name: "New Task", path: "/newtask", icon: <i className="bi bi-plus-circle"></i> },
+      path: "/all-projects" 
         
-
-      ]
+      
     },
-    { 
-      name: "Students", 
-      path: "/mentor/students",
-      icon: <i className="bi bi-mortarboard"></i>
-    },
-    { 
-      name: "Review", 
-      path: "/mentor/review", 
-      icon: <i className="bi bi-clipboard-check"></i> 
-    },
-    { 
-      name: "Comments", 
-      path: "/mentor/comments", 
-      icon: <i className="bi bi-chat-left-text"></i> 
-    }
+    
   ],
   STUDENT: [
     { 
@@ -85,15 +59,10 @@ const sidebarItems = {
     { 
       name: "Projects", 
       icon: <i className="bi bi-folder"></i>,
-      subItems: [
-        { name: "Tasks", path: "/all-projects" }
-      ]
+      path: "/all-projects" 
+      
     },
-    { 
-      name: "Feedback", 
-      path: "/student/feedbacks",
-      icon: <i className="bi bi-chat-square-text"></i>
-    },
+    
     { 
       name: "Explore", 
       path: "/student/projects", 
@@ -101,7 +70,7 @@ const sidebarItems = {
     },
     { 
       name: "Enrollment Status", 
-      path: "/student/enrollments", 
+      path: "/enrollments", 
       icon: <i className="bi bi-clipboard-check"></i> 
     }
   ]
@@ -110,27 +79,9 @@ const sidebarItems = {
 const Sidebar = ({ role = "ADMIN" }) => {
   const [expanded, setExpanded] = useState(false);
   const [openSubmenus, setOpenSubmenus] = useState({});
-  const [isMobile, setIsMobile] = useState(false);
 
-  // Check if mobile view on mount and resize
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); // Bootstrap's md breakpoint
-      if (window.innerWidth >= 768) {
-        setExpanded(true); // Always show expanded on desktop
-      } else {
-        setExpanded(false); // Collapse by default on mobile
-      }
-    };
-
-    handleResize(); // Initial check
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const toggleSidebar = () => {
-    setExpanded(!expanded);
-  };
+  // Normalize role to uppercase to match our keys
+  const normalizedRole = role?.toUpperCase() || "ADMIN";
 
   const toggleSubmenu = (name) => {
     setOpenSubmenus(prev => ({ ...prev, [name]: !prev[name] }));
@@ -147,12 +98,6 @@ const Sidebar = ({ role = "ADMIN" }) => {
             >
               {item.icon}
               {expanded && <span className={styles.sidebarText}>{item.name}</span>}
-              {expanded && (
-                <i 
-                  className={`bi bi-chevron-${openSubmenus[item.name] ? 'down' : 'right'}`} 
-                  style={{ marginLeft: 'auto' }}
-                />
-              )}
             </div>
             
             {openSubmenus[item.name] && expanded && (
@@ -165,7 +110,6 @@ const Sidebar = ({ role = "ADMIN" }) => {
           <Link
             to={item.path}
             className={`${styles.navLink} ${level > 0 ? styles.subItem : ''}`}
-            onClick={() => isMobile && setExpanded(false)} // Close sidebar on mobile when clicking a link
           >
             {item.icon}
             {expanded && <span className={styles.sidebarText}>{item.name}</span>}
@@ -175,45 +119,33 @@ const Sidebar = ({ role = "ADMIN" }) => {
     ));
   };
 
-  const normalizedRole = role?.toUpperCase() || "ADMIN";
+  // Get items for current role or empty array if role not found
   const currentItems = sidebarItems[normalizedRole] || [];
 
   return (
-    <>
-      {/* Mobile Hamburger Button (only shows on small screens) */}
-      {isMobile && (
+    <div className={styles.sidebarContainer}>
+      <div className={`${styles.sidebar} ${expanded ? styles.expanded : styles.collapsed}`}>
+        <div className={styles.logoSection}>
+          <img 
+            src={logo} 
+            alt="Logo" 
+            className={expanded ? styles.fullLogo : styles.miniLogo} 
+          />
+        </div>
+        
         <button 
-          className={`${styles.mobileToggle} btn btn-dark`}
-          onClick={toggleSidebar}
+          className={styles.toggleBtn} 
+          onClick={() => setExpanded(!expanded)}
+          aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
         >
           <i className="bi bi-list"></i>
         </button>
-      )}
 
-      <div className={`${styles.sidebarContainer} ${expanded ? styles.expanded : styles.collapsed}`}>
-        <div className={`${styles.sidebar} ${isMobile ? styles.mobileSidebar : ''}`}>
-          <div className={styles.logoSection}>
-            <img 
-              src={logo} 
-              alt="Logo" 
-              className={expanded ? styles.fullLogo : styles.miniLogo} 
-            />
-          </div>
-          
-          <div className={styles.navContainer}>
-            {renderSubItems(currentItems)}
-          </div>
+        <div className={styles.navContainer}>
+          {renderSubItems(currentItems)}
         </div>
-
-        {/* Overlay for mobile when sidebar is open */}
-        {isMobile && expanded && (
-          <div 
-            className={styles.sidebarOverlay}
-            onClick={() => setExpanded(false)}
-          />
-        )}
       </div>
-    </>
+    </div>
   );
 };
 
