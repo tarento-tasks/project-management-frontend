@@ -68,6 +68,21 @@ const API = {
       throw error;
     }
   },
+  mapSkillToProject: async (mappingData) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(`${API_BASE_URL}/project-skills`, mappingData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error mapping skill to project:", error.response?.data || error.message);
+      throw error;
+    }
+  },
 
   getProjectEnrollments: async () => {
     try {
