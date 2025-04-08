@@ -176,8 +176,9 @@ try {
             >
               <option value="">All Skills</option>
               {allSkills.map(skill => (
-                <option key={skill.skillId} value={skill.name}>{skill.name}</option>
+                <option key={skill.skillId} value={skill.skillName}>{skill.skillName}</option>
               ))}
+
             </select>
           </div>
         </div>

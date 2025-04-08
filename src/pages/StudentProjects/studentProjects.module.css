@@ -52,18 +52,23 @@
 
 .searchFilterContainer {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* Changed from wrap to nowrap */
   gap: 1rem;
   margin-bottom: 2rem;
   align-items: center;
   justify-content: space-between;
+  flex-direction: row;
 }
 
-.searchBox {
-  position: relative;
-  flex-grow: 1;
-  max-width: 400px;
+
+
+.filterGroup {
+  display: flex;
+  flex: 1;
+  gap: 1rem;
+  justify-content: flex-end;
 }
+
 
 .searchInput {
   width: 100%;
@@ -90,11 +95,7 @@
   font-size: 1.2rem;
 }
 
-.filterGroup {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
+
 
 .filterSelect {
   padding: 0.75rem 1rem;
@@ -179,5 +180,17 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .searchFilterContainer {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .searchBox, .filterGroup {
+    width: 100%;
   }
 }

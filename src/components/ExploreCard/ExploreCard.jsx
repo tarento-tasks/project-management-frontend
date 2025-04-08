@@ -57,11 +57,10 @@ const ProjectCard = ({ project, skills, isRecommended, isEnrolled, onEnrollSucce
             <span className={styles.detailLabel}>Skills:</span>
             <div className={styles.skillTags}>
               {skills && skills.length > 0 ? (
-                skills.map(skill => (
-                  <span key={skill.skillId} className={styles.skillTag}>
-                    {skill.skillName}
-                  </span>
-                ))
+                <span className={styles.skillTag}>
+                {skills.map(skill => skill.skillName).join(', ')}
+              </span>
+              
               ) : (
                 <span>{project.skillsRequired || 'None specified'}</span>
               )}
