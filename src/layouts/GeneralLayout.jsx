@@ -8,7 +8,9 @@ import styles from "./generalLayout.module.css";
 const GeneralLayout = ({ children }) => {
   // Get the current auth state including role
   const auth = useRecoilValue(authState);
-  const role = auth.role || 'ADMIN'; // Default fallback
+
+  
+  const role = auth.role  
 
   return (
     <div className={styles.dashboardContainer}>

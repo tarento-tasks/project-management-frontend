@@ -1,44 +1,54 @@
-
 .container {
   padding: 2rem;
   margin-bottom: -500px;
+  background: linear-gradient(135deg, #f7f9fc, #e3ecf4);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(42, 60, 80, 0.1);
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 .title {
   color: #2a3c50;
+  font-size: 2rem;
+  font-weight: bold;
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
   color: #517ea6;
   margin-bottom: 2rem;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .projectsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 3fr));
   gap: 2rem;
+  animation: fadeIn 0.4s ease-in;
 }
 
-.loading, .error, .noProjects {
+.loading,
+.error,
+.noProjects {
   text-align: center;
   padding: 2rem;
   font-size: 1.2rem;
   color: #2a3c50;
+  border-radius: 8px;
 }
 
 .error {
   color: #d32f2f;
+  background-color: #ffe6e6;
+  box-shadow: 0 0 6px rgba(211, 47, 47, 0.1);
 }
 
 .noProjects {
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  margin-top: 1rem;
+  background-color: #f0f4f8;
+  color: #607d8b;
+  border: 2px dashed #cfd8dc;
 }
-
-
 
 .searchFilterContainer {
   display: flex;
@@ -46,6 +56,7 @@
   gap: 1rem;
   margin-bottom: 2rem;
   align-items: center;
+  justify-content: space-between;
 }
 
 .searchBox {
@@ -57,16 +68,17 @@
 .searchInput {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   font-size: 1rem;
   transition: all 0.3s ease;
+  background-color: #fff;
 }
 
 .searchInput:focus {
   outline: none;
   border-color: #517ea6;
-  box-shadow: 0 0 0 2px rgba(81, 126, 166, 0.2);
+  box-shadow: 0 0 8px rgba(81, 126, 166, 0.2);
 }
 
 .searchIcon {
@@ -75,6 +87,7 @@
   top: 50%;
   transform: translateY(-50%);
   color: #517ea6;
+  font-size: 1.2rem;
 }
 
 .filterGroup {
@@ -85,28 +98,24 @@
 
 .filterSelect {
   padding: 0.75rem 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
   font-size: 1rem;
-  background-color: white;
+  background-color: #ffffff;
   color: #2a3c50;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
+.filterSelect:hover,
 .filterSelect:focus {
   outline: none;
   border-color: #517ea6;
-  box-shadow: 0 0 0 2px rgba(81, 126, 166, 0.2);
+  box-shadow: 0 0 6px rgba(81, 126, 166, 0.3);
 }
 
-.noProjects {
-  text-align: center;
-  padding: 2rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  color: #2a3c50;
-  margin-top: 1rem;
+.projectWrapper {
+  position: relative;
 }
 
 .modalContent {
@@ -122,10 +131,16 @@
 
 .cancelButton {
   padding: 0.5rem 1rem;
-  background-color: #f0f0f0;
+  background-color: #eeeeee;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.cancelButton:hover {
+  background-color: #d6d6d6;
 }
 
 .confirmButton {
@@ -133,47 +148,14 @@
   background-color: #517ea6;
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
 }
 
 .confirmButton:hover {
   background-color: #3e648b;
-}
-
-Copy
-.projectWrapper {
-position: relative;
-}
-
-.searchBox {
-display: flex;
-align-items: center;
-margin-right: 15px;
-}
-
-.searchInput {
-padding: 8px 12px;
-border: 1px solid #ddd;
-border-radius: 4px;
-width: 250px;
-}
-
-.searchIcon {
-margin-left: -30px;
-color: #666;
-}
-
-.filterGroup {
-display: flex;
-gap: 10px;
-}
-
-.filterSelect {
-padding: 8px;
-border: 1px solid #ddd;
-border-radius: 4px;
-background-color: white;
 }
 
 .successMessage {
@@ -182,14 +164,20 @@ background-color: white;
   right: 20px;
   background-color: #4caf50;
   color: white;
-  padding: 1rem;
-  border-radius: 4px;
+  padding: 1rem 1.5rem;
+  border-radius: 6px;
   z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.3s ease-out;
 }
 
-
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

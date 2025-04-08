@@ -282,6 +282,7 @@ const Dashboard = () => {
     }
   }, [auth.isAuthenticated, navigate]);
 
+  
   if (loading) {
     return (
       <GeneralLayout role={auth.role}>

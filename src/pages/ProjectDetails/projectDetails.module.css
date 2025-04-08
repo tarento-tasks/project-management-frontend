@@ -1,56 +1,105 @@
 .container {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 12px;
-    max-width: 800px;
+    padding: 2rem;
+    max-width: 1000px;
     margin: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    font-family: "Segoe UI", sans-serif;
   }
   
-  .title {
-    font-size: 28px;
+  .heading {
+    font-size: 2rem;
     font-weight: bold;
-    margin-bottom: 20px;
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
   }
   
-  .infoGroup {
-    margin-bottom: 16px;
+  .loading,
+  .error {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #888;
   }
   
-  .label {
-    font-weight: 600;
-    color: #333;
+  .infoGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: space-between;
+    margin-bottom: 2rem;
   }
   
-  .value {
-    margin: 4px 0 0 0;
-    color: #555;
+  .infoGrid > div {
+    flex: 1 1 45%;
   }
   
-  .link {
-    color: #0077cc;
-    text-decoration: none;
-  }
-  
-  .link:hover {
-    text-decoration: underline;
-  }
-  
-  .studentList {
-    list-style-type: disc;
-    padding-left: 20px;
+  .infoGrid p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
     color: #444;
   }
   
-  .studentItem {
-    margin-bottom: 4px;
+  .infoGrid a {
+    color: #007bff;
+    text-decoration: none;
   }
   
-  .loading {
-    text-align: center;
-    font-size: 18px;
+  .infoGrid a:hover {
+    text-decoration: underline;
   }
   
-  .error {
-    color: red;
-    text-align: center;
+  .inlineList {
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0.5rem;
+  }
+  
+  .inlineList li {
+    background-color: #f4f7fb;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .sectionTitle {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #34495e;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 0.3rem;
+  }
+  
+  .taskTable {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fdfdfd;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+  
+  .taskTable th,
+  .taskTable td {
+    border: 1px solid #e0e0e0;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  
+  .taskTable th {
+    background-color: #f0f3f5;  
+    color: #2c3e50;
+    font-weight: 600;
+  }
+  
+  .taskTable tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+  
+  .taskTable tr:hover {
+    background-color: #f1f1f1;
   }

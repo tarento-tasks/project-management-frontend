@@ -1,3 +1,4 @@
+// src/pages/LoginPage/LoginPage.js
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
@@ -14,29 +15,24 @@ const LoginPage = () => {
 
   const handleLogin = async ({ email, password }) => {
     try {
-      setLoginError(null); // clear previous error
+      setLoginError(null);
 
-      const response = await login({ email, password });
+      const { token, userId, role, name } = await login({ email, password });
 
-      if (response?.token) {
-        const { token, role, name, email: userEmail } = response;
-        const user = { name, email: userEmail, role };
+      // Save to localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role);
+      localStorage.setItem("user", JSON.stringify({ name, email, role }));
 
-        // Store in local storage
-        localStorage.setItem("token", token);
-        localStorage.setItem("role", role);
-        localStorage.setItem("user", JSON.stringify(user));
+      // Update Recoil state
+      setAuth({
+        isAuthenticated: true,
+        userId,
+        role,
+      });
 
-        // Update Recoil state
-        setAuth({
-          isAuthenticated: true,
-          token,
-          role,
-          user
-        });
-
-        navigate(`/${role.toLowerCase()}/dashboard`);
-      }
+      navigate(`/${role.toLowerCase()}/dashboard`);
     } catch (error) {
       console.error("Login failed:", error);
       setLoginError("Invalid credentials. Please try again.");
