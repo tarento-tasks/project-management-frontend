@@ -110,9 +110,27 @@ const sidebarItems = {
 const Sidebar = ({ role = "ADMIN" }) => {
   const [expanded, setExpanded] = useState(false);
   const [openSubmenus, setOpenSubmenus] = useState({});
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Normalize role to uppercase to match our keys
-  const normalizedRole = role?.toUpperCase() || "ADMIN";
+  // Check if mobile view on mount and resize
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768); // Bootstrap's md breakpoint
+      if (window.innerWidth >= 768) {
+        setExpanded(true); // Always show expanded on desktop
+      } else {
+        setExpanded(false); // Collapse by default on mobile
+      }
+    };
+
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setExpanded(!expanded);
+  };
 
   const toggleSubmenu = (name) => {
     setOpenSubmenus(prev => ({ ...prev, [name]: !prev[name] }));
@@ -129,6 +147,12 @@ const Sidebar = ({ role = "ADMIN" }) => {
             >
               {item.icon}
               {expanded && <span className={styles.sidebarText}>{item.name}</span>}
+              {expanded && (
+                <i 
+                  className={`bi bi-chevron-${openSubmenus[item.name] ? 'down' : 'right'}`} 
+                  style={{ marginLeft: 'auto' }}
+                />
+              )}
             </div>
             
             {openSubmenus[item.name] && expanded && (
@@ -141,6 +165,7 @@ const Sidebar = ({ role = "ADMIN" }) => {
           <Link
             to={item.path}
             className={`${styles.navLink} ${level > 0 ? styles.subItem : ''}`}
+            onClick={() => isMobile && setExpanded(false)} // Close sidebar on mobile when clicking a link
           >
             {item.icon}
             {expanded && <span className={styles.sidebarText}>{item.name}</span>}
@@ -150,33 +175,45 @@ const Sidebar = ({ role = "ADMIN" }) => {
     ));
   };
 
-  // Get items for current role or empty array if role not found
+  const normalizedRole = role?.toUpperCase() || "ADMIN";
   const currentItems = sidebarItems[normalizedRole] || [];
 
   return (
-    <div className={styles.sidebarContainer}>
-      <div className={`${styles.sidebar} ${expanded ? styles.expanded : styles.collapsed}`}>
-        <div className={styles.logoSection}>
-          <img 
-            src={logo} 
-            alt="Logo" 
-            className={expanded ? styles.fullLogo : styles.miniLogo} 
-          />
-        </div>
-        
+    <>
+      {/* Mobile Hamburger Button (only shows on small screens) */}
+      {isMobile && (
         <button 
-          className={styles.toggleBtn} 
-          onClick={() => setExpanded(!expanded)}
-          aria-label={expanded ? "Collapse sidebar" : "Expand sidebar"}
+          className={`${styles.mobileToggle} btn btn-dark`}
+          onClick={toggleSidebar}
         >
           <i className="bi bi-list"></i>
         </button>
+      )}
 
-        <div className={styles.navContainer}>
-          {renderSubItems(currentItems)}
+      <div className={`${styles.sidebarContainer} ${expanded ? styles.expanded : styles.collapsed}`}>
+        <div className={`${styles.sidebar} ${isMobile ? styles.mobileSidebar : ''}`}>
+          <div className={styles.logoSection}>
+            <img 
+              src={logo} 
+              alt="Logo" 
+              className={expanded ? styles.fullLogo : styles.miniLogo} 
+            />
+          </div>
+          
+          <div className={styles.navContainer}>
+            {renderSubItems(currentItems)}
+          </div>
         </div>
+
+        {/* Overlay for mobile when sidebar is open */}
+        {isMobile && expanded && (
+          <div 
+            className={styles.sidebarOverlay}
+            onClick={() => setExpanded(false)}
+          />
+        )}
       </div>
-    </div>
+    </>
   );
 };
 
