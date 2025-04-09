@@ -1,25 +1,73 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 import axios from "axios";
 import DashboardLayout from "../../layouts/GeneralLayout";
 import styles from "./projectDetails.module.css";
+import Swal from "sweetalert2";
+import Modal from "react-modal";
+import { format } from 'date-fns';
+import { FiEdit2, FiTrash2, FiPlus, FiX, FiCalendar, FiUser, FiInfo, FiLink, FiClock, FiCheck, FiAward } from "react-icons/fi";
+import { FiDownload, FiFile, FiImage } from "react-icons/fi";
+import { FiMessageSquare, FiThumbsUp } from "react-icons/fi";
+ 
+ 
+Modal.setAppElement('#root');
  
 const API_URL = "http://localhost:8080/api/projects";
 const USERS_API = "http://localhost:8080/api/users";
 const ENROLLMENT_API = "http://localhost:8080/api/project-enrollment/approved-students";
 const TASKS_API = "http://localhost:8080/api/tasks";
- 
+const STU_TASK_API = "http://localhost:8080/api/stu-task";
  
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [mentorName, setMentorName] = useState("Loading...");
   const [approvedStudents, setApprovedStudents] = useState([]);
+  const [taskStudentsMap, setTaskStudentsMap] = useState({});
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [mentorImage, setMentorImage] = useState(null);
+  const [studentImages, setStudentImages] = useState({});
+ 
+  
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // New - for task details
+  const [newTask, setNewTask] = useState({
+    taskName: '',
+    taskObjective: '',
+    dueDate: '',
+    assignedStudents: []
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentTaskId, setCurrentTaskId] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedAttachment, setSelectedAttachment] = useState(null);
+const [fileToUpload, setFileToUpload] = useState(null);
+const [isSubmittingTask, setIsSubmittingTask] = useState(false);
+ 
+ 
  
   useEffect(() => {
+    const fetchUserRole = () => {
+      const userData = localStorage.getItem("user");
+      if (userData) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          setUserRole(parsedUser.role?.toLowerCase());
+        } catch (e) {
+          console.error("Error parsing user data:", e);
+        }
+      }
+    };
+ 
+    fetchUserRole();
+    
     if (projectId) {
       fetchProjectDetails();
       fetchApprovedStudents(projectId);
@@ -39,9 +87,10 @@ const ProjectDetails = () => {
       setProject(projectData);
  
       if (projectData.mentorId) {
-        fetchMentorName(projectData.mentorId);
+        fetchMentorDetails(projectData.mentorId);
       } else {
         setMentorName("Not Assigned");
+        setMentorImage(null);
       }
     } catch (err) {
       console.error("Error fetching project:", err);
@@ -51,7 +100,7 @@ const ProjectDetails = () => {
     }
   };
  
-  const fetchMentorName = async (mentorId) => {
+  const fetchMentorDetails = async (mentorId) => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(`${USERS_API}?userId=${mentorId}`, {
@@ -60,21 +109,20 @@ const ProjectDetails = () => {
         },
       });
   
-      console.log("✅ Mentor API Full Response:", response);
-  
-      if (response.data) {
-        setMentorName(response.data.response?.name || "Unknown Mentor");
+      if (response.data?.response) {
+        const mentorData = response.data.response;
+        setMentorName(mentorData.name || "Unknown Mentor");
+        setMentorImage(mentorData.imageBase64 || null);
       } else {
         setMentorName("Unknown Mentor");
+        setMentorImage(null);
       }
     } catch (error) {
-      console.error("❌ Error fetching mentor details:", error);
+      console.error("Error fetching mentor details:", error);
       setMentorName("Unknown Mentor");
+      setMentorImage(null);
     }
   };
- 
- 
-  
  
   const fetchApprovedStudents = async (projectId) => {
     try {
@@ -85,18 +133,101 @@ const ProjectDetails = () => {
         },
       });
   
-      // Log response to understand its shape
-      console.log("✅ Approved Students Response:", response);
-  
-      // This assumes the backend wraps the list inside a 'response' field
       const students = response.data.response || [];
       setApprovedStudents(students);
+      
+      // Fetch profile pictures for all students
+      const images = {};
+      await Promise.all(
+        students.map(async (student) => {
+          try {
+            const userRes = await axios.get(`${USERS_API}?userId=${student.userId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (userRes.data?.response?.imageBase64) {
+              images[student.userId] = userRes.data.response.imageBase64;
+            }
+          } catch (err) {
+            console.error(`Error fetching image for student ${student.userId}:`, err);
+          }
+        })
+      );
+      setStudentImages(images);
     } catch (err) {
       console.error("Error fetching approved students:", err);
-      setApprovedStudents([]); // fallback to empty list on error
+      setApprovedStudents([]);
     }
   };
+  const fetchStudentsForTasks = async (tasks) => {
+    const token = localStorage.getItem("token");
+    const newMap = {};
   
+    await Promise.all(
+      tasks.map(async (task) => {
+        try {
+          const res = await axios.get(`${STU_TASK_API}?taskId=${task.taskId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+  
+          if (res.data?.response) {
+            const enriched = await Promise.all(
+              res.data.response.map(async (s) => {
+                try {
+                  const userRes = await axios.get(`${USERS_API}?userId=${s.studentId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                  });
+                  return {
+                    ...s,
+                    name: userRes.data?.response?.name || s.studentId,
+                    image: userRes.data?.response?.imageBase64 || null
+                  };
+                } catch (err) {
+                  console.error(`Error fetching user ${s.studentId}:`, err);
+                  return {
+                    ...s,
+                    name: s.studentId,
+                    image: null
+                  };
+                }
+              })
+            );
+            newMap[task.taskId] = enriched;
+          } else {
+            newMap[task.taskId] = [];
+          }
+        } catch (err) {
+          console.error(`Error fetching students for task ${task.taskId}:`, err);
+          newMap[task.taskId] = [];
+        }
+      })
+    );
+  
+    setTaskStudentsMap(newMap);
+  };
+ 
+ 
+  const fetchStudentName = async (studentId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${USERS_API}?user_id=${studentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+  
+      const users = res.data;
+      const matchedUser = Array.isArray(users)
+        ? users.find((user) => user.userId === studentId)
+        : null;
+  
+      return matchedUser?.name || studentId;
+    } catch (err) {
+      console.error(`Failed to fetch name for ${studentId}`, err);
+      return studentId;
+    }
+  };
  
   const fetchTasksForProject = async (projectId) => {
     try {
@@ -108,54 +239,401 @@ const ProjectDetails = () => {
       });
   
       if (response.data && response.data.response) {
-        setTasks(response.data.response);
+        const fetchedTasks = response.data.response;
+        setTasks(fetchedTasks);
+        fetchStudentsForTasks(fetchedTasks);
       }
     } catch (err) {
       console.error("Error fetching tasks:", err);
     }
   };
+ 
+  const openCreateTaskModal = () => {
+    setIsModalOpen(true);
+    setIsEditing(false);
+    setNewTask({
+      taskName: '',
+      taskObjective: '',
+      dueDate: '',
+      assignedStudents: []
+    });
+  };
+ 
+  const openEditTaskModal = (task) => {
+    setIsModalOpen(true);
+    setIsEditing(true);
+    setCurrentTaskId(task.taskId);
+    setNewTask({
+      taskName: task.taskName,
+      taskObjective: task.taskObjective || '',
+      dueDate: task.dueDate ? format(new Date(task.dueDate), 'yyyy-MM-dd\'T\'HH:mm') : '',
+      assignedStudents: taskStudentsMap[task.taskId]?.map(s => s.studentId) || []
+    });
+  };
+ 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewTask(prev => ({ ...prev, [name]: value }));
+  };
+ 
+  const handleStudentSelect = (e) => {
+    const options = e.target.options;
+    const selectedStudents = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        selectedStudents.push(options[i].value);
+      }
+    }
+    setNewTask(prev => ({ ...prev, assignedStudents: selectedStudents }));
+  };
+ 
+  const showSuccessAlert = (message) => {
+    Swal.fire({
+      icon: 'success',
+      title: 'Success',
+      text: message,
+      timer: 3000,
+      showConfirmButton: false,
+      background: '#ffffff',
+      backdrop: 'rgba(0, 0, 0, 0.1)'
+    });
+  };
+ 
+  const showErrorAlert = (message) => {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: message,
+      background: '#ffffff',
+      backdrop: 'rgba(0, 0, 0, 0.1)'
+    });
+  };
+ 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+    
+    try {
+      if (isEditing) {
+        await axios.put(`${TASKS_API}/${currentTaskId}`, {
+          taskName: newTask.taskName,
+          taskObjective: newTask.taskObjective,
+          dueDate: newTask.dueDate,
+          projectId: projectId
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+ 
+        showSuccessAlert('Task updated successfully!');
+      } else {
+        const response = await axios.post(TASKS_API, {
+          taskName: newTask.taskName,
+          taskObjective: newTask.taskObjective,
+          dueDate: newTask.dueDate,
+          projectId: projectId
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+ 
+        const createdTask = response.data?.response || response.data;
+        
+        if (!createdTask || !createdTask.taskId) {
+          throw new Error('Invalid task creation response');
+        }
+ 
+        if (newTask.assignedStudents.length > 0) {
+          try {
+            await Promise.all(newTask.assignedStudents.map(studentId =>
+              axios.post(STU_TASK_API, {
+                taskId: createdTask.taskId,
+                studentId: studentId
+              }, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              })
+            ));
+          } catch (assignmentError) {
+            console.error("Error assigning students:", assignmentError);
+            showErrorAlert('Task was created but student assignment failed');
+          }
+        }
+ 
+        showSuccessAlert('Task created successfully!');
+      }
+ 
+      await fetchTasksForProject(projectId);
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error("Error saving task:", err);
+      showErrorAlert(err.response?.data?.message || 'Failed to save task. Please try again.');
+    }
+  };
+ 
+  const handleDeleteTask = async (taskId) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#6366f1',
+      cancelButtonColor: '#64748b',
+      confirmButtonText: 'Yes, delete it!',
+      background: '#ffffff',
+      backdrop: 'rgba(0, 0, 0, 0.1)'
+    });
+ 
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.delete(`${TASKS_API}/${taskId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        
+        await fetchTasksForProject(projectId);
+        showSuccessAlert('Task has been deleted.');
+      } catch (err) {
+        console.error("Error deleting task:", err);
+        showErrorAlert('Failed to delete task. Please try again.');
+      }
+    }
+  };
+ 
+  const getStatusBadgeClass = (status) => {
+    if (status === "Completed") return `${styles.statusBadge} ${styles.completed}`;
+    if (status === "Pending") return `${styles.statusBadge} ${styles.pending}`;
+    return `${styles.statusBadge} ${styles.notMarked}`;
+  };
+ 
+  const getInitials = (name) => {
+    if (!name) return "?";
+    const names = name.split(" ");
+    return names.map(n => n[0]).join("").toUpperCase().substring(0, 2);
+  };
+ 
+ 
+  const openTaskDetails = (task) => {
+    setSelectedTask(task);
+    setIsDetailsModalOpen(true);
+  };
   
+  const closeTaskDetails = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedTask(null);
+  };
+ 
+ 
+  const handleFileChange = (e) => {
+    setFileToUpload(e.target.files[0]);
+  };
   
+  const handleTaskSubmission = async () => {
+    if (!fileToUpload) {
+      showErrorAlert('Please select a file to upload');
+      return;
+    }
   
+    setIsSubmittingTask(true);
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append('attachments', fileToUpload);
+      formData.append('taskId', selectedTask.taskId);
+      formData.append('studentStatus', 'SUBMITTED');
+  
+      await axios.put(`${TASKS_API}/${selectedTask.taskId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+  
+      showSuccessAlert('Task submitted successfully!');
+      closeTaskDetails();
+      fetchTasksForProject(projectId);
+    } catch (err) {
+      console.error("Error submitting task:", err);
+      showErrorAlert('Failed to submit task. Please try again.');
+    } finally {
+      setIsSubmittingTask(false);
+    }
+  };
+  
+  const handleTaskApproval = async (approved) => {
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      
+      // Add all required fields
+      formData.append('taskName', selectedTask.taskName);
+      formData.append('taskObjective', selectedTask.taskObjective || '');
+      formData.append('completeStatus', approved ? "Completed" : "Not Completed");
+      formData.append('studentStatus', selectedTask.studentStatus || '');
+      
+      if (selectedTask.dueDate) {
+        formData.append('dueDate',
+          format(new Date(selectedTask.dueDate), "yyyy-MM-dd'T'HH:mm:ss"));
+      }
+  
+      await axios.put(
+        `${TASKS_API}/${selectedTask.taskId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+  
+      showSuccessAlert(`Task marked as ${approved ? "Completed" : "Not Completed"}`);
+      closeTaskDetails();
+      fetchTasksForProject(projectId);
+    } catch (err) {
+      console.error("Error:", err);
+      showErrorAlert('Failed to update task status. Please try again.');
+    }
+  };
+ 
+ 
+  const downloadAttachment = (task) => {
+    if (!task.attachments) {
+      showErrorAlert('No attachment available');
+      return;
+    }
+  
+    try {
+      // Create a temporary anchor element
+      const link = document.createElement('a');
+      
+      if (typeof task.attachments === 'string' && task.attachments.startsWith('data:')) {
+        // Handle base64 data URI
+        link.href = task.attachments;
+        link.setAttribute('download', `task_${task.taskId}_attachment`);
+      } else {
+        // Handle OID reference
+        link.href = `${TASKS_API}/${task.taskId}/attachment`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+      }
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error("Error downloading attachment:", err);
+      showErrorAlert('Failed to download attachment');
+    }
+  };
+ 
+ 
+  const handleCommentsClick = (taskId) => {
+    console.log("Comments clicked for task:", taskId);
+    // Add your comment logic here later
+    
+  };
+
+  const navigate = useNavigate();
+  
+ 
+ 
+ 
   if (loading) return <div className={styles.loading}>Loading project...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
   if (!project) return <div className={styles.noData}>No project found.</div>;
  
   return (
     <DashboardLayout>
-  <div className={styles.container}>
-    {loading ? (
-      <p className={styles.loading}>Loading project details...</p>
-    ) : error ? (
-      <p className={styles.error}>{error}</p>
-    ) : project ? (
-      <>
+      <div className={styles.container}>
         <h1 className={styles.heading}>{project.title}</h1>
  
         <div className={styles.infoGrid}>
-          <div>
-            <p><strong>Objective:</strong> {project.objective}</p>
-            <p><strong>Description:</strong> {project.description}</p>
-            <p>
-              <strong>Repository:</strong>{" "}
-              <a href={project.repo} target="_blank" rel="noopener noreferrer">
-                {project.repo}
-              </a>
-            </p>
-            <p><strong>Start Date:</strong> {project.lastDate}</p>
-            <p><strong>Due Date:</strong> {project.dueDate}</p>
-            <p><strong>Criteria:</strong> {project.criteria}</p>
-            <p><strong>Status:</strong> {project.openStatus ? "Open" : "Closed"}</p>
-            <p><strong>Mentor:</strong> {mentorName}</p>
+          <div className={styles.infoCard}>
+            <h3><FiInfo /> Project Details</h3>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Objective:</span>
+              <span className={styles.infoValue}>{project.objective}</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Description:</span>
+              <span className={styles.infoValue}>{project.description}</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Repository:</span>
+              <span className={styles.infoValue}>
+                <a href={project.repo} target="_blank" rel="noopener noreferrer">
+                  {project.repo}
+                </a>
+              </span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Start Date:</span>
+              <span className={styles.infoValue}>{project.lastDate}</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Due Date:</span>
+              <span className={styles.infoValue}>{project.dueDate}</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Criteria:</span>
+              <span className={styles.infoValue}>{project.criteria}</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>Status:</span>
+              <span className={styles.infoValue}>
+                {project.openStatus ? (
+                  <span className={getStatusBadgeClass("Pending")}>Open</span>
+                ) : (
+                  <span className={getStatusBadgeClass("Completed")}>Closed</span>
+                )}
+              </span>
+            </div>
+            <div className={styles.infoItem}>
+  <span className={styles.infoLabel}>Mentor:</span>
+  <span className={styles.infoValue}>
+    {mentorImage ? (
+      <div className={styles.mentorDisplay}>
+        <img
+          src={`data:image/jpeg;base64,${mentorImage}`}
+          alt={mentorName}
+          className={styles.mentorAvatar}
+        />
+        <span>{mentorName}</span>
+      </div>
+    ) : (
+      <div className={styles.mentorDisplay}>
+        <div className={styles.avatarSmall}>
+          {getInitials(mentorName)}
+        </div>
+        <span>{mentorName}</span>
+      </div>
+    )}
+  </span>
+</div>
           </div>
  
-          <div>
-            <p><strong>Team Members:</strong></p>
+          <div className={styles.infoCard}>
+            <h3><FiUser /> Team Members</h3>
             {approvedStudents.length > 0 ? (
-              <ul className={styles.inlineList}>
+              <ul className={styles.teamList}>
                 {approvedStudents.map((student) => (
-                  <li key={student.userId}>
-                    {student.name} ({student.email})
+                  <li key={student.userId} className={styles.teamMember}>
+                    <div className={styles.avatar}>
+                      {getInitials(student.name)}
+                    </div>
+                    <div className={styles.memberInfo}>
+                      <div className={styles.memberName}>{student.name}</div>
+                      <div className={styles.memberEmail}>{student.email}</div>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -165,39 +643,480 @@ const ProjectDetails = () => {
           </div>
         </div>
  
-        <h3 className={styles.sectionTitle}>Project Tasks</h3>
-        {tasks.length > 0 ? (
-          <table className={styles.taskTable}>
-            <thead>
-              <tr>
-                <th>Task Name</th>
-                <th>Objective</th>
-                <th>Due Date</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tasks.map((task) => (
-                <tr key={task.taskId}>
-                  <td>{task.taskName}</td>
-                  <td>{task.taskObjective || "N/A"}</td>
-                  <td>{task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "Not set"}</td>
-                  <td>{task.completeStatus || "Not marked"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No tasks assigned yet.</p>
-        )}
-      </>
-    ) : null}
-  </div>
-</DashboardLayout>
  
+        <div className={styles.taskSection}>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.sectionTitle}>Project Tasks</h3>
+            {(userRole === "admin" || userRole === "mentor") && (
+              <button
+                onClick={openCreateTaskModal}
+                className={styles.createButton}
+              >
+                <FiPlus /> Create New Task
+              </button>
+            )}
+          </div>
+ 
+          {tasks.length > 0 ? (
+            <table className={styles.taskTable}>
+              <thead>
+                <tr>
+                  <th>Task Name</th>
+                  <th>Objective</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Student Assigned</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((task) => (
+                  <tr key={task.taskId}
+ 
+                  onClick={() => openTaskDetails(task)}
+                  className={styles.clickableRow}
+                 
+                  >
+                    <td>{task.taskName}</td>
+                    <td>{task.taskObjective || "N/A"}</td>
+                    <td>
+                      {task.dueDate ? (
+                        <>
+                          <FiCalendar /> {new Date(task.dueDate).toLocaleDateString()}
+                        </>
+                      ) : "Not set"}
+                    </td>
+                    <td>
+                      <span className={getStatusBadgeClass(task.completeStatus)}>
+                        {task.completeStatus || "Not marked"}
+                      </span>
+                    </td>
+                    <td>
+                    {taskStudentsMap[task.taskId] && taskStudentsMap[task.taskId].length > 0 ? (
+    <div className={styles.assignedStudents}>
+      {taskStudentsMap[task.taskId].map((student, index) => (
+        <div key={index} className={styles.studentBadge}>
+          {student.image ? (
+            <img
+              src={`data:image/jpeg;base64,${student.image}`}
+              alt={student.name}
+              className={styles.studentAvatar}
+            />
+          ) : (
+            <div className={styles.avatarSmall}>
+              {getInitials(student.name)}
+            </div>
+          )}
+          <span>{student.name}</span>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <span>No students assigned</span>
+  )}
+</td>
+ 
+ 
+                    {(userRole === "admin" || userRole === "mentor" || userRole ==="student") && (
+   <td>
+   <div className={styles.actionButtons}>
+     {/* Comment Button - for ALL users */}
+     <button
+      onClick={(e) => {
+        e.stopPropagation();
+        console.log("Comments clicked for task:", task.taskId);
+        navigate(`/tasks/${task.taskId}/comments-feedback`);
+      }}
+      className={styles.actionButton}
+      title="Comments"
+    >
+      <FiMessageSquare />
+    </button>
+     
+     
+ 
+     {/* Edit/Delete - only for mentors/admins */}
+     {(userRole === 'admin' || userRole === 'mentor') && (
+       <>
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             openEditTaskModal(task);
+           }}
+           className={styles.actionButton}
+           title="Edit"
+         >
+           <FiEdit2 />
+         </button>
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             handleDeleteTask(task.taskId);
+           }}
+           className={`${styles.actionButton} ${styles.delete}`}
+           title="Delete"
+         >
+           <FiTrash2 />
+         </button>
+       </>
+     )}
+   </div>
+</td>
+)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <div className={styles.infoCard}>
+              <p>No tasks assigned yet.</p>
+            </div>
+          )}
+        </div>
+ 
+        {/* Modern Modal */}
+        <Modal
+          isOpen={isModalOpen}
+          onRequestClose={() => setIsModalOpen(false)}
+          className={styles.modal}
+          overlayClassName={styles.overlay}
+          contentLabel={isEditing ? "Edit Task" : "Create Task"}
+        >
+          <div className={styles.modalHeader}>
+            <h2>
+              {isEditing ? (
+                <>
+                  <FiEdit2 /> Edit Task
+                </>
+              ) : (
+                <>
+                  <FiPlus /> Create New Task
+                </>
+              )}
+            </h2>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className={styles.modalCloseButton}
+              aria-label="Close"
+            >
+              <FiX />
+            </button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className={styles.modalForm}>
+            <div className={styles.formGroup}>
+              <label>Task Name *</label>
+              <input
+                type="text"
+                name="taskName"
+                value={newTask.taskName}
+                onChange={handleInputChange}
+                required
+                className={styles.formInput}
+                placeholder="Enter task name"
+              />
+            </div>
+ 
+            <div className={styles.formGroup}>
+              <label>Objective</label>
+              <textarea
+                name="taskObjective"
+                value={newTask.taskObjective}
+                onChange={handleInputChange}
+                className={styles.formTextarea}
+                placeholder="Describe the task objective"
+                rows="4"
+              />
+            </div>
+ 
+            <div className={styles.formGroup}>
+              <label>
+                <FiCalendar /> Due Date
+              </label>
+              <input
+                type="datetime-local"
+                name="dueDate"
+                value={newTask.dueDate}
+                onChange={handleInputChange}
+                className={styles.formInput}
+              />
+            </div>
+ 
+            {approvedStudents.length > 0 && (
+  <div className={styles.formGroup}>
+    <label className={styles.dropdownLabel}>
+      <FiUser className={styles.labelIcon} /> Assign Students
+    </label>
+    <div className={styles.selectWrapper}>
+      <select
+        multiple
+        value={newTask.assignedStudents}
+        onChange={handleStudentSelect}
+        className={styles.studentSelect}
+        aria-multiselectable="true"
+      >
+        {approvedStudents.map(student => (
+          <option
+            key={student.userId}
+            value={student.userId}
+            className={styles.optionItem}
+            data-image={studentImages[student.userId] ? `data:image/jpeg;base64,${studentImages[student.userId]}` : null}
+          >
+            <div className={styles.optionContent}>
+              {studentImages[student.userId] ? (
+                <img
+                  src={`data:image/jpeg;base64,${studentImages[student.userId]}`}
+                  alt={student.name}
+                  className={styles.optionImage}
+                />
+              ) : (
+                <div className={styles.optionInitials}>
+                  {getInitials(student.name)}
+                </div>
+              )}
+              <div className={styles.optionText}>
+                <span className={styles.optionName}>{student.name}</span>
+                <span className={styles.optionEmail}>{student.email}</span>
+              </div>
+            </div>
+          </option>
+        ))}
+      </select>
+    </div>
+    <div className={styles.selectedCount}>
+      {newTask.assignedStudents.length > 0 ? (
+        <span className={styles.countBadge}>
+          {newTask.assignedStudents.length} selected
+        </span>
+      ) : (
+        <span className={styles.helperText}>
+          Hold Ctrl/Cmd to select multiple students
+        </span>
+      )}
+    </div>
+  </div>
+)}
+ 
+            <div className={styles.modalFooter}>
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className={styles.cancelButton}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className={styles.submitButton}
+              >
+                {isEditing ? 'Update Task' : 'Create Task'}
+              </button>
+            </div>
+          </form>
+        </Modal>
+ 
+ 
+       {/* Task Details Modal */}
+{/* Task Details Modal */}
+<Modal
+  isOpen={isDetailsModalOpen}
+  onRequestClose={closeTaskDetails}
+  className={styles.modal}
+  overlayClassName={styles.overlay}
+  contentLabel="Task Details"
+>
+  <div className={styles.modalHeader}>
+    <h2>
+      <FiInfo /> Task Details
+    </h2>
+    <button
+      onClick={closeTaskDetails}
+      className={styles.modalCloseButton}
+      aria-label="Close"
+    >
+      <FiX />
+    </button>
+  </div>
   
+  {selectedTask && (
+    <div className={styles.taskDetailsContent}>
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Task Name:</span>
+        <span className={styles.detailValue}>{selectedTask.taskName}</span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Objective:</span>
+        <span className={styles.detailValue}>
+          {selectedTask.taskObjective || "Not specified"}
+        </span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Due Date:</span>
+        <span className={styles.detailValue}>
+          {selectedTask.dueDate ? (
+            <>
+              <FiCalendar /> {new Date(selectedTask.dueDate).toLocaleString()}
+            </>
+          ) : "Not set"}
+        </span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Status:</span>
+        <span className={styles.detailValue}>
+          <span className={getStatusBadgeClass(selectedTask.completeStatus)}>
+            {selectedTask.completeStatus || "Not marked"}
+          </span>
+        </span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Assigned Students:</span>
+        <div className={styles.assignedStudentsList}>
+          {taskStudentsMap[selectedTask.taskId]?.length > 0 ? (
+            taskStudentsMap[selectedTask.taskId].map((student) => (
+              <div key={student.studentId} className={styles.studentDetail}>
+                <div className={styles.avatarSmall}>
+                  {getInitials(student.name)}
+                </div>
+                <div>
+                  <div>{student.name}</div>
+                  <div className={styles.studentEmail}>{student.email}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <span>No students assigned</span>
+          )}
+        </div>
+      </div>
+ 
+      {/* Attachments Section */}
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Attachments:</span>
+        {selectedTask.attachments ? (
+          <div className={styles.attachmentsList}>
+            <div
+              className={styles.attachmentItem}
+              onClick={() => setSelectedAttachment(selectedTask)}
+            >
+              <FiLink /> Current Attachment
+            </div>
+          </div>
+        ) : (
+          <span>No attachments yet</span>
+        )}
+      </div>
+ 
+      {/* Student View - Submit Task */}
+      {userRole === 'student' && (
+        <div className={styles.detailItem}>
+          <span className={styles.detailLabel}>Submit Task:</span>
+          <div className={styles.submissionSection}>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+            />
+            <button
+              onClick={handleTaskSubmission}
+              disabled={isSubmittingTask}
+              className={styles.submitButton}
+            >
+              {isSubmittingTask ? 'Submitting...' : 'Submit Task'}
+            </button>
+          </div>
+        </div>
+      )}
+ 
+      {/* Admin/Mentor View - Approve/Reject */}
+      {(userRole === 'admin' || userRole === 'mentor') && (
+        <div className={styles.detailItem}>
+          <span className={styles.detailLabel}>Review Task:</span>
+          <div className={styles.reviewButtons}>
+            <button
+              onClick={() => handleTaskApproval(true)}
+              className={styles.approveButton}
+            >
+              <FiCheck /> Approve
+            </button>
+            <button
+              onClick={() => handleTaskApproval(false)}
+              className={styles.declineButton}
+            >
+              <FiX /> Decline
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+</Modal>
+ 
+{/* Attachment Viewer Modal */}
+<Modal
+  isOpen={!!selectedAttachment}
+  onRequestClose={() => setSelectedAttachment(null)}
+  className={styles.attachmentModal}
+  overlayClassName={styles.overlay}
+  contentLabel="Attachment Viewer"
+>
+  <div className={styles.modalHeader}>
+    <h2>
+      <FiLink /> Task Attachment
+    </h2>
+    <button
+      onClick={() => setSelectedAttachment(null)}
+      className={styles.modalCloseButton}
+      aria-label="Close"
+    >
+      <FiX />
+    </button>
+  </div>
+  
+  <div className={styles.attachmentContent}>
+    {selectedAttachment?.attachments ? (
+      <div className={styles.attachmentFrame}>
+        {selectedAttachment.attachments.startsWith('data:image') ? (
+          <img
+            src={selectedAttachment.attachments}
+            alt="Task Attachment"
+            className={styles.attachmentImage}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '';
+              e.target.style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className={styles.filePreview}>
+            <FiFile size={48} />
+            <p>File attachment</p>
+          </div>
+        )}
+        
+        <button
+          onClick={() => downloadAttachment(selectedAttachment)}
+          className={styles.downloadButton}
+        >
+          <FiDownload /> Download
+        </button>
+      </div>
+    ) : (
+      <div className={styles.noAttachment}>
+        <FiFile size={48} />
+        <p>No attachment available</p>
+      </div>
+    )}
+  </div>
+</Modal>
+ 
+      </div>
+    </DashboardLayout>
   );
-  
 };
  
 export default ProjectDetails;
+ 

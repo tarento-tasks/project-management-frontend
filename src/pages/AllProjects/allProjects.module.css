@@ -112,20 +112,19 @@
   
   
   .toBeReviewedHeader {
-    background: linear-gradient(135deg, #ffe0b2, #ffcc80);
-    color: #804000;
+    background: linear-gradient(135deg, #c8d1a0, #8f8f8a); /* 500 to 600 */
   }
+   
   .inProgressHeader {
-    background: linear-gradient(135deg, #fff3b0, #ffe680);
-    color: #7a6500;
+    background: linear-gradient(135deg, #527a72, #acd1bd); /* 600 to 700 */
   }
+   
   .completedHeader {
-    background: linear-gradient(135deg, #c8e6c9, #a5d6a7);
-    color: #2e7d32;
+    background: linear-gradient(135deg, #b9b9b4, #2d455f); /* 700 to 800 */
   }
+   
   .overdueHeader {
-    background: linear-gradient(115deg, #ffcdd2, #ef9a9a);
-    color: #b71c1c;
+    background: linear-gradient(135deg,  #d3ebb9,#c3cfce); /* 800 to 900 */
   }
   
   /* Light background below headers */
