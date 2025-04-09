@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import GeneralLayout from "../layouts/GeneralLayout";
 import { useRecoilValue } from "recoil";
 import { authState } from "../states/authState";
 import { getComments, addComment } from "../services/CommentService";
 import { getFeedback, addFeedback } from "../services/FeedbackService";
-import Table from "../components/Table/Table";
-import AddEntryModal from "../components/Modal/AddEntryModal";
+import { FaCommentDots, FaComments, FaUser, FaPaperPlane } from "react-icons/fa";
 import styles from "./commentsFeedbackPage.module.css";
-import { FaCommentDots, FaComments } from "react-icons/fa";
 
 const CommentsFeedbackPage = () => {
   const { taskId } = useParams();
@@ -16,11 +14,14 @@ const CommentsFeedbackPage = () => {
   const [activeTab, setActiveTab] = useState("comments");
   const [comments, setComments] = useState([]);
   const [feedbacks, setFeedbacks] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
   const isMentorOrAdmin = auth.role === "MENTOR" || auth.role === "ADMIN";
   const isStudent = auth.role === "STUDENT";
+  const canAddEntry = (isMentorOrAdmin && activeTab === "feedback") || 
+                     (isStudent && activeTab === "comments");
 
   useEffect(() => {
     if (!taskId) return;
@@ -44,83 +45,59 @@ const CommentsFeedbackPage = () => {
     fetchData();
   }, [taskId, auth.role]);
 
-  const injectUserNames = async (entries, token) => {
+  useEffect(() => {
+    scrollToBottom();
+  }, [comments, feedbacks, activeTab]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const injectUserNames = async (entries) => {
     const ids = [...new Set(entries.map(e => e.userId || e.mentorId))];
     const userMap = {};
-  
+
     for (const id of ids) {
       try {
-        const token = localStorage.getItem("token"); 
-
+        const token = localStorage.getItem("token");
         const res = await fetch(`http://localhost:8080/api/users?userId=${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` }
         });
-  
-        const contentType = res.headers.get("Content-Type");
-  
-        if (!res.ok) {
-          console.error(`User fetch failed: ${res.status} ${res.statusText}`);
-          throw new Error("Fetch failed");
-        }
-  
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await res.text();
-          console.error("Expected JSON but got:", text);
-          throw new Error("Invalid content type");
-        }
-  
+
+        if (!res.ok) throw new Error("Fetch failed");
         const data = await res.json();
         userMap[id] = data.response?.name || "Unknown";
-  
       } catch (err) {
         console.warn("User fetch failed for ID:", id, err);
         userMap[id] = "Unknown";
       }
     }
-  
+
     return entries.map(e => ({
       ...e,
       userName: userMap[e.userId || e.mentorId],
       createdAt: new Date(e.createdAt).toLocaleString()
     }));
   };
-  
-  
 
-  const commentColumns = [
-    { key: "comment", label: "Comment" },
-    { key: "userName", label: "By" },
-    { key: "createdAt", label: "Created At" }
-  ];
-
-  const feedbackColumns = [
-    { key: "feedback", label: "Feedback" },
-    { key: "userName", label: "By" },
-    { key: "createdAt", label: "Created At" }
-  ];
-
-  const handleAdd = () => setShowModal(true);
-  const handleClose = () => setShowModal(false);
-
-  const handleSubmit = async (text) => {
-    if (!text) return;
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!message.trim()) return;
 
     try {
       setLoading(true);
       if (activeTab === "comments") {
-        await addComment(taskId, auth.userId, text);
+        await addComment(taskId, auth.userId, message);
         const updated = await getComments(taskId);
         const withNames = await injectUserNames(updated);
         setComments(withNames);
       } else {
-        await addFeedback(taskId, auth.userId, text);
+        await addFeedback(taskId, auth.userId, message);
         const updated = await getFeedback(taskId);
         const withNames = await injectUserNames(updated);
         setFeedbacks(withNames);
       }
-      setShowModal(false);
+      setMessage("");
     } catch (err) {
       console.error("Failed to submit:", err);
     } finally {
@@ -131,61 +108,100 @@ const CommentsFeedbackPage = () => {
   return (
     <GeneralLayout role={auth.role}>
       <div className={styles.container}>
-        <div className={styles.header}>
-          <h2 className={styles.title}>Task Comments & Feedback</h2>
-          <div className={styles.controls}>
-            <div className={styles.tabs}>
-              <button
-                className={`${styles.tab} ${activeTab === "comments" ? styles.active : ""}`}
-                onClick={() => setActiveTab("comments")}
-              >
-                <FaComments className={styles.tabIcon} /> 
-                <span>Comments</span>
-                {comments.length > 0 && <span className={styles.badge}>{comments.length}</span>}
-              </button>
-              <button
-                className={`${styles.tab} ${activeTab === "feedback" ? styles.active : ""}`}
-                onClick={() => setActiveTab("feedback")}
-              >
-                <FaCommentDots className={styles.tabIcon} /> 
-                <span>Feedback</span>
-                {feedbacks.length > 0 && <span className={styles.badge}>{feedbacks.length}</span>}
-              </button>
-            </div>
-
-            {(isMentorOrAdmin && activeTab === "feedback") ||
-            (isStudent && activeTab === "comments") ? (
-              <button className={styles.addButton} onClick={handleAdd}>
-                <FaPlus className={styles.addIcon} />
-                {activeTab === "comments" ? "Add Comment" : "Add Feedback"}
-              </button>
-            ) : null}
+        <div className={styles.contentCard}>
+          <div className={styles.header}>
+            <h2 className={styles.title}>Task Discussions</h2>
           </div>
-        </div>
 
-        <div className={styles.content}>
-          <div className={styles.tableWrapper}>
+          <div className={styles.tabsContainer}>
+            <button
+              className={`${styles.tabButton} ${
+                activeTab === "comments" ? styles.activeTab : ""
+              }`}
+              onClick={() => setActiveTab("comments")}
+            >
+              <FaComments />
+              Comments ({comments.length})
+            </button>
+            <button
+              className={`${styles.tabButton} ${
+                activeTab === "feedback" ? styles.activeTab : ""
+              }`}
+              onClick={() => setActiveTab("feedback")}
+            >
+              <FaCommentDots />
+              Feedback ({feedbacks.length})
+            </button>
+          </div>
+
+          <div className={styles.entriesContainer}>
             {activeTab === "comments" ? (
-              <Table columns={commentColumns} data={comments} />
+              comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div key={comment.id} className={styles.entryCard}>
+                    <div className={styles.entryHeader}>
+                      <div className={styles.userInfo}>
+                        <div className={styles.userIcon}>
+                          <FaUser />
+                        </div>
+                        <span className={styles.userName}>{comment.userName}</span>
+                      </div>
+                      <span className={styles.date}>{comment.createdAt}</span>
+                    </div>
+                    <div className={styles.entryContent}>{comment.comment}</div>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.emptyState}>
+                  No comments yet. Be the first to add one!
+                </div>
+              )
+            ) : feedbacks.length > 0 ? (
+              feedbacks.map((feedback) => (
+                <div key={feedback.id} className={styles.entryCard}>
+                  <div className={styles.entryHeader}>
+                    <div className={styles.userInfo}>
+                      <div className={styles.userIcon}>
+                        <FaUser />
+                      </div>
+                      <span className={styles.userName}>{feedback.userName}</span>
+                    </div>
+                    <span className={styles.date}>{feedback.createdAt}</span>
+                  </div>
+                  <div className={styles.entryContent}>{feedback.feedback}</div>
+                </div>
+              ))
             ) : (
-              <Table columns={feedbackColumns} data={feedbacks} />
+              <div className={styles.emptyState}>
+                No feedback yet. Be the first to add some!
+              </div>
             )}
+            <div ref={messagesEndRef} />
           </div>
-        </div>
 
-        {showModal && (
-          <AddEntryModal
-            onClose={handleClose}
-            onSubmit={handleSubmit}
-            title={activeTab === "comments" ? "Add Comment" : "Add Feedback"}
-            placeholder={`Enter your ${activeTab === "comments" ? "comment" : "feedback"} here...`}
-            loading={loading}
-          />
-        )}
+          {canAddEntry && (
+            <form onSubmit={handleSubmit} className={styles.messageInputContainer}>
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                placeholder={`Type your ${activeTab === "comments" ? "comment" : "feedback"} here...`}
+                className={styles.messageInput}
+                disabled={loading}
+              />
+              <button
+                type="submit"
+                className={styles.sendButton}
+                disabled={!message.trim() || loading}
+              >
+                <FaPaperPlane />
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </GeneralLayout>
   );
 };
 
 export default CommentsFeedbackPage;
-

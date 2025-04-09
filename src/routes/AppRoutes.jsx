@@ -15,7 +15,7 @@ import EnrollmentPage from '../pages/Enrollment/EnrollmentPage';
 
 import NewTask from '../pages/NewTask/NewTask';
 
-
+import Table from '../components/Table/Table';
 
 import CommentsFeedbackPage from "../pages/CommentsFeedbackPage";
 import AllProjects from "../pages/AllProjects/AllProjects";
@@ -39,7 +39,7 @@ const AppRoutes = () => {
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<LoginPage />} />
-     
+      <Route path="/table" element={<Table />} />
       <Route path="/newprojects" element={ <NewProject />} />
       <Route path="/newtask" element={ <NewTask />} />
       <Route path="/users" element={ <UserManagementPage />} />

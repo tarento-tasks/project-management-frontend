@@ -24,6 +24,33 @@ const newProjectService = {
       throw error;
     }
   },
+  getMentors: async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/users?role=MENTOR`, {
+        headers: getAuthHeaders()
+      });
+      return response.data?.response || []; // Adjusted to match your API response structure
+    } catch (error) {
+      console.error("Error fetching mentors:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  updateProject: async (projectId, updatedProjectData) => {
+    try {
+      const response = await axios.post(
+        `${API_BASE_URL}/projects?id=${projectId}`,
+        updatedProjectData,
+        {
+          headers: getAuthHeaders()
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error updating project:", error.response?.data || error.message);
+      throw error;
+    }
+  },
 
   getAllSkills: async () => {
     try {
@@ -37,17 +64,7 @@ const newProjectService = {
     }
   },
 
-  getMentors: async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/users?role=MENTOR`, {
-        headers: getAuthHeaders()
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching mentors:", error.response?.data || error.message);
-      throw error;
-    }
-  },
+ 
 
   createTask: async (taskData) => {
     try {
@@ -60,7 +77,34 @@ const newProjectService = {
       throw error;
     }
   },
+  
+  
 
+  deleteProject: async (projectId) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/projects/${projectId}`, {
+        headers: getAuthHeaders()
+      });
+
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Project deleted successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting project:", error.response?.data || error.message);
+      Swal.fire({
+        title: 'Error',
+        text: error.response?.data?.message || error.message,
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      throw error;
+    }
+  },
   getProjectEnrollments: async () => {
     try {
       const token = localStorage.getItem('token');

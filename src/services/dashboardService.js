@@ -57,30 +57,31 @@ const dashboardService = {
     }
   },
   
-getStudentEnrollments: async (studentId, status = null) => {
-  try {
-      const params = { studentId };
-      if (status) {
-          params.status = status; // 👈 Add status only if provided
-      }
+  getStudentEnrollments: async (studentId) => {
+    try {
+        console.log("Calling API: /api/project-enrollment with studentId:", studentId);
+        
+        const response = await axios.get(
+            `${API_BASE_URL}/api/project-enrollment`, 
+            {
+                params: { 
+                    studentId,
+                    status: "APPROVED" // Hardcoded to only get approved projects
+                },
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
 
-      console.log("Calling API: /api/project-enrollment with params:", params);
-      const response = await axios.get(`${API_BASE_URL}/api/project-enrollment`, {
-          params,
-          headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json'
-          }
-      });
-
-      console.log("Student Enrollments API Response:", response.data);
-      return response.data.response || [];
-  } catch (error) {
-      console.error('Error fetching student enrollments:', error);
-      throw error;
-  }
+        console.log("Approved Projects API Response:", response.data);
+        return response.data.response || []; // Returns list of approved projects
+    } catch (error) {
+        console.error('Error fetching approved projects:', error.response?.data || error.message);
+        throw error;
+    }
 },
-
 
 
 getTasksByProjectId: async (projectId) => {

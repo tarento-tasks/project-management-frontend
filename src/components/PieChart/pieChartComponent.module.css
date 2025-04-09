@@ -1,17 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 .chartContainer {
-  width: 300px;  /* Adjust size */
-  max-width: 100%;
-  margin: auto;
-  padding: 15px;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  height: 94%;
+  font-family: 'Inter', sans-serif;
+  transition: box-shadow 0.2s ease;
 }
 
-.chartContainer h5 {
-  font-size: 16px;
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
+.chartContainer:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+}
+
+.chartHeader {
+  background-color: #3e648b;
+  padding: 14px 20px;
+  border-bottom: 1px solid #eaeaea;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+}
+
+.chartTitle {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.2px;
+}
+
+.chartContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.chartWrapper {
+  position: relative;
+  height: 200px;
+  margin-bottom: 18px;
+}
+
+/* Summary Section */
+.chartSummary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 160px;
+  overflow-y: auto;
+  padding: 0 4px;
+}
+
+.scrollableSummary::-webkit-scrollbar {
+  width: 6px;
+}
+.scrollableSummary::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+}
+
+.summaryItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #f9fbfc;
+  transition: background-color 0.2s ease;
+}
+
+.summaryItem:hover {
+  background-color: #f0f5f9;
+}
+
+.summaryColor {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.summaryLabel {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #354a5f;
+}
+
+.summaryValue {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #3e648b;
+  width: 35px;
+  text-align: right;
+}
+
+.summaryPercentage {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #718096;
+  width: 50px;
+  text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chartWrapper {
+    height: 180px;
+  }
+
+  .chartContent {
+    padding: 16px;
+  }
+
+  .summaryItem {
+    padding: 6px 8px;
+  }
 }

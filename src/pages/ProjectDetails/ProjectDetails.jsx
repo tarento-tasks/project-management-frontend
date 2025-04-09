@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+
 import axios from "axios";
 import DashboardLayout from "../../layouts/GeneralLayout";
 import styles from "./projectDetails.module.css";
@@ -7,30 +9,35 @@ import Swal from "sweetalert2";
 import Modal from "react-modal";
 import { format } from 'date-fns';
 import { FiEdit2, FiTrash2, FiPlus, FiX, FiCalendar, FiUser, FiInfo, FiLink, FiClock, FiCheck, FiAward } from "react-icons/fi";
-
+import { FiDownload, FiFile, FiImage } from "react-icons/fi";
+import { FiMessageSquare, FiThumbsUp } from "react-icons/fi";
+ 
+ 
 Modal.setAppElement('#root');
-
+ 
 const API_URL = "http://localhost:8080/api/projects";
 const USERS_API = "http://localhost:8080/api/users";
 const ENROLLMENT_API = "http://localhost:8080/api/project-enrollment/approved-students";
 const TASKS_API = "http://localhost:8080/api/tasks";
 const STU_TASK_API = "http://localhost:8080/api/stu-task";
-
+ 
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [mentorName, setMentorName] = useState("Loading...");
-  const [mentorImage, setMentorImage] = useState(null);
   const [approvedStudents, setApprovedStudents] = useState([]);
   const [taskStudentsMap, setTaskStudentsMap] = useState({});
-  const [studentImages, setStudentImages] = useState({}); 
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [mentorImage, setMentorImage] = useState(null);
+  const [studentImages, setStudentImages] = useState({});
+ 
   
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false); // New - for task details
   const [newTask, setNewTask] = useState({
     taskName: '',
     taskObjective: '',
@@ -39,7 +46,13 @@ const ProjectDetails = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [currentTaskId, setCurrentTaskId] = useState(null);
-
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedAttachment, setSelectedAttachment] = useState(null);
+const [fileToUpload, setFileToUpload] = useState(null);
+const [isSubmittingTask, setIsSubmittingTask] = useState(false);
+ 
+ 
+ 
   useEffect(() => {
     const fetchUserRole = () => {
       const userData = localStorage.getItem("user");
@@ -52,7 +65,7 @@ const ProjectDetails = () => {
         }
       }
     };
-
+ 
     fetchUserRole();
     
     if (projectId) {
@@ -61,7 +74,7 @@ const ProjectDetails = () => {
       fetchTasksForProject(projectId);
     }
   }, [projectId]);
-
+ 
   const fetchProjectDetails = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -72,7 +85,7 @@ const ProjectDetails = () => {
       });
       const projectData = response.data.response[0];
       setProject(projectData);
-
+ 
       if (projectData.mentorId) {
         fetchMentorDetails(projectData.mentorId);
       } else {
@@ -86,7 +99,7 @@ const ProjectDetails = () => {
       setLoading(false);
     }
   };
-
+ 
   const fetchMentorDetails = async (mentorId) => {
     try {
       const token = localStorage.getItem("token");
@@ -110,7 +123,7 @@ const ProjectDetails = () => {
       setMentorImage(null);
     }
   };
-
+ 
   const fetchApprovedStudents = async (projectId) => {
     try {
       const token = localStorage.getItem("token");
@@ -147,8 +160,6 @@ const ProjectDetails = () => {
       setApprovedStudents([]);
     }
   };
-  
-  
   const fetchStudentsForTasks = async (tasks) => {
     const token = localStorage.getItem("token");
     const newMap = {};
@@ -195,7 +206,8 @@ const ProjectDetails = () => {
   
     setTaskStudentsMap(newMap);
   };
-
+ 
+ 
   const fetchStudentName = async (studentId) => {
     try {
       const token = localStorage.getItem("token");
@@ -216,26 +228,27 @@ const ProjectDetails = () => {
       return studentId;
     }
   };
-
+ 
   const fetchTasksForProject = async (projectId) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${TASKS_API}?projectId=${projectId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (response.data && response.data.response) {
-        const fetchedTasks = response.data.response;
-        setTasks(fetchedTasks);
-        fetchStudentsForTasks(fetchedTasks);
-      }
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${TASKS_API}?projectId=${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+ 
+        if (response.data && response.data.response) {
+            // Filter out any tasks that might have deletedAt set (just in case)
+            const fetchedTasks = response.data.response.filter(task => !task.deletedAt);
+            setTasks(fetchedTasks);
+            fetchStudentsForTasks(fetchedTasks);
+        }
     } catch (err) {
-      console.error("Error fetching tasks:", err);
+        console.error("Error fetching tasks:", err);
     }
-  };
-
+};
+ 
   const openCreateTaskModal = () => {
     setIsModalOpen(true);
     setIsEditing(false);
@@ -246,7 +259,7 @@ const ProjectDetails = () => {
       assignedStudents: []
     });
   };
-
+ 
   const openEditTaskModal = (task) => {
     setIsModalOpen(true);
     setIsEditing(true);
@@ -258,12 +271,12 @@ const ProjectDetails = () => {
       assignedStudents: taskStudentsMap[task.taskId]?.map(s => s.studentId) || []
     });
   };
-
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewTask(prev => ({ ...prev, [name]: value }));
   };
-
+ 
   const handleStudentSelect = (e) => {
     const options = e.target.options;
     const selectedStudents = [];
@@ -274,7 +287,7 @@ const ProjectDetails = () => {
     }
     setNewTask(prev => ({ ...prev, assignedStudents: selectedStudents }));
   };
-
+ 
   const showSuccessAlert = (message) => {
     Swal.fire({
       icon: 'success',
@@ -286,7 +299,7 @@ const ProjectDetails = () => {
       backdrop: 'rgba(0, 0, 0, 0.1)'
     });
   };
-
+ 
   const showErrorAlert = (message) => {
     Swal.fire({
       icon: 'error',
@@ -296,27 +309,30 @@ const ProjectDetails = () => {
       backdrop: 'rgba(0, 0, 0, 0.1)'
     });
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("token");
     
     try {
       if (isEditing) {
-        await axios.put(`${TASKS_API}/${currentTaskId}`, {
-          taskName: newTask.taskName,
-          taskObjective: newTask.taskObjective,
-          dueDate: newTask.dueDate,
-          projectId: projectId
-        }, {
+        // Use FormData for updates to handle file uploads as it works in the first snippet
+        const formData = new FormData();
+        formData.append('taskName', newTask.taskName);
+        formData.append('taskObjective', newTask.taskObjective || '');
+        formData.append('dueDate', newTask.dueDate);
+        formData.append('projectId', projectId);
+        
+        await axios.put(`${TASKS_API}/${currentTaskId}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data'
           }
         });
-
+        
         showSuccessAlert('Task updated successfully!');
       } else {
+        // Use JSON for creating new tasks, as it works in the second snippet
         const response = await axios.post(TASKS_API, {
           taskName: newTask.taskName,
           taskObjective: newTask.taskObjective,
@@ -328,16 +344,16 @@ const ProjectDetails = () => {
             'Content-Type': 'application/json'
           }
         });
-
-        const createdTask = response.data?.response || response.data;
         
+        const createdTask = response.data?.response || response.data;
         if (!createdTask || !createdTask.taskId) {
           throw new Error('Invalid task creation response');
         }
-
-        if (newTask.assignedStudents.length > 0) {
+        
+        // Handle student assignments for new tasks
+        if (newTask.assignedStudents && newTask.assignedStudents.length > 0) {
           try {
-            await Promise.all(newTask.assignedStudents.map(studentId => 
+            await Promise.all(newTask.assignedStudents.map(studentId =>
               axios.post(STU_TASK_API, {
                 taskId: createdTask.taskId,
                 studentId: studentId
@@ -353,10 +369,10 @@ const ProjectDetails = () => {
             showErrorAlert('Task was created but student assignment failed');
           }
         }
-
+        
         showSuccessAlert('Task created successfully!');
       }
-
+      
       await fetchTasksForProject(projectId);
       setIsModalOpen(false);
     } catch (err) {
@@ -364,7 +380,8 @@ const ProjectDetails = () => {
       showErrorAlert(err.response?.data?.message || 'Failed to save task. Please try again.');
     }
   };
-
+   
+ 
   const handleDeleteTask = async (taskId) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
@@ -377,7 +394,7 @@ const ProjectDetails = () => {
       background: '#ffffff',
       backdrop: 'rgba(0, 0, 0, 0.1)'
     });
-
+ 
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
@@ -395,28 +412,170 @@ const ProjectDetails = () => {
       }
     }
   };
-
+ 
   const getStatusBadgeClass = (status) => {
     if (status === "Completed") return `${styles.statusBadge} ${styles.completed}`;
     if (status === "Pending") return `${styles.statusBadge} ${styles.pending}`;
     return `${styles.statusBadge} ${styles.notMarked}`;
   };
-
+ 
   const getInitials = (name) => {
     if (!name) return "?";
     const names = name.split(" ");
     return names.map(n => n[0]).join("").toUpperCase().substring(0, 2);
   };
+ 
+ 
+  const openTaskDetails = (task) => {
+    setSelectedTask(task);
+    setIsDetailsModalOpen(true);
+  };
+  
+  const closeTaskDetails = () => {
+    setIsDetailsModalOpen(false);
+    setSelectedTask(null);
+  };
+ 
+ 
+  const handleFileChange = (e) => {
+    setFileToUpload(e.target.files[0]);
+  };
+  
+  const handleTaskSubmission = async () => {
+    if (!fileToUpload) {
+      showErrorAlert('Please select a file to upload');
+      return;
+    }
+  
+    setIsSubmittingTask(true);
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      formData.append('attachments', fileToUpload);
+      formData.append('taskId', selectedTask.taskId);
+      formData.append('studentStatus', 'SUBMITTED');
+  
+      await axios.put(`${TASKS_API}/${selectedTask.taskId}`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      });
+  
+      showSuccessAlert('Task submitted successfully!');
+      closeTaskDetails();
+      fetchTasksForProject(projectId);
+    } catch (err) {
+      console.error("Error submitting task:", err);
+      showErrorAlert('Failed to submit task. Please try again.');
+    } finally {
+      setIsSubmittingTask(false);
+    }
+  };
+  
+  const handleTaskApproval = async (approved) => {
+    try {
+      const token = localStorage.getItem("token");
+      const formData = new FormData();
+      
+      // Add all required fields
+      formData.append('taskName', selectedTask.taskName);
+      formData.append('taskObjective', selectedTask.taskObjective || '');
+      formData.append('completeStatus', approved ? "Completed" : "Not Completed");
+      formData.append('studentStatus', selectedTask.studentStatus || '');
+      
+      if (selectedTask.dueDate) {
+        formData.append('dueDate',
+          format(new Date(selectedTask.dueDate), "yyyy-MM-dd'T'HH:mm:ss"));
+      }
+  
+      await axios.put(
+        `${TASKS_API}/${selectedTask.taskId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+  
+      showSuccessAlert(`Task marked as ${approved ? "Completed" : "Not Completed"}`);
+      closeTaskDetails();
+      fetchTasksForProject(projectId);
+    } catch (err) {
+      console.error("Error:", err);
+      showErrorAlert('Failed to update task status. Please try again.');
+    }
+  };
+ 
+ 
+  const downloadAttachment = async (task) => {
+    if (!task.attachments) {
+      showErrorAlert('No attachment available');
+      return;
+    }
+    
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${TASKS_API}/${task.taskId}/attachment`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to download attachment');
+      }
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Try to get filename from content-disposition header or use a default
+      const contentDisposition = response.headers.get('content-disposition');
+      let filename = `task_${task.taskId}_attachment`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Error downloading attachment:", err);
+      showErrorAlert('Failed to download attachment');
+    }
+  };
+ 
+  const handleCommentsClick = (taskId) => {
+    console.log("Comments clicked for task:", taskId);
+    // Add your comment logic here later
+    
+  };
 
+  const navigate = useNavigate();
+  
+ 
+ 
+ 
   if (loading) return <div className={styles.loading}>Loading project...</div>;
   if (error) return <div className={styles.error}>{error}</div>;
   if (!project) return <div className={styles.noData}>No project found.</div>;
-
+ 
   return (
     <DashboardLayout>
       <div className={styles.container}>
         <h1 className={styles.heading}>{project.title}</h1>
-
+ 
         <div className={styles.infoGrid}>
           <div className={styles.infoCard}>
             <h3><FiInfo /> Project Details</h3>
@@ -463,8 +622,8 @@ const ProjectDetails = () => {
   <span className={styles.infoValue}>
     {mentorImage ? (
       <div className={styles.mentorDisplay}>
-        <img 
-          src={`data:image/jpeg;base64,${mentorImage}`} 
+        <img
+          src={`data:image/jpeg;base64,${mentorImage}`}
           alt={mentorName}
           className={styles.mentorAvatar}
         />
@@ -481,7 +640,7 @@ const ProjectDetails = () => {
   </span>
 </div>
           </div>
-
+ 
           <div className={styles.infoCard}>
             <h3><FiUser /> Team Members</h3>
             {approvedStudents.length > 0 ? (
@@ -503,12 +662,13 @@ const ProjectDetails = () => {
             )}
           </div>
         </div>
-
+ 
+ 
         <div className={styles.taskSection}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Project Tasks</h3>
             {(userRole === "admin" || userRole === "mentor") && (
-              <button 
+              <button
                 onClick={openCreateTaskModal}
                 className={styles.createButton}
               >
@@ -516,7 +676,7 @@ const ProjectDetails = () => {
               </button>
             )}
           </div>
-
+ 
           {tasks.length > 0 ? (
             <table className={styles.taskTable}>
               <thead>
@@ -526,12 +686,17 @@ const ProjectDetails = () => {
                   <th>Due Date</th>
                   <th>Status</th>
                   <th>Student Assigned</th>
-                  {(userRole === "admin" || userRole === "mentor") && <th>Actions</th>}
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {tasks.map((task) => (
-                  <tr key={task.taskId}>
+                  <tr key={task.taskId}
+ 
+                  onClick={() => openTaskDetails(task)}
+                  className={styles.clickableRow}
+                 
+                  >
                     <td>{task.taskName}</td>
                     <td>{task.taskObjective || "N/A"}</td>
                     <td>
@@ -547,13 +712,13 @@ const ProjectDetails = () => {
                       </span>
                     </td>
                     <td>
-  {taskStudentsMap[task.taskId] && taskStudentsMap[task.taskId].length > 0 ? (
+                    {taskStudentsMap[task.taskId] && taskStudentsMap[task.taskId].length > 0 ? (
     <div className={styles.assignedStudents}>
       {taskStudentsMap[task.taskId].map((student, index) => (
         <div key={index} className={styles.studentBadge}>
           {student.image ? (
-            <img 
-              src={`data:image/jpeg;base64,${student.image}`} 
+            <img
+              src={`data:image/jpeg;base64,${student.image}`}
               alt={student.name}
               className={styles.studentAvatar}
             />
@@ -570,26 +735,54 @@ const ProjectDetails = () => {
     <span>No students assigned</span>
   )}
 </td>
-                    {(userRole === "admin" || userRole === "mentor") && (
-                      <td>
-                        <div className={styles.actionButtons}>
-                          <button 
-                            onClick={() => openEditTaskModal(task)}
-                            className={styles.actionButton}
-                            title="Edit"
-                          >
-                            <FiEdit2 />
-                          </button>
-                          <button 
-                            onClick={() => handleDeleteTask(task.taskId)}
-                            className={`${styles.actionButton} ${styles.delete}`}
-                            title="Delete"
-                          >
-                            <FiTrash2 />
-                          </button>
-                        </div>
-                      </td>
-                    )}
+ 
+ 
+                    {(userRole === "admin" || userRole === "mentor" || userRole ==="student") && (
+   <td>
+   <div className={styles.actionButtons}>
+     {/* Comment Button - for ALL users */}
+     <button
+      onClick={(e) => {
+        e.stopPropagation();
+        console.log("Comments clicked for task:", task.taskId);
+        navigate(`/tasks/${task.taskId}/comments-feedback`);
+      }}
+      className={styles.actionButton}
+      title="Comments"
+    >
+      <FiMessageSquare />
+    </button>
+     
+     
+ 
+     {/* Edit/Delete - only for mentors/admins */}
+     {(userRole === 'admin' || userRole === 'mentor') && (
+       <>
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             openEditTaskModal(task);
+           }}
+           className={styles.actionButton}
+           title="Edit"
+         >
+           <FiEdit2 />
+         </button>
+         <button
+           onClick={(e) => {
+             e.stopPropagation();
+             handleDeleteTask(task.taskId);
+           }}
+           className={`${styles.actionButton} ${styles.delete}`}
+           title="Delete"
+         >
+           <FiTrash2 />
+         </button>
+       </>
+     )}
+   </div>
+</td>
+)}
                   </tr>
                 ))}
               </tbody>
@@ -600,7 +793,7 @@ const ProjectDetails = () => {
             </div>
           )}
         </div>
-
+ 
         {/* Modern Modal */}
         <Modal
           isOpen={isModalOpen}
@@ -621,7 +814,7 @@ const ProjectDetails = () => {
                 </>
               )}
             </h2>
-            <button 
+            <button
               onClick={() => setIsModalOpen(false)}
               className={styles.modalCloseButton}
               aria-label="Close"
@@ -643,7 +836,7 @@ const ProjectDetails = () => {
                 placeholder="Enter task name"
               />
             </div>
-
+ 
             <div className={styles.formGroup}>
               <label>Objective</label>
               <textarea
@@ -655,7 +848,7 @@ const ProjectDetails = () => {
                 rows="4"
               />
             </div>
-
+ 
             <div className={styles.formGroup}>
               <label>
                 <FiCalendar /> Due Date
@@ -668,38 +861,72 @@ const ProjectDetails = () => {
                 className={styles.formInput}
               />
             </div>
-
+ 
             {approvedStudents.length > 0 && (
-              <div className={styles.formGroup}>
-                <label>
-                  <FiUser /> Assign Students
-                </label>
-                <select
-                  multiple
-                  value={newTask.assignedStudents}
-                  onChange={handleStudentSelect}
-                  className={styles.formSelect}
-                >
-                  {approvedStudents.map(student => (
-                    <option key={student.userId} value={student.userId}>
-                      {student.name} ({student.email})
-                    </option>
-                  ))}
-                </select>
-                <small className={styles.helperText}>Hold Ctrl/Cmd to select multiple students</small>
+  <div className={styles.formGroup}>
+    <label className={styles.dropdownLabel}>
+      <FiUser className={styles.labelIcon} /> Assign Students
+    </label>
+    <div className={styles.selectWrapper}>
+      <select
+        multiple
+        value={newTask.assignedStudents}
+        onChange={handleStudentSelect}
+        className={styles.studentSelect}
+        aria-multiselectable="true"
+      >
+        {approvedStudents.map(student => (
+          <option
+            key={student.userId}
+            value={student.userId}
+            className={styles.optionItem}
+            data-image={studentImages[student.userId] ? `data:image/jpeg;base64,${studentImages[student.userId]}` : null}
+          >
+            <div className={styles.optionContent}>
+              {studentImages[student.userId] ? (
+                <img
+                  src={`data:image/jpeg;base64,${studentImages[student.userId]}`}
+                  alt={student.name}
+                  className={styles.optionImage}
+                />
+              ) : (
+                <div className={styles.optionInitials}>
+                  {getInitials(student.name)}
+                </div>
+              )}
+              <div className={styles.optionText}>
+                <span className={styles.optionName}>{student.name}</span>
+                <span className={styles.optionEmail}>{student.email}</span>
               </div>
-            )}
-
+            </div>
+          </option>
+        ))}
+      </select>
+    </div>
+    <div className={styles.selectedCount}>
+      {newTask.assignedStudents.length > 0 ? (
+        <span className={styles.countBadge}>
+          {newTask.assignedStudents.length} selected
+        </span>
+      ) : (
+        <span className={styles.helperText}>
+          Hold Ctrl/Cmd to select multiple students
+        </span>
+      )}
+    </div>
+  </div>
+)}
+ 
             <div className={styles.modalFooter}>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setIsModalOpen(false)}
                 className={styles.cancelButton}
               >
                 Cancel
               </button>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className={styles.submitButton}
               >
                 {isEditing ? 'Update Task' : 'Create Task'}
@@ -707,9 +934,209 @@ const ProjectDetails = () => {
             </div>
           </form>
         </Modal>
+ 
+ 
+       {/* Task Details Modal */}
+{/* Task Details Modal */}
+<Modal
+  isOpen={isDetailsModalOpen}
+  onRequestClose={closeTaskDetails}
+  className={styles.modal}
+  overlayClassName={styles.overlay}
+  contentLabel="Task Details"
+>
+  <div className={styles.modalHeader}>
+    <h2>
+      <FiInfo /> Task Details
+    </h2>
+    <button
+      onClick={closeTaskDetails}
+      className={styles.modalCloseButton}
+      aria-label="Close"
+    >
+      <FiX />
+    </button>
+  </div>
+  
+  {selectedTask && (
+    <div className={styles.taskDetailsContent}>
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Task Name:</span>
+        <span className={styles.detailValue}>{selectedTask.taskName}</span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Objective:</span>
+        <span className={styles.detailValue}>
+          {selectedTask.taskObjective || "Not specified"}
+        </span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Due Date:</span>
+        <span className={styles.detailValue}>
+          {selectedTask.dueDate ? (
+            <>
+              <FiCalendar /> {new Date(selectedTask.dueDate).toLocaleString()}
+            </>
+          ) : "Not set"}
+        </span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Status:</span>
+        <span className={styles.detailValue}>
+          <span className={getStatusBadgeClass(selectedTask.completeStatus)}>
+            {selectedTask.completeStatus || "Not marked"}
+          </span>
+        </span>
+      </div>
+      
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Assigned Students:</span>
+        <div className={styles.assignedStudentsList}>
+          {taskStudentsMap[selectedTask.taskId]?.length > 0 ? (
+            taskStudentsMap[selectedTask.taskId].map((student) => (
+              <div key={student.studentId} className={styles.studentDetail}>
+                <div className={styles.avatarSmall}>
+                  {getInitials(student.name)}
+                </div>
+                <div>
+                  <div>{student.name}</div>
+                  <div className={styles.studentEmail}>{student.email}</div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <span>No students assigned</span>
+          )}
+        </div>
+      </div>
+ 
+      {/* Attachments Section */}
+      <div className={styles.detailItem}>
+        <span className={styles.detailLabel}>Attachments:</span>
+        {selectedTask.attachments ? (
+          <div className={styles.attachmentsList}>
+            <div
+              className={styles.attachmentItem}
+              onClick={() => setSelectedAttachment(selectedTask)}
+            >
+              <FiLink /> Current Attachment
+            </div>
+          </div>
+        ) : (
+          <span>No attachments yet</span>
+        )}
+      </div>
+ 
+      {/* Student View - Submit Task */}
+      {userRole === 'student' && (
+        <div className={styles.detailItem}>
+          <span className={styles.detailLabel}>Submit Task:</span>
+          <div className={styles.submissionSection}>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className={styles.fileInput}
+            />
+            <button
+              onClick={handleTaskSubmission}
+              disabled={isSubmittingTask}
+              className={styles.submitButton}
+            >
+              {isSubmittingTask ? 'Submitting...' : 'Submit Task'}
+            </button>
+          </div>
+        </div>
+      )}
+ 
+      {/* Admin/Mentor View - Approve/Reject */}
+      {(userRole === 'admin' || userRole === 'mentor') && (
+        <div className={styles.detailItem}>
+          <span className={styles.detailLabel}>Review Task:</span>
+          <div className={styles.reviewButtons}>
+            <button
+              onClick={() => handleTaskApproval(true)}
+              className={styles.approveButton}
+            >
+              <FiCheck /> Approve
+            </button>
+            <button
+              onClick={() => handleTaskApproval(false)}
+              className={styles.declineButton}
+            >
+              <FiX /> Decline
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  )}
+</Modal>
+ 
+{/* Attachment Viewer Modal */}
+<Modal
+  isOpen={!!selectedAttachment}
+  onRequestClose={() => setSelectedAttachment(null)}
+  className={styles.attachmentModal}
+  overlayClassName={styles.overlay}
+  contentLabel="Attachment Viewer"
+>
+  <div className={styles.modalHeader}>
+    <h2>
+      <FiLink /> Task Attachment
+    </h2>
+    <button
+      onClick={() => setSelectedAttachment(null)}
+      className={styles.modalCloseButton}
+      aria-label="Close"
+    >
+      <FiX />
+    </button>
+  </div>
+  
+  <div className={styles.attachmentContent}>
+    {selectedAttachment?.attachments ? (
+      <div className={styles.attachmentFrame}>
+        {selectedAttachment.attachments.startsWith('data:image') ? (
+          <img
+            src={selectedAttachment.attachments}
+            alt="Task Attachment"
+            className={styles.attachmentImage}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = '';
+              e.target.style.display = 'none';
+            }}
+          />
+        ) : (
+          <div className={styles.filePreview}>
+            <FiFile size={48} />
+            <p>File attachment</p>
+          </div>
+        )}
+        
+        <button
+          onClick={() => downloadAttachment(selectedAttachment)}
+          className={styles.downloadButton}
+        >
+          <FiDownload /> Download
+        </button>
+      </div>
+    ) : (
+      <div className={styles.noAttachment}>
+        <FiFile size={48} />
+        <p>No attachment available</p>
+      </div>
+    )}
+  </div>
+</Modal>
+ 
       </div>
     </DashboardLayout>
   );
 };
-
+ 
 export default ProjectDetails;
+ 
