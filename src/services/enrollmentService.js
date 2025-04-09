@@ -71,21 +71,43 @@ export const getStudentSkills = async (userId) => {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('No authentication token found');
 
-    const response = await axios.get(`${API_BASE_URL}/api/skill-mapping`, {
+    // 1. First fetch skill mappings for the user
+    const mappingResponse = await axios.get(`${API_BASE_URL}/api/skill-mapping`, {
       params: { userId },
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       }
     });
+
+    // 2. Extract skill IDs from the response
+    const skillMappings = mappingResponse.data?.response || [];
+    const skillIds = skillMappings.map(mapping => mapping.skillId);
+
+    if (skillIds.length === 0) return [];
+
+    // 3. Fetch all skills to map IDs to names
+    const skillsResponse = await axios.get(`${API_BASE_URL}/api/skills`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const allSkills = skillsResponse.data?.response || [];
     
-    return response.data.response || [];
+    // 4. Map skill IDs to skill names
+    return skillIds.map(skillId => {
+      const skill = allSkills.find(s => s.skillId === skillId);
+      return skill?.skillName;
+    }).filter(Boolean); // Remove any undefined values
+    
   } catch (error) {
     console.error('Error fetching student skills:', error);
-    throw error;
+    // Return empty array instead of throwing error to prevent UI breakage
+    return [];
   }
 };
-
 
 
 export const getRecommendedStudents = async (projectId) => {

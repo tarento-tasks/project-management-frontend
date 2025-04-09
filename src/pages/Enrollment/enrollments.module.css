@@ -18,7 +18,129 @@
   margin-bottom: 1.5rem;
   gap: 1rem;
 }
+/* Recommendation Section */
+.recommendationSection {
+  margin: 24px 0;
+  width: 100%;
+}
 
+/* Recommendation Button */
+.recommendationButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background-color: var(--secondary-color);
+  color: rgb(60, 64, 90);
+  border: none;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.recommendationButton:hover {
+  background-color: var(--secondary-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* Recommendation Container */
+.recommendationContainer {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+/* Student Cards Grid */
+.studentCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Individual Student Card */
+.studentCard {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 10px;
+  transition: transform 0.2s;
+}
+
+.studentCard:hover {
+  transform: translateY(-2px);
+  background: #f3f4f6;
+}
+
+/* Student Avatar */
+.studentAvatar {
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: var(--secondary-color);
+}
+
+.studentAvatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Student Info */
+.studentInfo {
+  flex: 1;
+}
+
+.studentInfo h4 {
+  margin: 0 0 6px 0;
+  font-size: 1rem;
+  color: #111827;
+}
+
+/* Skill Badges */
+.skillBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skillBadge {
+  padding: 4px 10px;
+  background: #8189a1;
+  color: var(--secondary-color);
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Empty State */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #6b7280;
+}
+
+.emptyState i {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  color: #d1d5db;
+}
 .searchBox {
   position: relative;
   flex-grow: 1;
@@ -275,12 +397,7 @@
     padding: 0.75rem 0.5rem;
   }
 }
-.modalActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-}
+
 
 .actionButton {
   display: flex;
@@ -301,17 +418,79 @@
   opacity: 0.95;
 }
 
+/* Gradient Button Styles */
 .approve {
-  background-color: #28a745; /* green */
+  background: linear-gradient(135deg, #c9e9d1 0%, #a8dbb5 50%, #88cdaa 100%);
+  color: #1a3e23;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.approve:hover {
+  background: linear-gradient(135deg, #88cdaa 0%, #a8dbb5 50%, #c9e9d1 100%);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
 }
 
 .reject {
-  background-color: #dc3545; /* red */
+  background: linear-gradient(135deg, #df3d4e 0%, #d12b3d 50%, #c2192b 100%);
+  color: white;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.reject:hover {
+  background: linear-gradient(135deg, #c2192b 0%, #d12b3d 50%, #df3d4e 100%);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
 }
 
 .delete {
-  background-color: #ffc107; /* yellow */
+  background: linear-gradient(135deg, #ffc107 0%, #ffab00 50%, #ff9500 100%);
   color: #212529;
+  border: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.delete:hover {
+  background: linear-gradient(135deg, #ff9500 0%, #ffab00 50%, #ffc107 100%);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+}
+
+/* Optional: Add these for better button appearance */
+button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.9rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Optional: Add a subtle shine effect */
+button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255,255,255,0.3) 0%,
+    rgba(255,255,255,0) 60%
+  );
+  transform: rotate(30deg);
+  transition: all 0.3s ease;
+}
+
+button:hover::after {
+  left: 100%;
 }
 
 .icon {
@@ -330,4 +509,212 @@
 .recommendationHighlight {
   background-color: #e8f5e9;
   border-left: 4px solid #28a745 !important;
+}
+/* Skills Section */
+.skillsSection {
+  margin: 16px 0 24px;
+  padding: 16px;
+  background-color: #f8fafc;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.skillsSection:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+.skillsSection strong {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #1e293b;
+  letter-spacing: 0.5px;
+}
+
+.skillBadges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.skillBadge {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #7977a7;
+  padding: 6px 14px;
+  border-radius: 24px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(99, 102, 241, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(165, 180, 252, 0.3);
+}
+
+.skillBadge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.15);
+  background: linear-gradient(135deg, #c7d2fe 0%, #a5b4fc 100%);
+}
+
+.skillBadge::before {
+  content: '•';
+  color: #818cf8;
+  margin-right: 6px;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.loadingSkills {
+  color: #64748b;
+  font-style: italic;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* For dark mode support */
+@media (prefers-color-scheme: dark) {
+  .skillsSection {
+    background-color: #1e293b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  
+  .skillsSection strong {
+    color: #e2e8f0;
+  }
+  
+  .skillBadge {
+    background: linear-gradient(135deg, #312e81 0%, #3730a3 100%);
+    color: #e0e7ff;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+  }
+  
+  .loadingSkills {
+    color: #94a3b8;
+  }
+}
+
+/* Criteria Section */
+.criteriaSection {
+  margin: 12px 0;
+}
+
+.criteriaList {
+  margin: 8px 0 0 16px;
+  padding: 0;
+  list-style-type: disc;
+}
+
+.criteriaList li {
+  margin-bottom: 4px;
+}
+
+/* Student Cards in Recommendations */
+.studentCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.studentCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.studentCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.studentAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  overflow: hidden;
+}
+
+.avatarPlaceholder {
+  font-weight: bold;
+  color: #495057;
+  font-size: 1.2rem;
+}
+
+.studentInfo {
+  flex: 1;
+}
+
+.studentInfo h4 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+}
+
+.studentEmail {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+
+
+.actionButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.actionButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.actionButton .icon {
+  font-size: 1rem;
+}
+
+/* Recommendation Button */
+.recommendationButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s;
+  margin: 16px 0;
+}
+
+.recommendationButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }

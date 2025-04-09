@@ -177,20 +177,31 @@ const AllProjects = () => {
 
   return (
     <GeneralLayout>
-      <div className={styles.allprojectscontainer}>
-        <div className={styles.headerRow}>
-          <h2 className={styles.allprojectstitle}>All Projects</h2>
-          <div className={styles.searchWrapper}>
-            <i className={`bi bi-search ${styles.searchIcon}`}></i>
-            <input
-              type="text"
-              className={styles.searchInput}
-              placeholder="Search projects..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
+     <div className={styles.allprojectscontainer}>
+  <div className={styles.headerRow}>
+    <h2 className={styles.allprojectstitle}>All Projects</h2>
+    <div className={styles.searchContainer}>
+      <div className={styles.searchBox}>
+        <i className={`bi bi-search ${styles.searchIcon}`}></i>
+        <input
+          type="text"
+          className={styles.searchInput}
+          placeholder="Find projects..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        {searchQuery && (
+          <button 
+            className={styles.clearButton}
+            onClick={() => setSearchQuery('')}
+          >
+            <i className="bi bi-x"></i>
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+
 
         <div className={styles.kanbanBoard}>
           {["todo", "inProgress", "completed", "overdue"].map((status) => (
