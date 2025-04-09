@@ -24,7 +24,6 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
 
     const { validation } = field;
 
-  
     if (field.required && (!value || (Array.isArray(value) && value.length === 0))) {
       return "This field is required";
     }
@@ -33,17 +32,40 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
       return validation.message || `Minimum ${validation.minLength} characters required`;
     }
 
-   
     if (validation.maxLength && value?.length > validation.maxLength) {
       return validation.message || `Maximum ${validation.maxLength} characters allowed`;
     }
 
-    // Future date validation
+    // ✅ Validation: selected date must be today or future
+    if (name === "dueDate" || name === "lastDate") {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+    
+      const selectedDate = new Date(value);
+      selectedDate.setHours(0, 0, 0, 0);
+    
+      console.log("Today:", today.toISOString());
+      console.log("Selected Date:", selectedDate.toISOString());
+    
+      if (selectedDate < today) {
+        return validation.message || "Date must be today or in the future";
+      }
+    }
+    
+    // ✅ Validation: dueDate must be after lastDate
+    if (name === "dueDate" && formData.lastDate) {
+      const dueDate = new Date(value);
+      const lastDate = new Date(formData.lastDate);
+      if (dueDate <= lastDate) {
+        return validation.message || "Due date must be after the last date to apply";
+      }
+    }
+
+    // Optional future-specific validations
     if (validation.isFutureDate && new Date(value) <= new Date()) {
       return validation.message || "Date must be in the future";
     }
 
-    // Date after another field validation
     if (validation.isAfterField && formData[validation.isAfterField]) {
       if (new Date(value) <= new Date(formData[validation.isAfterField])) {
         return validation.message || `Date must be after ${validation.isAfterField}`;
@@ -56,7 +78,7 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
   const handleChange = (e, fieldName) => {
     const { value } = e.target;
     let newValue = value;
-    
+
     if (fieldName === "skills" && value) {
       if (!formData.skills.includes(value)) {
         newValue = [...formData.skills, value];
@@ -116,10 +138,8 @@ const FormComponent = ({ fields, onSubmit, validateOnBlur = true, validateOnChan
       formData.criteria = "Default Criteria"; 
     }
     if (!validateForm()) {
-      
       return;
     }
-
     onSubmit(formData);
   };
 

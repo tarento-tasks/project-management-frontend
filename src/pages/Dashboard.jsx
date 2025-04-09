@@ -56,7 +56,7 @@ const Dashboard = () => {
              
               { key: "progress", label: "Progress" }
             ],
-            data: projects.slice(0, 5).map(project => ({
+            data: projects.map(project => ({
               projectId: project.projectId.substring(0, 6).toUpperCase(),
               projectName: project.title || 'Unnamed Project',
               
@@ -98,7 +98,7 @@ const Dashboard = () => {
               { key: "projectName", label: "Project Name" },
               { key: "progress", label: "Progress" }
             ],
-            data: mentorProjects.slice(0, 5).map(project => ({
+            data: mentorProjects.map(project => ({
               projectId: project.projectId.substring(0, 6).toUpperCase(),
               projectName: project.title || 'Unnamed Project',
               progress: calculateProjectProgress(project.projectId)
@@ -162,7 +162,7 @@ const Dashboard = () => {
               { key: "status", label: "Status" },
               { key: "dueDate", label: "Due Date" }
             ],
-            data: assignedTasks.slice(0, 5).map(task => ({
+            data: assignedTasks.map(task => ({
               taskId: task.taskId.substring(0, 6).toUpperCase(),
               taskName: task.taskName || 'Unnamed Task',
               status: task.completeStatus || 'Pending',

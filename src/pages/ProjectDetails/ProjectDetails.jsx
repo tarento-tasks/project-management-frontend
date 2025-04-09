@@ -231,22 +231,23 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
  
   const fetchTasksForProject = async (projectId) => {
     try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(`${TASKS_API}?projectId=${projectId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-  
-      if (response.data && response.data.response) {
-        const fetchedTasks = response.data.response;
-        setTasks(fetchedTasks);
-        fetchStudentsForTasks(fetchedTasks);
-      }
+        const token = localStorage.getItem("token");
+        const response = await axios.get(`${TASKS_API}?projectId=${projectId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+ 
+        if (response.data && response.data.response) {
+            // Filter out any tasks that might have deletedAt set (just in case)
+            const fetchedTasks = response.data.response.filter(task => !task.deletedAt);
+            setTasks(fetchedTasks);
+            fetchStudentsForTasks(fetchedTasks);
+        }
     } catch (err) {
-      console.error("Error fetching tasks:", err);
+        console.error("Error fetching tasks:", err);
     }
-  };
+};
  
   const openCreateTaskModal = () => {
     setIsModalOpen(true);
@@ -315,20 +316,23 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
     
     try {
       if (isEditing) {
-        await axios.put(`${TASKS_API}/${currentTaskId}`, {
-          taskName: newTask.taskName,
-          taskObjective: newTask.taskObjective,
-          dueDate: newTask.dueDate,
-          projectId: projectId
-        }, {
+        // Use FormData for updates to handle file uploads as it works in the first snippet
+        const formData = new FormData();
+        formData.append('taskName', newTask.taskName);
+        formData.append('taskObjective', newTask.taskObjective || '');
+        formData.append('dueDate', newTask.dueDate);
+        formData.append('projectId', projectId);
+        
+        await axios.put(`${TASKS_API}/${currentTaskId}`, formData, {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            'Content-Type': 'multipart/form-data'
           }
         });
- 
+        
         showSuccessAlert('Task updated successfully!');
       } else {
+        // Use JSON for creating new tasks, as it works in the second snippet
         const response = await axios.post(TASKS_API, {
           taskName: newTask.taskName,
           taskObjective: newTask.taskObjective,
@@ -340,14 +344,14 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
             'Content-Type': 'application/json'
           }
         });
- 
-        const createdTask = response.data?.response || response.data;
         
+        const createdTask = response.data?.response || response.data;
         if (!createdTask || !createdTask.taskId) {
           throw new Error('Invalid task creation response');
         }
- 
-        if (newTask.assignedStudents.length > 0) {
+        
+        // Handle student assignments for new tasks
+        if (newTask.assignedStudents && newTask.assignedStudents.length > 0) {
           try {
             await Promise.all(newTask.assignedStudents.map(studentId =>
               axios.post(STU_TASK_API, {
@@ -365,10 +369,10 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
             showErrorAlert('Task was created but student assignment failed');
           }
         }
- 
+        
         showSuccessAlert('Task created successfully!');
       }
- 
+      
       await fetchTasksForProject(projectId);
       setIsModalOpen(false);
     } catch (err) {
@@ -376,37 +380,41 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
       showErrorAlert(err.response?.data?.message || 'Failed to save task. Please try again.');
     }
   };
+   
  
   const handleDeleteTask = async (taskId) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#6366f1',
-      cancelButtonColor: '#64748b',
-      confirmButtonText: 'Yes, delete it!',
-      background: '#ffffff',
-      backdrop: 'rgba(0, 0, 0, 0.1)'
+        title: 'Are you sure?',
+        text: "This task will be archived!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#6366f1',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'Yes, archive it!',
+        background: '#ffffff',
+        backdrop: 'rgba(0, 0, 0, 0.1)'
     });
  
     if (result.isConfirmed) {
-      try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`${TASKS_API}/${taskId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        
-        await fetchTasksForProject(projectId);
-        showSuccessAlert('Task has been deleted.');
-      } catch (err) {
-        console.error("Error deleting task:", err);
-        showErrorAlert('Failed to delete task. Please try again.');
-      }
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`${TASKS_API}/${taskId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            
+            // Optimistically update the UI by filtering out the deleted task
+            setTasks(prevTasks => prevTasks.filter(task => task.taskId !== taskId));
+            
+            showSuccessAlert('Task has been archived.');
+        } catch (err) {
+            console.error("Error deleting task:", err);
+            showErrorAlert('Failed to archive task. Please try again.');
+        }
     }
-  };
+};
+ 
  
   const getStatusBadgeClass = (status) => {
     if (status === "Completed") return `${styles.statusBadge} ${styles.completed}`;
@@ -505,37 +513,51 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   };
  
  
-  const downloadAttachment = (task) => {
+  const downloadAttachment = async (task) => {
     if (!task.attachments) {
       showErrorAlert('No attachment available');
       return;
     }
-  
+    
     try {
-      // Create a temporary anchor element
-      const link = document.createElement('a');
+      const token = localStorage.getItem("token");
+      const response = await fetch(`${TASKS_API}/${task.taskId}/attachment`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       
-      if (typeof task.attachments === 'string' && task.attachments.startsWith('data:')) {
-        // Handle base64 data URI
-        link.href = task.attachments;
-        link.setAttribute('download', `task_${task.taskId}_attachment`);
-      } else {
-        // Handle OID reference
-        link.href = `${TASKS_API}/${task.taskId}/attachment`;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
+      if (!response.ok) {
+        throw new Error('Failed to download attachment');
       }
       
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Try to get filename from content-disposition header or use a default
+      const contentDisposition = response.headers.get('content-disposition');
+      let filename = `task_${task.taskId}_attachment`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1];
+        }
+      }
+      
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
+      
+      // Cleanup
       document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (err) {
       console.error("Error downloading attachment:", err);
       showErrorAlert('Failed to download attachment');
     }
   };
- 
- 
   const handleCommentsClick = (taskId) => {
     console.log("Comments clicked for task:", taskId);
     // Add your comment logic here later

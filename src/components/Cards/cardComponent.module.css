@@ -1,15 +1,275 @@
+/* src/components/Cards/cardComponent.module.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+ 
+/* Card Container */
 .cardContainer {
-    margin: 20px;
-    font-family: 'Inter', sans-serif;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  border: none;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+ 
+.hoverable:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+ 
+/* Card Header */
+.cardHeader {
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #517ea6 0%, #3e648b 100%);
+  border-bottom: none;
+  display: flex;
+  align-items: center;
+}
+ 
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+ 
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.3px;
+}
+ 
+.dataCount {
+  font-size: 0.85rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: white;
+}
+ 
+/* Card Body */
+.cardBody {
+  padding: 0;
+  background-color: #ffffff;
+}
+ 
+.tableWrapper {
+  overflow-y: auto;
+  max-height: 270px; /* You can adjust this height */
+  -webkit-overflow-scrolling: touch;
+}
+ 
+/* Table Styling */
+.cardTable {
+  margin-bottom: 0;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+ 
+/* Table Header */
+.tableHeader {
+  background-color: rgba(81, 126, 166, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+ 
+.tableHeaderCell {
+  color: #2a3c50;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 16px;
+  border-bottom: 2px solid #eaecef;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+ 
+.headerCellContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+ 
+.headerIcon {
+  display: flex;
+  align-items: center;
+}
+ 
+/* Table Rows */
+.tableRow {
+  border-bottom: 1px solid #f0f2f5;
+  transition: all 0.15s ease;
+}
+ 
+.cardTable.striped .tableRow:nth-child(even) {
+  background-color: rgba(81, 126, 166, 0.03);
+}
+ 
+.tableRow:hover {
+  background-color: rgba(81, 126, 166, 0.05) !important;
+}
+ 
+.tableCell {
+  padding: 16px;
+  color: #2d455f;
+  font-size: 0.95rem;
+  vertical-align: middle;
+  line-height: 1.5;
+}
+ 
+.numericCell {
+  text-align: right;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+ 
+/* Status Badges */
+.statusBadge {
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  background-color: rgba(81, 126, 166, 0.1);
+  color: #2d455f;
+}
+ 
+.statusApproved {
+  background-color: rgba(56, 161, 105, 0.1) !important;
+  color: #38a169 !important;
+}
+ 
+.statusOpen {
+  background-color: rgba(81, 126, 166, 0.1) !important;
+  color: #517ea6 !important;
+}
+ 
+.statusPending {
+  background-color: rgba(214, 158, 46, 0.1) !important;
+  color: #d69e2e !important;
+}
+ 
+.statusRejected {
+  background-color: rgba(229, 62, 62, 0.1) !important;
+  color: #e53e3e !important;
+}
+ 
+.statusClosed {
+  background-color: rgba(113, 128, 150, 0.1) !important;
+  color: #718096 !important;
+}
+ 
+/* Progress Bar Styling */
+.progressWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+ 
+.progressContainer {
+  height: 8px;
+  flex: 1;
+  background-color: #edf2f7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+ 
+.progressBar {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+ 
+.progressHigh {
+  background-color: #38a169;
+}
+ 
+.progressMedium {
+  background-color: #3e648b;
+}
+ 
+.progressLow {
+  background-color: #d69e2e;
+}
+ 
+.progressText {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #3e648b;
+  min-width: 40px;
+  text-align: right;
+}
+ 
+/* Boolean Badges */
+.booleanTrue {
+  background-color: rgba(56, 161, 105, 0.1);
+  color: #38a169;
+}
+ 
+.booleanFalse {
+  background-color: rgba(229, 62, 62, 0.1);
+  color: #e53e3e;
+}
+ 
+/* Empty State */
+.emptyState {
+  text-align: center;
+  padding: 40px 24px;
+  color: #718096;
+}
+ 
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+ 
+.emptyIcon {
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+ 
+/* Card Footer */
+.cardFooter {
+  background-color: #f8fafc;
+  border-top: 1px solid #eaecef;
+  padding: 12px 24px;
+  font-size: 0.85rem;
+  color: #718096;
+}
+ 
+.footerContent {
+  display: flex;
+  justify-content: flex-end;
+}
+ 
+.lastUpdated {
+  font-size: 0.8rem;
+}
+ 
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .cardHeader {
+    padding: 14px 16px;
   }
   
-  .cardHeader {
-    font-size: 1.2rem;
-    font-weight: bold;
-    font-family: 'Inter', sans-serif;
-    background-color: #517ea6;
-    color: white;
+  .tableHeaderCell {
+    padding: 12px;
+    font-size: 0.8rem;
   }
+  
+  .tableCell {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+  
+  .emptyContent {
+    max-width: 100%;
+  }
+}
+ 

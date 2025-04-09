@@ -21,6 +21,15 @@
     flex-wrap: wrap; 
     margin-bottom: 20px;
   }
+
+  .statusHeading {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    color: white;
+    
+  }
+  
   
 
   .searchWrapper {
@@ -73,7 +82,7 @@
     border-radius: 6px;
   }
   
-  /* Separate Header Section */
+  
   .columnHeader {
     
     height: 40px;
@@ -111,8 +120,8 @@
   }
   
   
-  .toBeReviewedHeader {
-    background: linear-gradient(135deg, #c8d1a0, #8f8f8a); /* 500 to 600 */
+  .todoHeader {
+    background: linear-gradient(135deg, #b9b9b4, #2d455f); /* 500 to 600 */
   }
    
   .inProgressHeader {
@@ -124,9 +133,12 @@
   }
    
   .overdueHeader {
-    background: linear-gradient(135deg,  #d3ebb9,#c3cfce); /* 800 to 900 */
+    background: linear-gradient(135deg,  #a9c091,#569690);
   }
-  
+  .allprojectscontainer h3{
+    color: white;
+
+  }
   /* Light background below headers */
   .toBeReviewed,
   .inProgress,

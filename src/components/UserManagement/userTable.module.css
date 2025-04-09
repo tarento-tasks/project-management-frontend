@@ -1,71 +1,115 @@
 .tableContainer {
-    width: 100%;
-    overflow-x: auto;
-    background-color: white;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #1f2937;
+  text-align: left;
+  margin-bottom: 0.5rem;
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+.sectionTitle::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 70%;
+  background: linear-gradient(180deg, #517ea6, #335171);
+  border-radius: 4px;
+}
+
+.cardRow {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cardRow:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+}
+
+.cardName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.cardEmail {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.cardQual {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin-top: 0.25rem;
+}
+
+.cardActions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.iconButton {
+  background: none;
+  border: none;
+  color: #111827;
+  padding: 0.25rem;
+  font-size: 1.1rem;
+}
+
+.iconButton:hover {
+  color: #000000;
+  transform: scale(1.1);
+  transition: transform 0.2s;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid #d1d5db;
+  border-top: 2px solid #111827;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
-  .userTable {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .userTable th {
-    padding: 1rem;
-    text-align: left;
-    background-color: #517ea6;
-    color: white;
-    font-weight: 500;
-  }
-  
-  .userTable td {
-    padding: 1rem;
-    border-bottom: 1px solid #e5e7eb;
-    color: #4b5563;
-  }
-  
-  .tableRow:hover {
-    background-color: #f3f4f6;
-    cursor: pointer;
-  }
-  
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .editButton, .deleteButton {
-    padding: 0.5rem;
-    border: none;
-    border-radius: 0.25rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-  
-  .editButton {
-    background-color: #3e648b;
-    color: white;
-  }
-  
-  .editButton:hover {
-    background-color: #335171;
-  }
-  
-  .deleteButton {
-    background-color: #ef4444;
-    color: white;
-  }
-  
-  .deleteButton:hover {
-    background-color: #dc2626;
-  }
-  
-  .noData {
-    text-align: center;
-    padding: 2rem;
-    color: #6b7280;
-  }
+}
+
+.createButton {
+  background: linear-gradient(90deg, #517ea6, #335171);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  box-shadow: 0 2px 5px rgba(81, 126, 166, 0.3);
+}
+
+.createButton:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(81, 126, 166, 0.4);
+}

@@ -67,8 +67,26 @@ const NewProject = () => {
       validation: { maxLength: 255 }
     },
     { name: "mentor", label: "Mentor", type: "select", options: mentors.map(m => m.name), required: true },
-    { name: "lastDate", label: "Last Date to Enroll", type: "date", required: true },
-    { name: "dueDate", label: "Project Due Date", type: "date", required: true }
+    {
+      name: "lastDate",
+      label: "Last Date to Enroll",
+      type: "date",
+      required: true,
+      validation: {
+        custom: true
+        
+      }
+    },
+    {
+      name: "dueDate",
+      label: "Project Due Date",
+      type: "date",
+      required: true,
+      validation: {
+        custom: true
+        
+      }
+    }
   ];
 
   const handleSubmit = async (formData) => {

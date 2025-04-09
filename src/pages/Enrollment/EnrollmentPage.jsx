@@ -194,7 +194,7 @@ const EnrollmentPage = () => {
               onChange={(e) => setStatusFilter(e.target.value)}
               style={{ borderColor: colors.secondary }}
             >
-              <option value="ALL">All Statuses</option>
+              <option value="ALL">Status</option>
               <option value="PENDING">Pending</option>
               <option value="APPROVED">Approved</option>
               <option value="REJECTED">Rejected</option>
