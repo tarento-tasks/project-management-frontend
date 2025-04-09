@@ -4,6 +4,9 @@ import ProjectCard from "../../components/ProjectCard/ProjectCard";
 import styles from "./allProjects.module.css";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Link } from "react-router-dom";
+import dashboardService from "../../services/dashboardService";
+
+
 
 import axios from "axios";
 import dayjs from "dayjs";
@@ -37,13 +40,14 @@ const AllProjects = () => {
 
         let studentApprovedProjectIds = [];
         if (userRole === "STUDENT") {
-          const approvedRes = await axios.get(STUDENT_PROJECTS_API, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          studentApprovedProjectIds = approvedRes.data.response.map(
-            (proj) => proj.projectId
-          );
+          try {
+            const approvedProjects = await dashboardService.getStudentEnrollments(userId);
+            studentApprovedProjectIds = approvedProjects.map((proj) => proj.projectId);
+          } catch (err) {
+            console.error("Error getting approved student projects:", err);
+          }
         }
+        
 
         if (
           projectResponse.data.response &&
