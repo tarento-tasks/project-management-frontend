@@ -25,6 +25,44 @@ const newProjectService = {
     }
   },
 
+  updateProject: async (projectId, updatedProjectData) => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/projects?id=${projectId}`, updatedProjectData, {
+        headers: getAuthHeaders()
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating project:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  deleteProject: async (projectId) => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/projects/${projectId}`, {
+        headers: getAuthHeaders()
+      });
+
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Project deleted successfully.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting project:", error.response?.data || error.message);
+      Swal.fire({
+        title: 'Error',
+        text: error.response?.data?.message || error.message,
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
+      throw error;
+    }
+  },
+
   getAllSkills: async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/skills`, {
@@ -68,7 +106,6 @@ const newProjectService = {
         throw new Error('Please login first');
       }
 
-      // Verify token expiration
       const tokenData = JSON.parse(atob(token.split('.')[1]));
       if (tokenData.exp * 1000 < Date.now()) {
         localStorage.removeItem('token');
@@ -77,7 +114,7 @@ const newProjectService = {
 
       const response = await axios.get(`${API_BASE_URL}/project-enrollment`, {
         headers: getAuthHeaders(),
-        validateStatus: (status) => status < 500 // Handle 403 explicitly
+        validateStatus: (status) => status < 500
       });
 
       if (response.status === 403) {
@@ -91,14 +128,12 @@ const newProjectService = {
     } catch (error) {
       console.error("API Error:", error);
 
-      // Handle token expiration or invalid token
       if (error.message.includes('expired') || error.response?.status === 401) {
         localStorage.removeItem('token');
         window.location.href = '/login?session=expired';
         return;
       }
 
-      // Handle 403 errors with a user-friendly alert
       if (error.response?.status === 403) {
         Swal.fire({
           title: 'Permission Required',

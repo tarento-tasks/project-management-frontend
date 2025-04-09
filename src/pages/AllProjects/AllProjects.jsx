@@ -23,6 +23,7 @@ const AllProjects = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
  
   useEffect(() => {
     const fetchProjects = async () => {
@@ -145,6 +146,26 @@ const AllProjects = () => {
     list.filter((project) =>
       project.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+  const handleEdit = (project) => {
+    // This function would handle editing if needed at this level
+    console.log("Edit project", project);
+  };
+
+  const handleDelete = (projectId) => {
+    // This function would handle deletion if needed at this level
+    console.log("Delete project", projectId);
+  };
+
+  const handleCardClick = (e, project) => {
+    // Only navigate if not editing or deleting
+    if (e.isDefaultPrevented() || showModal) {
+      return;
+    }
+    
+    // Otherwise navigate to project details
+    window.location.href = `/projects/${project.projectId}`;
+  };
  
   if (loading) {
     return (
@@ -196,23 +217,26 @@ const AllProjects = () => {
           {["todo", "inProgress", "completed", "overdue"].map((status) => (
             <div key={status} className={styles.columnWrapper}>
               <div className={`${styles.columnHeader} ${styles[`${status}Header`]}`}>
-              <h3 className={styles.statusHeading}>
-                {status === "todo" && "To Do"}
-                {status === "inProgress" && "In Progress"}
-                {status === "completed" && "Completed"}
-                {status === "overdue" && "Overdue"}
-              </h3>
-
+                <h3 className={styles.statusHeading}>
+                  {status === "todo" && "To Do"}
+                  {status === "inProgress" && "In Progress"}
+                  {status === "completed" && "Completed"}
+                  {status === "overdue" && "Overdue"}
+                </h3>
               </div>
               <div className={`${styles.column} ${styles[status]}`}>
                 {filterBySearch(projects[status]).map((project, index) => (
-                  <Link
+                  <div 
                     key={`${status}-${index}`}
-                    to={`/projects/${project.projectId}`}
-                    style={{ textDecoration: "none", color: "inherit" }}
+                    className={styles.projectCardWrapper}
+                    onClick={(e) => handleCardClick(e, project)}
                   >
-                    <ProjectCard {...project} />
-                  </Link>
+                    <ProjectCard
+                      project={project}
+                      onUpdate={() => window.location.reload()}
+                      setParentShowModal={setShowModal} // Pass setter to child component
+                    />
+                  </div>
                 ))}
                 {filterBySearch(projects[status]).length === 0 && (
                   <div className={styles.emptyColumn}>
