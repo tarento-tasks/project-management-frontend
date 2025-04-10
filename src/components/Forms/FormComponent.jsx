@@ -120,102 +120,114 @@ const FormComponent = ({
     onSubmit(formData);
   };
 
+  // Group fields by type for card-based layout
+  const renderFormFields = () => {
+    return (
+      <div className={styles.formCards}>
+        {fields.map((field) => (
+          <div key={field.name} className={styles.formCard}>
+            <div className={styles.cardHeader}>
+              <label className={styles.formLabel}>
+                {field.label}
+                {field.required && <span className={styles.required}>*</span>}
+              </label>
+            </div>
+
+            <div className={styles.cardBody}>
+              {field.type === "textarea" ? (
+                <>
+                  <textarea
+                    className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={(e) => handleChange(e, field.name)}
+                    onBlur={(e) => handleBlur(e, field.name)}
+                    placeholder={field.placeholder}
+                    rows={field.rows}
+                  />
+                </>
+              ) : field.type === "select" && field.name === "skills" ? (
+                <>
+                  <select
+                    className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
+                    onChange={(e) => handleChange(e, "skills")}
+                    onBlur={(e) => handleBlur(e, "skills")}
+                    value=""
+                  >
+                    <option value="" disabled>Select a skill</option>
+                    {field.options
+                      .filter((option) => !formData.skills.includes(option))
+                      .map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                  </select>
+
+                  <div className={styles.selectedSkills}>
+                    {formData.skills.map((skill, index) => (
+                      <span key={index} className={styles.skillTag}>
+                        {skill}
+                        <button 
+                          type="button" 
+                          className={styles.removeSkill} 
+                          onClick={() => removeSkill(skill)}
+                          aria-label={`Remove ${skill}`}
+                        >
+                          ✖
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                </>
+              ) : field.type === "select" ? (
+                <>
+                  <select
+                    className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={(e) => handleChange(e, field.name)}
+                    onBlur={(e) => handleBlur(e, field.name)}
+                  >
+                    <option value="">Select {field.label}</option>
+                    {field.options.map((option, index) => (
+                      <option key={index} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              ) : (
+                <>
+                  <input
+                    className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
+                    type={field.type}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={(e) => handleChange(e, field.name)}
+                    onBlur={(e) => handleBlur(e, field.name)}
+                    placeholder={field.placeholder}
+                  />
+                </>
+              )}
+              {errors[field.name] && <div className={styles.errorMessage}>{errors[field.name]}</div>}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className={`${styles.formContainer} ${className}`}>
       <form onSubmit={handleSubmit}>
-        {fields.map((field) => (
-          <div key={field.name} className={styles.formGroup}>
-            <label className={styles.formLabel}>
-              {field.label}
-              {field.required && <span className={styles.required}>*</span>}
-            </label>
-
-            {field.type === "textarea" ? (
-              <>
-                <textarea
-                  className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
-                  name={field.name}
-                  value={formData[field.name]}
-                  onChange={(e) => handleChange(e, field.name)}
-                  onBlur={(e) => handleBlur(e, field.name)}
-                  placeholder={field.placeholder}
-                  rows={field.rows}
-                />
-                {errors[field.name] && <div className={styles.errorMessage}>{errors[field.name]}</div>}
-              </>
-            ) : field.type === "select" && field.name === "skills" ? (
-              <>
-                <select
-                  className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
-                  onChange={(e) => handleChange(e, "skills")}
-                  onBlur={(e) => handleBlur(e, "skills")}
-                  value=""
-                >
-                  <option value="" disabled>Select a skill</option>
-                  {field.options
-                    .filter((option) => !formData.skills.includes(option))
-                    .map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
-                {errors[field.name] && <div className={styles.errorMessage}>{errors[field.name]}</div>}
-
-                <div className={styles.selectedSkills}>
-                  {formData.skills.map((skill, index) => (
-                    <span key={index} className={styles.skillTag}>
-                      {skill}
-                      <button 
-                        type="button" 
-                        className={styles.removeSkill} 
-                        onClick={() => removeSkill(skill)}
-                        aria-label={`Remove ${skill}`}
-                      >
-                        ✖
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              </>
-            ) : field.type === "select" ? (
-              <>
-                <select
-                  className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
-                  name={field.name}
-                  value={formData[field.name]}
-                  onChange={(e) => handleChange(e, field.name)}
-                  onBlur={(e) => handleBlur(e, field.name)}
-                >
-                  <option value="">Select {field.label}</option>
-                  {field.options.map((option, index) => (
-                    <option key={index} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {errors[field.name] && <div className={styles.errorMessage}>{errors[field.name]}</div>}
-              </>
-            ) : (
-              <>
-                <input
-                  className={`${styles.formControl} ${errors[field.name] ? styles.error : ''}`}
-                  type={field.type}
-                  name={field.name}
-                  value={formData[field.name]}
-                  onChange={(e) => handleChange(e, field.name)}
-                  onBlur={(e) => handleBlur(e, field.name)}
-                  placeholder={field.placeholder}
-                />
-                {errors[field.name] && <div className={styles.errorMessage}>{errors[field.name]}</div>}
-              </>
-            )}
-          </div>
-        ))}
-
-        <button type="submit" className={styles.submitButton}>
-          Submit
-        </button>
+        {renderFormFields()}
+        
+        <div className={styles.formActions}>
+          <button type="submit" className={styles.submitButton}>
+            Submit
+          </button>
+        </div>
       </form>
     </div>
   );

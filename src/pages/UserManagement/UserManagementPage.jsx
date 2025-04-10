@@ -31,6 +31,7 @@ const UserManagementPage = () => {
 
   // Fetch initial data
   useEffect(() => {
+    console.log("Mentors Button:", document.getElementById("mentorBtn"));
     const fetchData = async () => {
       try {
         setIsLoading(true);
@@ -218,71 +219,77 @@ const UserManagementPage = () => {
     const regex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return regex.test(uuid);
   };
+
+  console.log("Button Rendered");
   return (
+    
     <GeneralLayout role={auth.role}>
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <h1 className={styles.title}>
-            <span className={styles.titleIcon}>👥</span>
-            User Management
-          </h1>
-          <div className={styles.actions}>
-            <button 
-              onClick={handleCreateNew}
-              className={styles.createButton}
-            >
-              <FaPlus className={styles.buttonIcon} />
-              Create New User
-            </button>
-          </div>
-          <div className={styles.tabs}>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'mentors' ? styles.active : ''}`}
-              onClick={() => setActiveTab('mentors')}
-            >
-              <FaChalkboardTeacher className={styles.tabIcon} />
-              Mentors
-              <span className={styles.countBadge}>{mentors.length}</span>
-            </button>
-            <button
-              className={`${styles.tabButton} ${activeTab === 'students' ? styles.active : ''}`}
-              onClick={() => setActiveTab('students')}
-            >
-              <FaUserGraduate className={styles.tabIcon} />
-              Students
-              <span className={styles.countBadge}>{students.length}</span>
-            </button>
-          </div>
+  <div className={styles.container}>
+    <div className={styles.header}>
+      <h1 className={styles.title}>User Management</h1>
+
+      {/* Tabs and Create Button in Same Row */}
+      <div className={styles.topBar}>
+        <div className={styles.tabs}>
+          <button
+            className={`${styles.tabButton} ${activeTab === 'mentors' ? styles.active : ''}`}
+            onClick={() => setActiveTab('mentors')}
+          >
+            <FaChalkboardTeacher className={styles.tabIcon} />
+            <span>Mentors</span>
+            <span className={styles.countBadge}>{mentors.length}</span>
+          </button>
+          <button
+            className={`${styles.tabButton} ${activeTab === 'students' ? styles.active : ''}`}
+            onClick={() => setActiveTab('students')}
+          >
+            <FaUserGraduate className={styles.tabIcon} />
+            <span>Students</span>
+            <span className={styles.countBadge}>{students.length}</span>
+          </button>
         </div>
 
-        <div className={styles.content}>
-          {isLoading ? (
-            <div className={styles.loadingContainer}>
-              <div className={styles.loadingSpinner}></div>
-              <p>Loading user data...</p>
-            </div>
-          ) : (
-            <UserTable
-              users={activeTab === 'mentors' ? mentors : students}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-              onView={handleView}
-            />
-          )}
+        <div className={styles.actions}>
+          <button 
+            onClick={handleCreateNew}
+            className={styles.createButton}
+          >
+            <FaPlus className={styles.buttonIcon} />
+            New User
+          </button>
         </div>
-
-        {isModalOpen && (
-          <UserModal
-            user={selectedUser}
-            roles={roles}
-            onClose={handleModalClose}
-            onSave={handleSave}
-            isEditMode={!isCreateMode}
-            isCreateMode={isCreateMode}
-          />
-        )}
       </div>
-    </GeneralLayout>
+    </div>
+
+    <div className={styles.content}>
+      {isLoading ? (
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner}></div>
+          <p>Loading user data...</p>
+        </div>
+      ) : (
+        <UserTable
+          users={activeTab === 'mentors' ? mentors : students}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+          onView={handleView}
+        />
+      )}
+    </div>
+
+    {isModalOpen && (
+      <UserModal
+        user={selectedUser}
+        roles={roles}
+        onClose={handleModalClose}
+        onSave={handleSave}
+        isEditMode={!isCreateMode}
+        isCreateMode={isCreateMode}
+      />
+    )}
+  </div>
+</GeneralLayout>
+
   );
 };
 

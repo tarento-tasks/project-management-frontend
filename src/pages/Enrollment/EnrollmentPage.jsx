@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { authState } from '../../states/authState';
 import GeneralLayout from '../../layouts/GeneralLayout';
-import { FaCheckCircle, FaTimesCircle, FaTrashAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaTrashAlt, FaSearch, FaFilter, FaUserTie, FaBook, FaInfoCircle } from 'react-icons/fa';
 import { 
   getEnrollments, 
   updateEnrollmentStatus,
@@ -30,15 +30,20 @@ const EnrollmentPage = () => {
   const [studentSkills, setStudentSkills] = useState([]);
   const [loadingSkills, setLoadingSkills] = useState(false);
 
-  // Color palette
+  // Classic color palette
   const colors = {
-    primary: '#517ea6',
-    secondary: '#3e648b',
-    dark: '#2a3c50',
-    light: '#f8f9fa',
-    success: '#28a745',
-    warning: '#ffc107',
-    danger: '#dc3545'
+    primary: '#2c3e50',
+    secondary: '#34495e',
+    accent: '#3498db',
+    light: '#ecf0f1',
+    dark: '#2c3e50',
+    success: '#27ae60',
+    warning: '#f39c12',
+    danger: '#e74c3c',
+    info: '#2980b9',
+    text: '#333',
+    muted: '#95a5a6',
+    background: '#f5f7fa'
   };
 
   useEffect(() => {
@@ -174,26 +179,40 @@ const EnrollmentPage = () => {
 
   return (
     <GeneralLayout>
-      <div className={styles.container} style={{ backgroundColor: colors.light }}>
-        <h1 className={styles.title} style={{ color: colors.dark }}>
-          {auth.role === 'ADMIN' ? 'Enrollment Requests Dashboard' : 'My Project Applications'}
-        </h1>
+      <div className={styles.container} style={{ backgroundColor: colors.background }}>
+        <div className={styles.headerContainer}>
+          <h1 className={styles.title} style={{ color: colors.dark }}>
+            {auth.role === 'ADMIN' ? 'Enrollment Requests' : 'My Applications'}
+            <span className={styles.titleDivider}></span>
+          </h1>
+          <p className={styles.subtitle} style={{ color: colors.muted }}>
+            {auth.role === 'ADMIN' ? 'Manage student project applications' : 'Track your project applications'}
+          </p>
+        </div>
         
-        <div className={styles.filterContainer} style={{ backgroundColor: colors.primary }}>
+        <div className={styles.filterContainer}>
           <div className={styles.searchBox}>
+            <FaSearch className={styles.searchIcon} style={{ color: colors.muted }} />
             <input
               type="text"
               placeholder={auth.role === 'ADMIN' ? "Search by student or project..." : "Search by project..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ borderColor: colors.secondary }}
+              style={{ 
+                borderColor: colors.secondary,
+                color: colors.text
+              }}
             />
           </div>
           <div className={styles.statusFilter}>
+            <FaFilter className={styles.filterIcon} style={{ color: colors.muted }} />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ borderColor: colors.secondary }}
+              style={{ 
+                borderColor: colors.secondary,
+                color: colors.text
+              }}
             >
               <option value="ALL">All Statuses</option>
               <option value="PENDING">Pending</option>
@@ -206,19 +225,22 @@ const EnrollmentPage = () => {
         <div className={styles.tableContainer}>
           <table className={styles.enrollmentTable}>
             <thead>
-              <tr style={{ backgroundColor: colors.secondary, color: 'white' }}>
+              <tr style={{ 
+                backgroundColor: colors.primary,
+                color: colors.light
+              }}>
                 {auth.role === 'ADMIN' ? (
                   <>
-                    <th>Student Name</th>
-                    <th>Project Title</th>
-                    <th>Project Objective</th>
+                    <th><FaUserTie className={styles.headerIcon} /> Student</th>
+                    <th><FaBook className={styles.headerIcon} /> Project</th>
+                    <th><FaInfoCircle className={styles.headerIcon} /> Objective</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </>
                 ) : (
                   <>
-                    <th>Project Title</th>
-                    <th>Mentor</th>
+                    <th><FaBook className={styles.headerIcon} /> Project</th>
+                    <th><FaUserTie className={styles.headerIcon} /> Mentor</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </>
@@ -233,8 +255,7 @@ const EnrollmentPage = () => {
                     onClick={() => handleRowClick(enrollment)}
                     className={styles.tableRow}
                     style={{ 
-                      backgroundColor: enrollment.status === 'APPROVED' ? '#e8f5e9' : 
-                                      enrollment.status === 'REJECTED' ? '#ffebee' : 'white',
+                      backgroundColor: 'white',
                       borderLeft: `4px solid ${
                         enrollment.status === 'APPROVED' ? colors.success :
                         enrollment.status === 'REJECTED' ? colors.danger :
@@ -244,11 +265,36 @@ const EnrollmentPage = () => {
                   >
                     {auth.role === 'ADMIN' ? (
                       <>
-                        <td>{enrollment.student?.name}</td>
-                        <td>{enrollment.project?.title}</td>
-                        <td>{enrollment.project?.objective || 'N/A'}</td>
                         <td>
-                          <span className={`${styles.status} ${styles[enrollment.status?.toLowerCase()]}`}>
+                          <div className={styles.studentCell}>
+                            <div className={styles.avatarPlaceholder}>
+                              {enrollment.student?.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div className={styles.studentName}>{enrollment.student?.name}</div>
+                              <div className={styles.studentEmail}>{enrollment.student?.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <div className={styles.projectTitle}>{enrollment.project?.title}</div>
+                          <div className={styles.projectMentor}>{enrollment.project?.mentor?.name}</div>
+                        </td>
+                        <td className={styles.objectiveCell}>
+                          {enrollment.project?.objective || 'N/A'}
+                        </td>
+                        <td>
+                          <span 
+                            className={`${styles.status} ${styles[enrollment.status?.toLowerCase()]}`}
+                            style={{
+                              backgroundColor: enrollment.status === 'APPROVED' ? `${colors.success}15` :
+                                            enrollment.status === 'REJECTED' ? `${colors.danger}15` :
+                                            `${colors.warning}15`,
+                              color: enrollment.status === 'APPROVED' ? colors.success :
+                                      enrollment.status === 'REJECTED' ? colors.danger :
+                                      colors.warning
+                            }}
+                          >
                             {enrollment.status}
                           </span>
                         </td>
@@ -259,18 +305,45 @@ const EnrollmentPage = () => {
                               handleRowClick(enrollment);
                             }}
                             className={styles.viewButton}
-                            style={{ backgroundColor: colors.primary }}
+                            style={{ 
+                              backgroundColor: 'transparent',
+                              border: `1px solid ${colors.accent}`,
+                              color: colors.accent
+                            }}
                           >
-                            View
+                            View Details
                           </button>
                         </td>
                       </>
                     ) : (
                       <>
-                        <td>{enrollment.project?.title}</td>
-                        <td>{enrollment.project?.mentor?.name || 'N/A'}</td>
                         <td>
-                          <span className={`${styles.status} ${styles[enrollment.status?.toLowerCase()]}`}>
+                          <div className={styles.projectTitle}>{enrollment.project?.title}</div>
+                          <div className={styles.projectObjective}>{enrollment.project?.objective?.substring(0, 60)}...</div>
+                        </td>
+                        <td>
+                          <div className={styles.mentorCell}>
+                            <div className={styles.avatarPlaceholder}>
+                              {enrollment.project?.mentor?.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <div className={styles.mentorName}>{enrollment.project?.mentor?.name || 'N/A'}</div>
+                              <div className={styles.mentorEmail}>{enrollment.project?.mentor?.email}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          <span 
+                            className={`${styles.status} ${styles[enrollment.status?.toLowerCase()]}`}
+                            style={{
+                              backgroundColor: enrollment.status === 'APPROVED' ? `${colors.success}15` :
+                                            enrollment.status === 'REJECTED' ? `${colors.danger}15` :
+                                            `${colors.warning}15`,
+                              color: enrollment.status === 'APPROVED' ? colors.success :
+                                      enrollment.status === 'REJECTED' ? colors.danger :
+                                      colors.warning
+                            }}
+                          >
                             {enrollment.status}
                           </span>
                         </td>
@@ -281,9 +354,13 @@ const EnrollmentPage = () => {
                               handleRowClick(enrollment);
                             }}
                             className={styles.viewButton}
-                            style={{ backgroundColor: colors.primary }}
+                            style={{ 
+                              backgroundColor: 'transparent',
+                              border: `1px solid ${colors.accent}`,
+                              color: colors.accent
+                            }}
                           >
-                            View
+                            View Details
                           </button>
                         </td>
                       </>
@@ -293,16 +370,19 @@ const EnrollmentPage = () => {
               ) : (
                 <tr>
                   <td colSpan={auth.role === 'ADMIN' ? 5 : 4} className={styles.emptyMessage}>
-                    No enrollments found matching your criteria
+                    <div className={styles.emptyState}>
+                      <div className={styles.emptyIcon}>📭</div>
+                      <h4>No enrollments found</h4>
+                      <p>Try adjusting your search or filter criteria</p>
+                    </div>
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-
-        <Modal 
-          isOpen={isModalOpen} 
+        <Modal
+          isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           title={`Enrollment Details - ${selectedEnrollment?.status || ''}`}
           titleStyle={{ color: colors.dark, fontWeight: '600' }}
@@ -357,20 +437,20 @@ const EnrollmentPage = () => {
                     )}
                   </div>
                   
-                  <p><strong>Status:</strong> 
+                  <p><strong>Status:</strong>
                     <span className={`${styles.status} ${styles[selectedEnrollment.status?.toLowerCase()]}`}>
                       {selectedEnrollment.status || 'N/A'}
                     </span>
                   </p>
                 </div>
               </div>
-
+ 
               {auth.role === 'ADMIN' && (
                 <div className={styles.recommendationSection}>
-                  <button 
+                  <button
                     onClick={() => setShowRecommendations(!showRecommendations)}
                     className={styles.recommendationButton}
-                    style={{ 
+                    style={{
                       background: `linear-gradient(135deg, ${colors.secondary} 0%, ${colors.primary} 100%)`,
                       color: 'white'
                     }}
@@ -418,7 +498,7 @@ const EnrollmentPage = () => {
                   )}
                 </div>
               )}
-
+ 
               <div className={styles.modalActions}>
                 {auth.role === 'ADMIN' && selectedEnrollment.status === 'PENDING' && (
                   <>
@@ -465,5 +545,6 @@ const EnrollmentPage = () => {
     </GeneralLayout>
   );
 };
-
+ 
 export default EnrollmentPage;
+ 

@@ -234,6 +234,16 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
             </Form.Group>
 
             <Form.Group className="mb-3">
+              <Form.Label>Eligibility criteria</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="criteria"
+                value={editedProject.criteria || ""}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
               <Form.Label>Objective</Form.Label>
               <Form.Control
                 as="textarea"
