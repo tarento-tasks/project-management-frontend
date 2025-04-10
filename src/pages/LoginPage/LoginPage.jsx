@@ -19,7 +19,7 @@ const LoginPage = () => {
 
       const { token, userId, role, name } = await login({ email, password });
 
-      // Save to localStorage
+      
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
       localStorage.setItem("role", role);

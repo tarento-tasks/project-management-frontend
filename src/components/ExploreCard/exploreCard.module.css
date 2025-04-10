@@ -1,102 +1,258 @@
-/* components/ProjectCard/ProjectCard.module.css */
 .card {
+    position: relative;
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+    transition: all 0.3s ease;
+    border: 1px solid #e2e8f0;
   }
-  
-  .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+   
+  .card.recommended {
+    border-left: 4px solid #2c4a7e;
   }
-  
-  .cardHeader {
-    background-color: #517ea6;
+   
+  .recommendedRibbon {
+    position: absolute;
+    top: -15%;
+    right: -13%;
+    background: linear-gradient(135deg, #4a6fa5 0%, #2c4a7e 100%);
     color: white;
-    padding: 1rem;
+    padding: 5px 20px 5px 32px;
+    font-size: 0.455rem;
+    font-weight: 600;
+    transform: rotate(45deg);
+    transform-origin: left;
     display: flex;
-    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+    z-index: 1;
+  }
+   
+  .recommendedRibbon svg {
+    width: 12px;
+    height: 12px;
+  }
+   
+  .cardContent {
+    padding: 1.5rem;
+  }
+   
+  .topSection {
+    margin-bottom: 1rem;
+  }
+   
+  .titleSection {
+    margin-bottom: 1rem;
+  }
+   
+  .title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0;
+  }
+   
+  .statusIndicator {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+   
+  .iconWrapper {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 6px;
+  }
+   
+  .enrolledStatus {
+    color: #10b981;
+    display: flex;
     align-items: center;
   }
-  .enrolledButton {
-    background-color: #98b399;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: default;
+   
+  .openStatus {
+    color: #3b82f6;
+    display: flex;
+    align-items: center;
   }
-  
-  
-  .title {
-    margin: 0;
-    font-size: 1.2rem;
-    font-weight: 600;
+   
+  .closedStatus {
+    color: #64748b;
+    display: flex;
+    align-items: center;
   }
-  
-  .cardBody {
-    padding: 1rem;
-    flex-grow: 1;
-  }
-  
-  .description {
+   
+  .descriptionContainer {
+    max-height: 80px;
+    overflow: hidden;
     margin-bottom: 1rem;
-    color: #555;
   }
-  
-  .details {
-    display: grid;
-    grid-template-columns: 1fr;
+   
+  .description {
+    font-size: 0.95rem;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
+  }
+   
+  .skillsContainer {
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
+    margin-top: 1rem;
   }
-  
+   
+  .skillBadge {
+    background: #e0e7ff;
+    color: #4f46e5;
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+   
+  .detailsSection {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1rem;
+    margin-top: 1rem;
+  }
+   
   .detailItem {
     display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+   
+  .detailIcon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+  }
+   
+  .detailContent {
+    flex: 1;
+  }
+   
+  .detailTitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 0.25rem 0;
+  }
+   
+  .detailText {
+    font-size: 0.9rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+  }
+   
+  .timelineSection {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: #475569;
+  }
+   
+  .timelineItem {
+    display: flex;
+    align-items: center;
     gap: 0.5rem;
   }
-  
-  .detailLabel {
-    font-weight: 600;
-    color: #2a3c50;
-  }
-  
+   
   .cardFooter {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-top: 1px solid #eee;
+    padding: 0.75rem 1.5rem;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
   }
-  
-  .dates {
+   
+  .footerButtonGroup {
     display: flex;
-    flex-direction: column;
-    font-size: 0.9rem;
-    color: #666;
+    gap: 0.5rem;
   }
-  
+   
+  .expandButton {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: color 0.2s ease;
+  }
+   
+  .expandButton:hover {
+    color: #4f46e5;
+  }
+   
   .enrollButton {
-    background-color: #3e648b;
+    background: linear-gradient(135deg, #4a6fa5 0%, #2c4a7e 100%);
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
+    border-radius: 6px;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
     cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
   }
-  
+   
   .enrollButton:hover {
-    background-color: #335171;
+    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
   }
-  
+   
   .enrollButton.disabled {
-    background-color: #cccccc;
+    background: #cbd5e1;
+    color: #64748b;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
   }
+   
+  /* Expanded state */
+  .card.expanded .descriptionContainer {
+    max-height: none;
+  }
+   
+ 
+   
+  .card.recommended {
+    animation: pulse 2s infinite;
+  }
+   
+  @media (max-width: 768px) {
+    .cardContent {
+      padding: 1rem;
+    }
+    
+    .cardFooter {
+      padding: 0.75rem 1rem;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: stretch;
+    }
+    
+    .footerButtonGroup {
+      justify-content: space-between;
+    }
+  }
+   

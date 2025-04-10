@@ -146,16 +146,6 @@ const AllProjects = () => {
     window.location.href = `/projects/${project.projectId}`;
   };
  
-  if (loading) {
-    return (
-      <GeneralLayout>
-        <div className={styles.loadingContainer}>
-          <Spinner animation="border" />
-          <p>Loading projects...</p>
-        </div>
-      </GeneralLayout>
-    );
-  }
  
   if (error) {
     return (

@@ -1,15 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import GeneralLayout from "../layouts/GeneralLayout";
 import { useRecoilValue } from "recoil";
 import { authState } from "../states/authState";
 import { getComments, addComment } from "../services/CommentService";
 import { getFeedback, addFeedback } from "../services/FeedbackService";
-import { FaCommentDots, FaComments, FaUser, FaPaperPlane } from "react-icons/fa";
+import { FaCommentDots, FaComments, FaUser, FaPaperPlane, FaArrowLeft } from "react-icons/fa";
 import styles from "./commentsFeedbackPage.module.css";
  
 const CommentsFeedbackPage = () => {
   const { taskId } = useParams();
+  const navigate = useNavigate();
   const auth = useRecoilValue(authState);
   const [activeTab, setActiveTab] = useState("comments");
   const [comments, setComments] = useState([]);
@@ -104,11 +105,21 @@ const CommentsFeedbackPage = () => {
       setLoading(false);
     }
   };
+
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
  
   return (
     <GeneralLayout role={auth.role}>
       <div className={styles.container}>
         <div className={styles.contentCard}>
+          <div className={styles.navHeader}>
+            <button onClick={handleGoBack} className={styles.backButton}>
+              <FaArrowLeft /> 
+            </button>
+          </div>
+          
           <div className={styles.header}>
             <h2 className={styles.title}>Task Discussions</h2>
           </div>
@@ -205,4 +216,3 @@ const CommentsFeedbackPage = () => {
 };
  
 export default CommentsFeedbackPage;
- 

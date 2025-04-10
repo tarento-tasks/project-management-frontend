@@ -47,6 +47,10 @@ export const fetchCurrentUser = async () => {
       if (userData.qualifications) {
         formData.append("qualifications", userData.qualifications);
       }
+
+      if (userData.password && userData.password.trim() !== "") {
+        formData.append("password", userData.password); 
+      }
       
       if (image && image instanceof File) {
         formData.append("image", image);

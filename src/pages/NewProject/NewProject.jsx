@@ -132,6 +132,10 @@ const NewProject = () => {
         confirmButtonText: 'OK',
         confirmButtonColor: '#517ea6',
         timer: 1000,
+        willClose: () => {
+          // Reload the page after the success message closes
+          window.location.reload();
+        }
       });
 
     } catch (error) {

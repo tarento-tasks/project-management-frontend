@@ -385,12 +385,12 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
   const handleDeleteTask = async (taskId) => {
     const result = await Swal.fire({
         title: 'Are you sure?',
-        text: "This task will be archived!",
+        text: "This task will be deleted",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#6366f1',
         cancelButtonColor: '#64748b',
-        confirmButtonText: 'Yes, archive it!',
+        confirmButtonText: 'Yes, delete it!',
         background: '#ffffff',
         backdrop: 'rgba(0, 0, 0, 0.1)'
     });
@@ -407,10 +407,10 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
             // Optimistically update the UI by filtering out the deleted task
             setTasks(prevTasks => prevTasks.filter(task => task.taskId !== taskId));
             
-            showSuccessAlert('Task has been archived.');
+            showSuccessAlert('Task has been deleted.');
         } catch (err) {
             console.error("Error deleting task:", err);
-            showErrorAlert('Failed to archive task. Please try again.');
+            showErrorAlert('Failed to delete task. Please try again.');
         }
     }
 };
@@ -674,7 +674,7 @@ const [isSubmittingTask, setIsSubmittingTask] = useState(false);
                 onClick={openCreateTaskModal}
                 className={styles.createButton}
               >
-                <FiPlus /> Create New Task
+                <FiPlus /> New Task
               </button>
             )}
           </div>

@@ -26,7 +26,7 @@ const Dashboard = () => {
 
     // Common calculations
     const completedTasks = tasks.filter(t => t.completeStatus === 'Completed').length;
-    const pendingTasks = tasks.filter(t => t.completeStatus === 'Pending').length;
+    const pendingTasks = tasks.filter(t => t.completeStatus === 'Not Completed').length;
     const activeProjects = projects.filter(p => p.openStatus === true).length;
 
     // Helper function to calculate project progress
@@ -66,13 +66,13 @@ const Dashboard = () => {
           },
           pieChartData: {
             title: "Project Status Distribution",
-            labels: ["Completed", "Pending", "In Progress"],
+            labels: ["Completed",  "In Progress"],
             values: [
               completedTasks,
               pendingTasks,
               tasks.length - completedTasks - pendingTasks
             ],
-            colors: ["#4BC0C0", "#3e648b", "#517ea6"]
+            colors: ["#4BC0C0",  "#517ea6"]
           }
         };
 
@@ -105,23 +105,17 @@ const Dashboard = () => {
             }))
           },
           pieChartData: (() => {
-            // Debugging logs
-            console.group('Pie Chart Data Debugging');
             
-            // 1. Log all mentor tasks
-            console.log('All mentor tasks:', mentorTasks);
             
             // 2. Log status values found in tasks
             const allStatuses = [...new Set(mentorTasks.map(t => t.completeStatus))];
-            console.log('Unique status values found:', allStatuses);
+            
             
             // 3. Calculate and log counts
             const completedCount = mentorTasks.filter(t => t.completeStatus =='Completed').length;
-            const pendingCount = mentorTasks.filter(t => t.completeStatus == 'Pending').length;
+            const pendingCount = mentorTasks.filter(t => t.completeStatus == 'Not Completed').length;
             
-            console.log('Completed tasks count:', completedCount);
-            console.log('Pending tasks count:', pendingCount);
-            console.log('Total tasks:', mentorTasks.length);
+            
             
             // 4. Verify the final data structure
             const chartData = {
@@ -131,7 +125,7 @@ const Dashboard = () => {
                 completedCount || 0,
                 pendingCount || 0
               ],
-              colors: ["#4BC0C0", "#FFCE56"]
+              colors: ["#4BC0C0", "#3e648b"]
             };
             
             console.log('Final pieChartData structure:', chartData);

@@ -41,6 +41,9 @@ const LoginForm = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    validateField('email', email);
+    validateField('password', password);
   
     const newErrors = {};
   

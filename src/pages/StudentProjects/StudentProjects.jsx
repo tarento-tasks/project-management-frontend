@@ -5,11 +5,11 @@ import GeneralLayout from '../../layouts/GeneralLayout';
 import ProjectCard from '../../components/ExploreCard/ExploreCard';
 import ExploreService from '../../services/explore';
 import styles from './studentProjects.module.css';
-
+ 
 const StudentProjects = () => {
   const auth = useRecoilValue(authState);
   const [projects, setProjects] = useState([]);
-  const [recommendedProjects, setRecommendedProjects] = useState([]); 
+  const [recommendedProjects, setRecommendedProjects] = useState([]);
   const [allSkills, setAllSkills] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOption, setFilterOption] = useState('all');
@@ -27,9 +27,9 @@ const StudentProjects = () => {
         setIsLoading(true);
         
         // Get student ID from auth or local storage
-        const studentId = auth.isAuthenticated && auth.user?.id 
-          ? auth.user.id 
-          : localStorage.getItem('userId'); 
+        const studentId = auth.isAuthenticated && auth.user?.id
+          ? auth.user.id
+          : localStorage.getItem('userId');
         
         console.log("Current student ID:", studentId);
   
@@ -43,7 +43,7 @@ const StudentProjects = () => {
         setAllSkills(skillsData);
   
         // Fetch skills for each project
-        const skillsPromises = projectsData.map(project => 
+        const skillsPromises = projectsData.map(project =>
           ExploreService.getProjectSkills(project.projectId)
         );
         
@@ -68,19 +68,18 @@ const StudentProjects = () => {
             console.error("Error fetching recommendations:", recError);
           }
           
-          // In your fetchData function:
-try {
-  const enrolled = await ExploreService.getEnrollmentsByStudent(studentId);
-  console.log('Enrolled project IDs:', enrolled);
-  setIsEnrolledReady(true);
-  
-  // Filter out any undefined/null values and create a Set
-  const enrolledSet = new Set(enrolled.filter(id => id));
-  setEnrolledProjects(enrolledSet);
-} catch (enrollError) {
-  console.error("Error fetching enrollments:", enrollError);
-  setEnrolledProjects(new Set());
-}
+          try {
+            const enrolled = await ExploreService.getEnrollmentsByStudent(studentId);
+            console.log('Enrolled project IDs:', enrolled);
+            setIsEnrolledReady(true);
+            
+            // Filter out any undefined/null values and create a Set
+            const enrolledSet = new Set(enrolled.filter(id => id));
+            setEnrolledProjects(enrolledSet);
+          } catch (enrollError) {
+            console.error("Error fetching enrollments:", enrollError);
+            setEnrolledProjects(new Set());
+          }
         } else {
           console.warn("No student ID available for recommendations");
           setIsEnrolledReady(true);
@@ -97,21 +96,21 @@ try {
   
     fetchData();
   }, [auth]);
-
+ 
   // Create a Set of recommended project IDs for easy checking
   const recommendedProjectIds = new Set(recommendedProjects.map(p => p.projectId));
   
   const handleEnrollment = (projectId) => {
     setEnrolledProjects((prev) => new Set([...prev, projectId]));
   };
-
+ 
   const filteredProjects = projects.filter(project => {
     // Search filter - matches title, description, or objective
-    const matchesSearch = searchTerm === '' || 
+    const matchesSearch = searchTerm === '' ||
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (project.description && project.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (project.objective && project.objective.toLowerCase().includes(searchTerm.toLowerCase()));
-
+ 
     // Main filter options
     let matchesFilter = true;
     if (filterOption === 'recommended') {
@@ -121,90 +120,190 @@ try {
       const lastDate = new Date(project.lastDate);
       matchesFilter = lastDate >= today && project.openStatus;
     }
-
+ 
     // Skill filter
-    const matchesSkill = skillFilter === '' || 
-      (project.skillsRequired && 
+    const matchesSkill = skillFilter === '' ||
+      (project.skillsRequired &&
        project.skillsRequired.toLowerCase().includes(skillFilter.toLowerCase())) ||
-      projectSkillsMap[project.projectId]?.some(skill => 
+      projectSkillsMap[project.projectId]?.some(skill =>
         skill.skillName.toLowerCase().includes(skillFilter.toLowerCase())
       );
-
+ 
     return matchesSearch && matchesFilter && matchesSkill;
   });
-
-  if (isLoading) return <div className={styles.loading}>Loading projects...</div>;
-  if (error) return <div className={styles.error}>Error: {error}</div>;
-
-  const studentId = auth.isAuthenticated && auth.user?.id 
-    ? auth.user.id 
-    : localStorage.getItem('userId');
-
+ 
+  // Function to get count of projects by type
+  const getProjectCount = (type) => {
+    if (type === 'recommended') {
+      return recommendedProjects.length;
+    } else if (type === 'enrolled') {
+      return enrolledProjects.size;
+    } else if (type === 'open') {
+      const today = new Date();
+      return projects.filter(p =>
+        new Date(p.lastDate) >= today && p.openStatus
+      ).length;
+    }
+    return projects.length; // all
+  };
+ 
+  if (isLoading) {
+    return (
+      <GeneralLayout role="student">
+        <div className={styles.loadingContainer}>
+          <div className={styles.loadingSpinner}></div>
+          <p>Loading projects...</p>
+        </div>
+      </GeneralLayout>
+    );
+  }
+  
+  if (error) {
+    return (
+      <GeneralLayout role="student">
+        <div className={styles.errorContainer}>
+          <div className={styles.errorIcon}>❌</div>
+          <h2>Something went wrong</h2>
+          <p>{error}</p>
+          <button
+            className={styles.retryButton}
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </button>
+        </div>
+      </GeneralLayout>
+    );
+  }
+ 
   return (
     <GeneralLayout role="student">
-      <div className={styles.container}>
-        <h1 className={styles.title}>Available Projects</h1>
-        <p className={styles.subtitle}>Browse and enroll in projects that match your interests</p>
-
-        <div className={styles.searchFilterContainer}>
-          <div className={styles.searchBox}>
+      <div className={styles.pageContainer}>
+        {/* Hero Section */}
+        <div className={styles.heroSection}>
+          <div className={styles.heroContent}>
+            <h1 className={styles.mainTitle}>Discover Projects</h1>
+            <p className={styles.heroText}>
+              Explore opportunities to enhance your skills and build your portfolio
+            </p>
+          </div>
+        </div>
+ 
+        {/* Stats Bar */}
+        <div className={styles.statsBar}>
+          <div className={styles.statItem}>
+            <span className={styles.statNumber}>{getProjectCount('all')}</span>
+            <span className={styles.statLabel}>Total Projects</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statNumber}>{getProjectCount('recommended')}</span>
+            <span className={styles.statLabel}>Recommended</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statNumber}>{getProjectCount('enrolled')}</span>
+            <span className={styles.statLabel}>Enrolled</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statNumber}>{getProjectCount('open')}</span>
+            <span className={styles.statLabel}>Open Projects</span>
+          </div>
+        </div>
+ 
+        {/* Search and Filter Section */}
+        <div className={styles.controlPanel}>
+          <div className={styles.searchContainer}>
+            <div className={styles.searchIcon}>🔍</div>
             <input
               type="text"
-              placeholder="Search projects..."
+              placeholder="Search by title, description or objective..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className={styles.searchInput}
             />
-            <span className={styles.searchIcon}>🔍</span>
+            {searchTerm && (
+              <button
+                className={styles.clearButton}
+                onClick={() => setSearchTerm('')}
+              >
+                ✕
+              </button>
+            )}
           </div>
-
-          <div className={styles.filterGroup}>
-            <select
-              value={filterOption}
-              onChange={(e) => setFilterOption(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="all">All Projects</option>
-              <option value="recommended">Recommended</option>
-              <option value="open">Open for Enrollment</option>
-            </select>
-
-            <select
-              value={skillFilter}
-              onChange={(e) => setSkillFilter(e.target.value)}
-              className={styles.filterSelect}
-            >
-              <option value="">All Skills</option>
-              {allSkills.map(skill => (
-                <option key={skill.skillId} value={skill.skillName}>{skill.skillName}</option>
-              ))}
-
-            </select>
+ 
+          <div className={styles.filtersGroup}>
+            <div className={styles.filterItem}>
+              <label className={styles.filterLabel}>Category:</label>
+              <select
+                value={filterOption}
+                onChange={(e) => setFilterOption(e.target.value)}
+                className={styles.filterSelect}
+              >
+                <option value="all">All Projects</option>
+                <option value="recommended">Recommended for You</option>
+                <option value="open">Open for Enrollment</option>
+              </select>
+            </div>
+ 
+            
           </div>
         </div>
-
-        {!isDataReady ? (
-          <div className={styles.loading}>Preparing data...</div>
-        ) : filteredProjects.length === 0 ? (
-          <div className={styles.noProjects}>No projects found matching your criteria.</div>
-        ) : (
-          <div className={styles.projectsGrid}>
-            {isEnrolledReady && filteredProjects.map(project => (
-              <ProjectCard
-                key={project.projectId}
-                project={project}
-                skills={projectSkillsMap[project.projectId] || []}
-                isRecommended={recommendedProjectIds.has(project.projectId)}
-                isEnrolled={enrolledProjects.has(project.projectId)}
-                onEnrollSuccess={handleEnrollment}
-                studentId={auth.user?.id || localStorage.getItem('userId')} 
-              />
-            ))}
+ 
+        {/* Results Section */}
+        <div className={styles.resultsContainer}>
+          <div className={styles.resultsHeader}>
+            <h2 className={styles.resultsTitle}>
+              {filterOption === 'all' ? 'All Projects' :
+               filterOption === 'recommended' ? 'Recommended Projects' :
+               'Open Projects'}
+            </h2>
+            <span className={styles.resultsCount}>
+              Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}
+            </span>
           </div>
-        )}
+ 
+          {!isDataReady ? (
+            <div className={styles.loadingPlaceholder}>
+              <div className={styles.loadingSpinner}></div>
+              <p>Preparing data...</p>
+            </div>
+          ) : filteredProjects.length === 0 ? (
+            <div className={styles.emptyState}>
+              <div className={styles.emptyIcon}>🔍</div>
+              <h3>No matching projects found</h3>
+              <p>Try adjusting your search or filter criteria</p>
+              {(searchTerm || filterOption !== 'all' || skillFilter) && (
+                <button
+                  className={styles.resetButton}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setFilterOption('all');
+                    setSkillFilter('');
+                  }}
+                >
+                  Reset Filters
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className={styles.projectGrid}>
+              {isEnrolledReady && filteredProjects.map(project => (
+                <ProjectCard
+                  key={project.projectId}
+                  project={project}
+                  skills={projectSkillsMap[project.projectId] || []}
+                  isRecommended={recommendedProjectIds.has(project.projectId)}
+                  isEnrolled={enrolledProjects.has(project.projectId)}
+                  onEnrollSuccess={handleEnrollment}
+                  studentId={auth.user?.id || localStorage.getItem('userId')}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </GeneralLayout>
   );
 };
-
+ 
 export default StudentProjects;
+ 

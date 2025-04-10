@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { authState } from '../../states/authState';
 import GeneralLayout from '../../layouts/GeneralLayout';
-import { FaCheckCircle, FaTimesCircle, FaTrashAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaTrashAlt, FaSearch, FaFilter, FaUserTie, FaBook, FaInfoCircle } from 'react-icons/fa';
 import {
   getEnrollments,
   updateEnrollmentStatus,
@@ -174,26 +174,38 @@ const EnrollmentPage = () => {
  
   return (
     <GeneralLayout>
-      <div className={styles.container} style={{ backgroundColor: colors.light }}>
-        <h1 className={styles.title} style={{ color: colors.dark }}>
-          {auth.role === 'ADMIN' ? 'Enrollment Requests Dashboard' : 'My Project Applications'}
-        </h1>
+      <div className={styles.container} style={{ backgroundColor: colors.background }}>
+        <div className={styles.headerContainer}>
+          <h1 className={styles.title} style={{ color: colors.dark }}>
+            {auth.role === 'ADMIN' ? 'Enrollment Requests' : 'My Applications'}
+            <span className={styles.titleDivider}></span>
+          </h1>
+          
+        </div>
         
-        <div className={styles.filterContainer} style={{ backgroundColor: colors.primary }}>
+        <div className={styles.filterContainer}>
           <div className={styles.searchBox}>
+            <FaSearch className={styles.searchIcon} style={{ color: colors.muted }} />
             <input
               type="text"
               placeholder={auth.role === 'ADMIN' ? "Search by student or project..." : "Search by project..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ borderColor: colors.secondary }}
+              style={{
+                borderColor: colors.secondary,
+                color: colors.text
+              }}
             />
           </div>
           <div className={styles.statusFilter}>
+            <FaFilter className={styles.filterIcon} style={{ color: colors.muted }} />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              style={{ borderColor: colors.secondary }}
+              style={{
+                borderColor: colors.secondary,
+                color: colors.text
+              }}
             >
               <option value="ALL">Status</option>
               <option value="PENDING">Pending</option>
@@ -202,6 +214,7 @@ const EnrollmentPage = () => {
             </select>
           </div>
         </div>
+ 
         
         <div className={styles.tableContainer}>
           <table className={styles.enrollmentTable}>
@@ -232,15 +245,7 @@ const EnrollmentPage = () => {
                     key={enrollment.enrollmentId}
                     onClick={() => handleRowClick(enrollment)}
                     className={styles.tableRow}
-                    style={{
-                      backgroundColor: enrollment.status === 'APPROVED' ? '#e8f5e9' :
-                                      enrollment.status === 'REJECTED' ? '#ffebee' : 'white',
-                      borderLeft: `4px solid ${
-                        enrollment.status === 'APPROVED' ? colors.success :
-                        enrollment.status === 'REJECTED' ? colors.danger :
-                        colors.warning
-                      }`
-                    }}
+                    
                   >
                     {auth.role === 'ADMIN' ? (
                       <>

@@ -12,14 +12,15 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 1rem;
-  ;
+  
   margin-bottom: 1.5rem;
 }
 
 .title {
   color: #2d455f;
-  font-weight: 500;
-  font-size: clamp(2rem, 2vw, 2rem);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
   text-align: left;
 }
 
