@@ -5,7 +5,7 @@
     box-sizing: border-box;
     overflow-x: hidden;
   }
-  
+   
   .allprojectstitle {
     text-align: left;
     font-size: 34px;
@@ -13,15 +13,15 @@
     margin: 20px 0;
     color: #2a3c50;
   }
-
+   
   .headerRow {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     margin-bottom: 20px;
   }
-
+   
   .statusHeading {
     font-size: 1.25rem;
     font-weight: 500;
@@ -29,40 +29,90 @@
     color: white;
     
   }
-  
-  
-
-  .searchWrapper {
+   
+   
+   
+  /* Modern search container */
+  .searchContainer {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 400px;
+    height: 30%;
+  }
+   
+  /* Search box styling */
+  .searchBox {
     position: relative;
+    width: 90%;
+    height: 30%;
     display: flex;
     align-items: center;
+    background: #f5f5f7;
+    border-radius: 24px;
+    padding: 8px 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   }
-  
+   
+  .searchBox:hover {
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  }
+   
+  /* Search icon */
   .searchIcon {
-    position: absolute;
-    left: 10px;
-    font-size: 16px;
-    color: #888;
+    color: #6b7280;
+    margin-right: 10px;
+    font-size: 1.1rem;
   }
-  
+   
+  /* Search input field */
   .searchInput {
-    padding: 6px 10px 6px 30px;
-    font-size: 14px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 0.95rem;
+    color: #374151;
     outline: none;
   }
-  
-  .searchInput:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+   
+  .searchInput::placeholder {
+    color: #9ca3af;
   }
-  
-  
-  
-  
-  
+   
+  /* Clear button */
+  .clearButton {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    padding: 4px;
+    margin-left: 8px;
+    transition: color 0.2s;
+  }
+   
+  .clearButton:hover {
+    color: #6b7280;
+  }
+   
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .headerRow {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .searchContainer {
+      margin-top: 16px;
+      max-width: 100%;
+    }
+  }
+   
+   
+   
+   
+   
   .kanbanBoard {
     display: flex;
     flex-wrap: nowrap;
@@ -72,7 +122,7 @@
     overflow-x: auto;
     padding-bottom: 20px;
   }
-  
+   
   .columnWrapper {
     flex: 0 0 24%;
     display: flex;
@@ -81,8 +131,8 @@
     background-color: #f8f9fa;
     border-radius: 6px;
   }
-  
-  
+   
+   
   .columnHeader {
     
     height: 40px;
@@ -95,7 +145,7 @@
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
   }
-  
+   
   .column {
     flex: 1;
     min-height: 0;
@@ -106,7 +156,7 @@
     border-bottom-right-radius: 6px;
     box-shadow: 1px 1px 4px rgba(0.1, 0.1, 0.1, 0.1);
   }
-  
+   
   .column::-webkit-scrollbar {
     width: 6px;
   }
@@ -114,12 +164,12 @@
     background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
   }
-  
+   
   .column > * + * {
     margin-top: 10px;
   }
-  
-  
+   
+   
   .todoHeader {
     background: linear-gradient(135deg, #b9b9b4, #2d455f); /* 500 to 600 */
   }
@@ -137,7 +187,7 @@
   }
   .allprojectscontainer h3{
     color: white;
-
+   
   }
   /* Light background below headers */
   .toBeReviewed,
@@ -146,29 +196,30 @@
   .overdue {
     background: #f8f9fa;
   }
-  
+   
   /* Responsive Design */
   @media (max-width: 1024px) {
     .kanbanBoard {
       flex-wrap: wrap;
       justify-content: center;
     }
-  
+   
     .columnWrapper {
       width: 48%;
       margin-bottom: 15px;
     }
   }
-  
+   
   @media (max-width: 768px) {
     .kanbanBoard {
       flex-direction: column;
       align-items: center;
       gap: 15px;
     }
-  
+   
     .columnWrapper {
       width: 90%;
     }
   }
-  
+   
+   

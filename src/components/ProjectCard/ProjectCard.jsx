@@ -1,17 +1,53 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import styles from "./projectcard.module.css";
-import { Card, Button, Modal, Form } from "react-bootstrap";
+import { Card, Button, Modal, Form, Spinner } from "react-bootstrap";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import newProjectService from "../../services/newProjectService";
 import Swal from "sweetalert2";
+import axios from "axios";
 
 const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
   const [showModal, setShowModal] = useState(false);
-  const [editedProject, setEditedProject] = useState({...project});
+  const [editedProject, setEditedProject] = useState({
+    title: "",
+    description: "",
+    criteria: "",
+    objective: "",
+    lastDate: "",
+    dueDate: "",
+    repo: "",
+    openStatus: false,
+    mentorId: "",
+    projectId: ""
+  });
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(null);
+  const [currentMentor, setCurrentMentor] = useState(null);
+  const [mentorLoading, setMentorLoading] = useState(false);
+
+  // Initialize editedProject when project changes
+  useEffect(() => {
+    if (project) {
+      setEditedProject({
+        title: project.title || "",
+        description: project.description || "",
+        criteria: project.criteria || "",
+        objective: project.objective || "",
+        lastDate: project.lastDate || "",
+        dueDate: project.dueDate || "",
+        repo: project.repo || "",
+        openStatus: project.openStatus || false,
+        mentorId: project.mentorId || "",
+        projectId: project.projectId || ""
+      });
+      
+      if (project.mentorId) {
+        fetchCurrentMentor(project.mentorId);
+      }
+    }
+  }, [project]);
 
   // Update parent component's modal state
   useEffect(() => {
@@ -20,20 +56,58 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
     }
   }, [showModal, setParentShowModal]);
 
-  // Fetch mentors when modal opens
+  // Fetch current mentor details
+  const fetchCurrentMentor = async (mentorId) => {
+    try {
+      setMentorLoading(true);
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `http://localhost:8080/api/users?userId=${mentorId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.data?.response) {
+        setCurrentMentor(response.data.response);
+      }
+    } catch (error) {
+      console.error("Error fetching current mentor:", error);
+    } finally {
+      setMentorLoading(false);
+    }
+  };
+
+  // Fetch all mentors when modal opens
   useEffect(() => {
     const fetchMentors = async () => {
       if (showModal) {
         try {
           setLoading(true);
           setApiError(null);
-          const response = await newProjectService.getMentors();
-          // Ensure we always set an array, even if response is undefined
-          setMentors(Array.isArray(response) ? response : []);
+          
+          const token = localStorage.getItem("token");
+          const response = await axios.get(
+            "http://localhost:8080/api/users?role=MENTOR",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          
+          if (response.data?.response) {
+            setMentors(response.data.response);
+          } else {
+            setMentors([]);
+          }
+          
         } catch (err) {
           console.error("Failed to fetch mentors", err);
           setApiError('Failed to load mentors');
-          setMentors([]); // Ensure mentors is always an array
+          setMentors([]);
         } finally {
           setLoading(false);
         }
@@ -70,12 +144,11 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
-    setEditedProject((prev) => ({ ...prev, [name]: value }));
+    setEditedProject(prev => ({ ...prev, [name]: value }));
   };
 
   const handleEditSubmit = async () => {
     try {
-      // Validate required fields
       if (!editedProject.projectId) {
         throw new Error("Project ID is missing");
       }
@@ -83,8 +156,6 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
         throw new Error("Please select a mentor");
       }
 
-      console.log("Submitting project update:", editedProject);
-      
       await newProjectService.updateProject(editedProject.projectId, editedProject);
       setShowModal(false);
       Swal.fire("Success", "Project updated successfully", "success");
@@ -92,7 +163,7 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
     } catch (err) {
       console.error("Update error:", err);
       Swal.fire(
-        "Error", 
+        "Error",
         `Failed to update project: ${err.message || 'Unknown error'}`,
         "error"
       );
@@ -109,14 +180,21 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
     e.stopPropagation();
   };
 
+  if (!project) {
+    return <div>Loading project...</div>;
+  }
+
   return (
     <>
       <Card className={styles.projectCard}>
         <Card.Body>
-          <Card.Title className="text-center fw-bold" style={{ fontSize: "15px" }}>
+          <Card.Title className=" fw-bold" style={{ fontSize: "15px" }}>
             {project.title}
           </Card.Title>
-          <Card.Text className="text-muted">{project.description}</Card.Text>
+          <Card.Text className="text-muted">
+            <div><strong>Description:</strong> {project.description || "N/A"}</div>
+            
+          </Card.Text>
 
           <div className="d-flex justify-content-between mt-3" style={{ fontSize: "11px" }}>
             <div><strong>📅 Start:</strong> {project.lastDate || "N/A"}</div>
@@ -124,16 +202,16 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
           </div>
           
           <div className="d-flex justify-content-end mt-3 gap-2">
-            <Button 
-              size="sm" 
-              variant="outline-primary" 
+            <Button
+              size="sm"
+              variant="outline-primary"
               onClick={handleEditClick}
             >
               <FaEdit />
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline-danger" 
+            <Button
+              size="sm"
+              variant="outline-danger"
               onClick={handleDelete}
             >
               <FaTrash />
@@ -142,9 +220,9 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
         </Card.Body>
       </Card>
 
-      <Modal 
-        show={showModal} 
-        onHide={() => setShowModal(false)} 
+      <Modal
+        show={showModal}
+        onHide={() => setShowModal(false)}
         onClick={handleModalClick}
         backdrop="static"
         size="lg"
@@ -159,49 +237,129 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
             </div>
           )}
           <Form>
-            {/* ... (keep all your existing form fields) ... */}
-            <Form.Group className="mb-2">
+            <Form.Group className="mb-3">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                type="text"
+                name="title"
+                value={editedProject.title}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="description"
+                value={editedProject.description}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Objective</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="objective"
+                value={editedProject.objective}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Criteria</Form.Label>
+              <Form.Control
+                as="textarea"
+                name="criteria"
+                value={editedProject.criteria}
+                onChange={handleEditChange}
+                placeholder="Enter project evaluation criteria"
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Repository Link</Form.Label>
+              <Form.Control
+                type="text"
+                name="repo"
+                value={editedProject.repo}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Start Date</Form.Label>
+              <Form.Control
+                type="date"
+                name="lastDate"
+                value={editedProject.lastDate?.split('T')[0] || ""}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Due Date</Form.Label>
+              <Form.Control
+                type="date"
+                name="dueDate"
+                value={editedProject.dueDate?.split('T')[0] || ""}
+                onChange={handleEditChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Status</Form.Label>
+              <Form.Select
+                name="openStatus"
+                value={editedProject.openStatus ? "true" : "false"}
+                onChange={(e) => {
+                  setEditedProject(prev => ({
+                    ...prev,
+                    openStatus: e.target.value === "true"
+                  }));
+                }}
+              >
+                <option value="true">Open</option>
+                <option value="false">Closed</option>
+              </Form.Select>
+            </Form.Group>
+
+            <Form.Group className="mb-3">
               <Form.Label>Mentor</Form.Label>
               <Form.Select
                 name="mentorId"
-                value={editedProject.mentorId || ""}
+                value={editedProject.mentorId}
                 onChange={handleEditChange}
-                onClick={handleModalClick}
                 disabled={loading}
                 required
               >
                 <option value="">Select a mentor</option>
-                {loading ? (
-                  <option>Loading mentors...</option>
-                ) : (
-                  mentors.map(mentor => (
-                    <option key={mentor.userId} value={mentor.userId}>
-                      {mentor.firstName} {mentor.lastName} ({mentor.email})
-                    </option>
-                  ))
-                )}
+                {mentors.map(mentor => (
+                  <option key={mentor.userId} value={mentor.userId}>
+                    {mentor.name || mentor.email}
+                  </option>
+                ))}
               </Form.Select>
-              {!loading && mentors.length === 0 && !apiError && (
-                <div className="text-danger mt-1">
-                  No mentors available
-                </div>
+              {mentors.length === 0 && !loading && (
+                <div className="text-danger mt-2">No mentors available</div>
               )}
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer onClick={handleModalClick}>
-          <Button 
-            variant="secondary" 
+          <Button
+            variant="secondary"
             onClick={() => setShowModal(false)}
           >
             Cancel
           </Button>
-          <Button 
-            variant="primary" 
+          <Button
+            variant="primary"
             onClick={handleEditSubmit}
             disabled={!editedProject.mentorId || loading}
           >
-            {loading ? 'Saving...' : 'Save Changes'}
+            {loading ? <Spinner size="sm" animation="border" /> : 'Save Changes'}
           </Button>
         </Modal.Footer>
       </Modal>
@@ -212,12 +370,15 @@ const ProjectCard = ({ project, onUpdate, setParentShowModal }) => {
 ProjectCard.propTypes = {
   project: PropTypes.shape({
     projectId: PropTypes.string.isRequired,
-    title: PropTypes.string,
+    title: PropTypes.string.isRequired,
     description: PropTypes.string,
+    criteria: PropTypes.string,
+    objective: PropTypes.string,
     lastDate: PropTypes.string,
     dueDate: PropTypes.string,
+    repo: PropTypes.string,
+    openStatus: PropTypes.bool,
     mentorId: PropTypes.string,
-    // Add other required project props
   }).isRequired,
   onUpdate: PropTypes.func,
   setParentShowModal: PropTypes.func
